@@ -1,0 +1,15 @@
+entry: start
+
+imports:
+  strings: "strings"
+  base: "github.com/Logiraptor/oak/core/base"
+
+components:
+  start: base.StringCLI
+  caps: strings.ToUpper
+  writeResult: base.PrintString
+
+flow:
+ start: caps
+ caps: writeResult
+
