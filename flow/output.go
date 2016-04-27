@@ -1,8 +1,9 @@
 package flow
 
 import (
+	"bytes"
+	"fmt"
 	"go/types"
-	"os"
 	"strings"
 	"text/template"
 )
@@ -48,10 +49,12 @@ func WriteFlowApp(app App) {
 		Args: steps[len(steps)-2].LHS,
 	}
 
-	tmpl.ExecuteTemplate(os.Stdout, "flowApp", TemplateParams{
+	buf := new(bytes.Buffer)
+	tmpl.ExecuteTemplate(buf, "flowApp", TemplateParams{
 		App:   app,
 		Steps: steps,
 	})
+	fmt.Println(formatFile(buf.String()))
 }
 
 func names(in *types.Tuple) []string {
