@@ -9,11 +9,11 @@ type Node struct {
 	Children map[string]*Node
 }
 
-func NewFlowGraph(comps map[ComponentID]Component, conf map[ComponentID]ComponentID) Graph {
+func NewGraph(app App, conf map[ComponentID]ComponentID) Graph {
 	output := Graph{}
 
 	for a, b := range conf {
-		compA := comps[a]
+		compA := app.Component(a)
 		for i := 0; i < compA.Outputs.Len(); i++ {
 			v := compA.Outputs.At(i)
 			output.AddEdge(a, b, v.Name())

@@ -6,8 +6,6 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-type ComponentID string
-
 type Config struct {
 	Imports    map[string]string
 	Components map[ComponentID]string
@@ -15,15 +13,15 @@ type Config struct {
 	Entry      ComponentID
 }
 
-func ParseYAMLFile(filename string) (*Config, error) {
-	var Config = new(Config)
+func ParseYAMLFile(filename string) (Config, error) {
+	var config Config
 	buf, err := ioutil.ReadFile(filename)
 	if err != nil {
-		return nil, err
+		return Config{}, err
 	}
-	err = yaml.Unmarshal(buf, &Config)
+	err = yaml.Unmarshal(buf, &config)
 	if err != nil {
-		return nil, err
+		return Config{}, err
 	}
-	return Config, nil
+	return config, nil
 }

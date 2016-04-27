@@ -19,7 +19,7 @@ func main() {
 		return
 	}
 
-	app, errs := flow.TypeChecker{Conf: conf}.Check()
+	app, errs := flow.Load(conf)
 	if errs != nil {
 		for _, err := range errs {
 			fmt.Println(err.Error())
@@ -27,5 +27,5 @@ func main() {
 		return
 	}
 
-	flow.WriteFlowApp(*app)
+	flow.WriteFlowApp(app)
 }
