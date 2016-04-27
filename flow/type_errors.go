@@ -41,5 +41,5 @@ But the %[3]s argument of %[2]s has type:
 	%[5]s
 
 HINT: These should have identical types.
-`, source, dest, humanize.Ordinal(argIndex), sourceType, endType)
+`, source, dest, humanize.Ordinal(argIndex+1), sourceType, endType)
 }
