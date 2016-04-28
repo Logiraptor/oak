@@ -1,6 +1,26 @@
-package flow
+package templates
 
-var templateSource = `
+import (
+	"io"
+	"strings"
+	"text/template"
+)
+
+func FlowApp(wr io.Writer, data interface{}) error {
+	return tmpl.ExecuteTemplate(wr, "flowApp", data)
+}
+
+func TypeChecker(wr io.Writer, data interface{}) error {
+	return tmpl.ExecuteTemplate(wr, "typeChecker", data)
+}
+
+var tmpl = template.Must(template.New("root").Funcs(template.FuncMap{
+	"join": func(a []string) string {
+		return strings.Join(a, ",")
+	},
+}).Parse(source))
+
+var source = `
 
 {{define "imports"}}
 import (

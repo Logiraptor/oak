@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/Logiraptor/oak/flow"
+	"github.com/Logiraptor/oak/flow/codegen"
+	"github.com/Logiraptor/oak/flow/loader"
+	"github.com/Logiraptor/oak/flow/parser"
 )
 
 func main() {
@@ -13,13 +15,13 @@ func main() {
 		return
 	}
 
-	conf, err := flow.ParseYAMLFile(os.Args[1])
+	conf, err := parser.ParseYAMLFile(os.Args[1])
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	app, errs := flow.Load(conf)
+	app, errs := loader.Load(conf)
 	if errs != nil {
 		for _, err := range errs {
 			fmt.Println(err.Error())
@@ -27,5 +29,5 @@ func main() {
 		return
 	}
 
-	flow.WriteFlowApp(app)
+	codegen.WriteFlowApp(app)
 }

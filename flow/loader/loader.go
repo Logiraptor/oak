@@ -1,24 +1,26 @@
-package flow
+package loader
 
 import (
 	"bytes"
 	"go/types"
 
-	"golang.org/x/tools/go/loader"
+	"github.com/Logiraptor/oak/flow/internal/templates"
+	"github.com/Logiraptor/oak/flow/parser"
+	goloader "golang.org/x/tools/go/loader"
 )
 
 // Load loads the components of a flow app and
 // reports type errors found in the graph.
-func Load(conf Config) (App, []error) {
-	pkg, err := load(writeProgram(conf))
+func Load(prog parser.Program) (App, []error) {
+	pkg, err := load(writeProgram(prog))
 	if err != nil {
 		return App{}, []error{err}
 	}
 
 	var app App
-	app.Entry = conf.Entry
-	app.Imports = conf.Imports
-	for name, comp := range conf.Components {
+	app.Entry = prog.Entry
+	app.Imports = prog.Imports
+	for name, comp := range prog.Components {
 		typ := lookupDef(pkg, string(name)).Type().(*types.Signature)
 		app.Components = append(app.Components, Component{
 			Label:   name,
@@ -27,13 +29,13 @@ func Load(conf Config) (App, []error) {
 			Outputs: typ.Results(),
 		})
 	}
-	app.Flow = newGraph(app, conf.Flow)
+	app.Flow = newGraph(app, prog.Flow)
 
-	errs := typeCheck(pkg, conf)
+	errs := typeCheck(pkg, prog)
 	return app, errs
 }
 
-func lookupDef(pkg *loader.PackageInfo, name string) types.Object {
+func lookupDef(pkg *goloader.PackageInfo, name string) types.Object {
 	for id, obj := range pkg.Defs {
 		if name == id.String() {
 			return obj
@@ -42,7 +44,7 @@ func lookupDef(pkg *loader.PackageInfo, name string) types.Object {
 	panic("undefined definition: " + name)
 }
 
-func typeCheck(pkg *loader.PackageInfo, conf Config) []error {
+func typeCheck(pkg *goloader.PackageInfo, conf parser.Program) []error {
 	var errs []error
 	for start, end := range conf.Flow {
 		startSig := lookupDef(pkg, string(start)).Type().(*types.Signature)
@@ -82,14 +84,14 @@ func typeCheck(pkg *loader.PackageInfo, conf Config) []error {
 	return errs
 }
 
-func writeProgram(conf Config) string {
+func writeProgram(conf parser.Program) string {
 	buf := new(bytes.Buffer)
-	tmpl.ExecuteTemplate(buf, "typeChecker", conf)
+	templates.TypeChecker(buf, conf)
 	return buf.String()
 }
 
-func load(src string) (*loader.PackageInfo, error) {
-	conf := loader.Config{}
+func load(src string) (*goloader.PackageInfo, error) {
+	conf := goloader.Config{}
 	file, err := conf.ParseFile("__loader.go", src)
 	if err != nil {
 		return nil, err

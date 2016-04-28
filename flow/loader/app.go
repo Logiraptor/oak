@@ -1,29 +1,30 @@
-package flow
+package loader
 
-import "go/types"
+import (
+	"github.com/Logiraptor/oak/flow/parser"
 
-// ComponentID is a unique identifier for a flow process node
-type ComponentID string
+	"go/types"
+)
 
 // App represents a flow program which has been loaded and
 // type checked.
 type App struct {
 	Imports    map[string]string
-	Entry      ComponentID
+	Entry      parser.ID
 	Components []Component
 	Flow       graph
 }
 
 // Component is a single process node within a flow program
 type Component struct {
-	Label   ComponentID
+	Label   parser.ID
 	Func    string
 	Inputs  *types.Tuple
 	Outputs *types.Tuple
 }
 
 // Component returns the component within the App with the given ID
-func (a App) Component(label ComponentID) Component {
+func (a App) Component(label parser.ID) Component {
 	for _, comp := range a.Components {
 		if comp.Label == label {
 			return comp

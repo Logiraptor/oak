@@ -1,14 +1,15 @@
-package flow
+package loader
 
 import (
 	"fmt"
 
 	"go/types"
 
+	"github.com/Logiraptor/oak/flow/parser"
 	"github.com/dustin/go-humanize"
 )
 
-func cardinalityMismatchError(source, dest ComponentID, sourceSig, destSig *types.Tuple) error {
+func cardinalityMismatchError(source, dest parser.ID, sourceSig, destSig *types.Tuple) error {
 	return fmt.Errorf(`
 As I infer the types of values flowing through your program, I see a mismatch in this connection.
 
@@ -26,7 +27,7 @@ HINT: These should have identical length and compatible types.
 `, source, dest, sourceSig.Len(), sourceSig, destSig.Len(), destSig)
 }
 
-func typeMismatchError(source, dest ComponentID, argIndex int, sourceType, endType types.Type) error {
+func typeMismatchError(source, dest parser.ID, argIndex int, sourceType, endType types.Type) error {
 	return fmt.Errorf(`
 As I infer the types of values flowing through your program, I see a mismatch in this connection.
 

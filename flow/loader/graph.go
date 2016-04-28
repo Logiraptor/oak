@@ -1,15 +1,17 @@
-package flow
+package loader
+
+import "github.com/Logiraptor/oak/flow/parser"
 
 type graph struct {
 	Nodes []*node
 }
 
 type node struct {
-	Label    ComponentID
+	Label    parser.ID
 	Children map[string]*node
 }
 
-func newGraph(app App, conf map[ComponentID]ComponentID) graph {
+func newGraph(app App, conf map[parser.ID]parser.ID) graph {
 	output := graph{}
 
 	for a, b := range conf {
@@ -23,7 +25,7 @@ func newGraph(app App, conf map[ComponentID]ComponentID) graph {
 	return output
 }
 
-func (f *graph) AddNode(label ComponentID) *node {
+func (f *graph) AddNode(label parser.ID) *node {
 	for _, n := range f.Nodes {
 		if n.Label == label {
 			return n
@@ -37,18 +39,18 @@ func (f *graph) AddNode(label ComponentID) *node {
 	return n
 }
 
-func (f *graph) AddEdge(from, to ComponentID, label string) {
+func (f *graph) AddEdge(from, to parser.ID, label string) {
 	fromNode := f.AddNode(from)
 	toNode := f.AddNode(to)
 	fromNode.Children[label] = toNode
 }
 
-func (f graph) TopologicalSort(start ComponentID) []*node {
+func (f graph) TopologicalSort(start parser.ID) []*node {
 	var current = f.AddNode(start)
-	return topologicalSort(current, map[ComponentID]bool{start: true})
+	return topologicalSort(current, map[parser.ID]bool{start: true})
 }
 
-func topologicalSort(root *node, visited map[ComponentID]bool) []*node {
+func topologicalSort(root *node, visited map[parser.ID]bool) []*node {
 	var output = []*node{root}
 	for _, child := range root.Children {
 		if visited[child.Label] {

@@ -1,33 +1,29 @@
-package flow
+package codegen
 
 import (
 	"bytes"
 	"fmt"
 	"go/types"
-	"strings"
-	"text/template"
-)
 
-var tmpl = template.Must(template.New("root").Funcs(template.FuncMap{
-	"join": func(a []string) string {
-		return strings.Join(a, ",")
-	},
-}).Parse(templateSource))
+	"github.com/Logiraptor/oak/flow/internal/templates"
+	"github.com/Logiraptor/oak/flow/loader"
+	"github.com/Logiraptor/oak/flow/parser"
+)
 
 type templateStep struct {
 	LHS  []string
-	Func ComponentID
+	Func parser.ID
 	Args []string
 }
 
 type templateParams struct {
-	App   App
+	App   loader.App
 	Steps []templateStep
 }
 
 // WriteFlowApp generates a Go program that implements the given flow
 // program and prints it to stdout.
-func WriteFlowApp(app App) {
+func WriteFlowApp(app loader.App) {
 
 	order := app.Flow.TopologicalSort(app.Entry)
 
@@ -52,7 +48,7 @@ func WriteFlowApp(app App) {
 	}
 
 	buf := new(bytes.Buffer)
-	tmpl.ExecuteTemplate(buf, "flowApp", templateParams{
+	templates.FlowApp(buf, templateParams{
 		App:   app,
 		Steps: steps,
 	})
