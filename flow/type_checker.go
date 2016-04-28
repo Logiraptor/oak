@@ -43,18 +43,36 @@ func lookupDef(pkg *loader.PackageInfo, name string) types.Object {
 func typeCheck(pkg *loader.PackageInfo, conf Config) []error {
 	var errs []error
 	for start, end := range conf.Flow {
-		startSig := lookupDef(pkg, string(start)).Type().(*types.Signature).Results()
-		endSig := lookupDef(pkg, string(end)).Type().(*types.Signature).Params()
+		startSig := lookupDef(pkg, string(start)).Type().(*types.Signature)
+		endSig := lookupDef(pkg, string(end)).Type().(*types.Signature)
 
-		if startSig.Len() != endSig.Len() {
-			errs = append(errs, cardinalityMismatchError(start, end, startSig, endSig))
+		startResults := startSig.Results()
+		endParams := endSig.Params()
+
+		if !endSig.Variadic() && startResults.Len() != endParams.Len() {
+			errs = append(errs, cardinalityMismatchError(start, end, startResults, endParams))
 			continue
 		}
 
-		for i := 0; i < startSig.Len(); i++ {
-			source := startSig.At(i)
-			dest := endSig.At(i)
-			if !types.Identical(source.Type(), dest.Type()) {
+	outer:
+		for i := 0; i < startResults.Len(); i++ {
+			source := startResults.At(i)
+			dest := endParams.At(i)
+
+			// drain the rest of startResults if the dest is variadic
+			if endSig.Variadic() && i == endParams.Len()-1 {
+				destType := dest.Type().(*types.Slice).Elem()
+				for j := i; j < startResults.Len(); j++ {
+					source = startResults.At(j)
+
+					if !types.AssignableTo(source.Type(), destType) {
+						errs = append(errs, typeMismatchError(start, end, j, source.Type(), dest.Type()))
+					}
+				}
+				break outer
+			}
+
+			if !types.AssignableTo(source.Type(), dest.Type()) {
 				errs = append(errs, typeMismatchError(start, end, i, source.Type(), dest.Type()))
 			}
 		}

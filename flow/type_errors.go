@@ -22,7 +22,7 @@ But %[2]s is expecting %[5]d argument[s]:
 
 	%[6]s
 
-HINT: These should have identical length and types.
+HINT: These should have identical length and compatible types.
 `, source, dest, sourceSig.Len(), sourceSig, destSig.Len(), destSig)
 }
 
@@ -40,6 +40,6 @@ But the %[3]s argument of %[2]s has type:
 
 	%[5]s
 
-HINT: These should have identical types.
+HINT: These should have compatible types.
 `, source, dest, humanize.Ordinal(argIndex+1), sourceType, endType)
 }
