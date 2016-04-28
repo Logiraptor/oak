@@ -14,24 +14,26 @@ var tmpl = template.Must(template.New("root").Funcs(template.FuncMap{
 	},
 }).Parse(templateSource))
 
-type TemplateStep struct {
+type templateStep struct {
 	LHS  []string
 	Func ComponentID
 	Args []string
 }
 
-type TemplateParams struct {
+type templateParams struct {
 	App   App
-	Steps []TemplateStep
+	Steps []templateStep
 }
 
+// WriteFlowApp generates a Go program that implements the given flow
+// program and prints it to stdout.
 func WriteFlowApp(app App) {
 
 	order := app.Flow.TopologicalSort(app.Entry)
 
-	var steps = make([]TemplateStep, len(order))
+	var steps = make([]templateStep, len(order))
 
-	steps[0] = TemplateStep{
+	steps[0] = templateStep{
 		LHS:  names(app.Component(order[1].Label).Inputs),
 		Func: order[0].Label,
 		Args: nil,
@@ -43,14 +45,14 @@ func WriteFlowApp(app App) {
 		steps[i+1].LHS = names(app.Component(order[i+2].Label).Inputs)
 	}
 
-	steps[len(steps)-1] = TemplateStep{
+	steps[len(steps)-1] = templateStep{
 		LHS:  nil,
 		Func: order[len(order)-1].Label,
 		Args: steps[len(steps)-2].LHS,
 	}
 
 	buf := new(bytes.Buffer)
-	tmpl.ExecuteTemplate(buf, "flowApp", TemplateParams{
+	tmpl.ExecuteTemplate(buf, "flowApp", templateParams{
 		App:   app,
 		Steps: steps,
 	})

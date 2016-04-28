@@ -1,16 +1,16 @@
 package flow
 
-type Graph struct {
-	Nodes []*Node
+type graph struct {
+	Nodes []*node
 }
 
-type Node struct {
+type node struct {
 	Label    ComponentID
-	Children map[string]*Node
+	Children map[string]*node
 }
 
-func NewGraph(app App, conf map[ComponentID]ComponentID) Graph {
-	output := Graph{}
+func newGraph(app App, conf map[ComponentID]ComponentID) graph {
+	output := graph{}
 
 	for a, b := range conf {
 		compA := app.Component(a)
@@ -23,33 +23,33 @@ func NewGraph(app App, conf map[ComponentID]ComponentID) Graph {
 	return output
 }
 
-func (f *Graph) AddNode(label ComponentID) *Node {
+func (f *graph) AddNode(label ComponentID) *node {
 	for _, n := range f.Nodes {
 		if n.Label == label {
 			return n
 		}
 	}
-	n := &Node{
+	n := &node{
 		Label:    label,
-		Children: make(map[string]*Node),
+		Children: make(map[string]*node),
 	}
 	f.Nodes = append(f.Nodes, n)
 	return n
 }
 
-func (f *Graph) AddEdge(from, to ComponentID, label string) {
+func (f *graph) AddEdge(from, to ComponentID, label string) {
 	fromNode := f.AddNode(from)
 	toNode := f.AddNode(to)
 	fromNode.Children[label] = toNode
 }
 
-func (f Graph) TopologicalSort(start ComponentID) []*Node {
+func (f graph) TopologicalSort(start ComponentID) []*node {
 	var current = f.AddNode(start)
 	return topologicalSort(current, map[ComponentID]bool{start: true})
 }
 
-func topologicalSort(root *Node, visited map[ComponentID]bool) []*Node {
-	var output = []*Node{root}
+func topologicalSort(root *node, visited map[ComponentID]bool) []*node {
+	var output = []*node{root}
 	for _, child := range root.Children {
 		if visited[child.Label] {
 			continue

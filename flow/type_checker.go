@@ -7,6 +7,8 @@ import (
 	"golang.org/x/tools/go/loader"
 )
 
+// Load loads the components of a flow app and
+// reports type errors found in the graph.
 func Load(conf Config) (App, []error) {
 	pkg, err := load(writeProgram(conf))
 	if err != nil {
@@ -25,7 +27,7 @@ func Load(conf Config) (App, []error) {
 			Outputs: typ.Results(),
 		})
 	}
-	app.Flow = NewGraph(app, conf.Flow)
+	app.Flow = newGraph(app, conf.Flow)
 
 	errs := typeCheck(pkg, conf)
 	return app, errs
