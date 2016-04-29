@@ -20,6 +20,15 @@ That said, the implementation goals as of now are:
 - Dataflow / Flow Based Programming
 - Scalable Processes within the dataflow graph
 - Graphical UI for building the programs
+	- I'd like to reuse existing projects if possible for this.
 - Access to any Go package
 - Multiple Targetable Environments (App Engine, CLI, WebServer, etc)
 
+The target audience for this tool is myself at the moment. If this ends up being useful to other developers, I'm happy to share.
+
+Next on the priority list:
+
+- Test Coverage
+- Better introspection of process types
+	- I want to be able to name edges in the graph and 'split' data among components.
+	- This should still be completely static analysis.
