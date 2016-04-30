@@ -1,9 +1,11 @@
 package parser
 
 import (
+	"io"
 	"io/ioutil"
+	"os"
 
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v1"
 )
 
 // ID is a unique identifier for a component in a flow program
@@ -18,16 +20,26 @@ type Program struct {
 	Entry      ID
 }
 
-// ParseYAMLFile reads a flow Program from the specified file
-func ParseYAMLFile(filename string) (Program, error) {
-	buf, err := ioutil.ReadFile(filename)
+// ParseFile reads a flow Program from the specified file
+func ParseFile(filename string) (Program, error) {
+	f, err := os.Open(filename)
 	if err != nil {
 		return Program{}, err
 	}
-	var program Program
-	err = yaml.Unmarshal(buf, &program)
+	defer f.Close()
+	return ParseReader(f)
+}
+
+// ParseReader parses a flow program from the given io.Reader
+func ParseReader(r io.Reader) (Program, error) {
+	buf, err := ioutil.ReadAll(r)
 	if err != nil {
 		return Program{}, err
 	}
-	return program, nil
+	var prog Program
+	err = yaml.Unmarshal(buf, &prog)
+	if err != nil {
+		return Program{}, err
+	}
+	return prog, nil
 }

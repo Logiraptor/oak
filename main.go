@@ -15,7 +15,7 @@ func main() {
 		return
 	}
 
-	conf, err := parser.ParseYAMLFile(os.Args[1])
+	conf, err := parser.ParseFile(os.Args[1])
 	if err != nil {
 		fmt.Println(err)
 		return
