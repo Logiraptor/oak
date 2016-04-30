@@ -3,8 +3,9 @@ go:
   - 1.6
   - tip
 before_install:
+  - go get github.com/pierrre/gotestcover
   - go get github.com/mattn/goveralls
   - go get golang.org/x/tools/cmd/cover
 script:
-  - go test -v -covermode=count -coverprofile=coverage.out ./...
+  - gotestcover -v -covermode=count -coverprofile=coverage.out ./...
   - goveralls -coverprofile=coverage.out -service travis-ci -repotoken $COVERALLS_TOKEN
