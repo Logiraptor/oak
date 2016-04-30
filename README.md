@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/Logiraptor/oak.svg?branch=master)](https://travis-ci.org/Logiraptor/oak)
 [![Go Report Card](https://goreportcard.com/badge/github.com/Logiraptor/oak)](https://goreportcard.com/report/github.com/Logiraptor/oak)
+[![Coverage Status](https://coveralls.io/repos/github/Logiraptor/oak/badge.svg?branch=master)](https://coveralls.io/github/Logiraptor/oak?branch=master)
 
 Oak is a flow based programming toolkit for the Go programming language.
 
