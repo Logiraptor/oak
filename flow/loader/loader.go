@@ -92,6 +92,9 @@ func writeProgram(conf parser.Program) string {
 
 func load(src string) (*goloader.PackageInfo, error) {
 	conf := goloader.Config{}
+	// This line prevents the loader package from printing errors
+	// to stderr.
+	conf.TypeChecker.Error = func(err error) {}
 	file, err := conf.ParseFile("__loader.go", src)
 	if err != nil {
 		return nil, err
