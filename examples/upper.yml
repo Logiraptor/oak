@@ -7,11 +7,9 @@ imports:
 components:
   start: base.StringCLI
   caps: strings.ToUpper
-  repeat: func(s string) string { return strings.Repeat(s, 2) }
   writeResult: base.PrintString
 
 flow:
  start: caps
- caps: repeat
- repeat: writeResult
+ caps: writeResult
 

@@ -1,0 +1,7 @@
+stdin: |
+  {"key":"value"}
+stdout: |
+  {
+  	"key": "value"
+  }
+  
