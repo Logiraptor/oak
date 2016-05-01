@@ -2,8 +2,9 @@ package codegen
 
 import (
 	"bytes"
-	"fmt"
 	"go/types"
+	"os"
+	"path/filepath"
 
 	"github.com/Logiraptor/oak/flow/internal/templates"
 	"github.com/Logiraptor/oak/flow/loader"
@@ -23,7 +24,7 @@ type templateParams struct {
 
 // WriteFlowApp generates a Go program that implements the given flow
 // program and prints it to stdout.
-func WriteFlowApp(app loader.App) {
+func WriteFlowApp(app loader.App, dir string) error {
 
 	order := app.Flow.TopologicalSort(app.Entry)
 
@@ -52,7 +53,16 @@ func WriteFlowApp(app loader.App) {
 		App:   app,
 		Steps: steps,
 	})
-	fmt.Println(formatFile(buf.String()))
+
+	err := os.MkdirAll(dir, 0777)
+	if err != nil {
+		return err
+	}
+	f, err := os.Create(filepath.Join(dir, "main.go"))
+	if err != nil {
+		return err
+	}
+	return formatFile(f, buf)
 }
 
 func names(in *types.Tuple) []string {

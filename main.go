@@ -29,5 +29,5 @@ func main() {
 		return
 	}
 
-	codegen.WriteFlowApp(app)
+	codegen.WriteFlowApp(app, "tmp")
 }

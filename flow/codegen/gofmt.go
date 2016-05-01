@@ -5,20 +5,25 @@ import (
 	"go/format"
 	"go/parser"
 	"go/token"
+	"io"
+	"strings"
 )
 
-func formatFile(file string) string {
+func formatString(in string) string {
+	buf := new(bytes.Buffer)
+	err := formatFile(buf, strings.NewReader(in))
+	if err != nil {
+		panic("unable to format: " + err.Error())
+	}
+	return buf.String()
+}
+
+func formatFile(out io.Writer, file io.Reader) error {
 	fset := token.NewFileSet()
 	f, err := parser.ParseFile(fset, "tmp.go", file, parser.ParseComments)
 	if err != nil {
-		panic("gofmt: unable to parse file: " + err.Error())
+		return err
 	}
 
-	buf := new(bytes.Buffer)
-	err = format.Node(buf, fset, f)
-	if err != nil {
-		panic("gofmt: unable to format file: " + err.Error())
-	}
-
-	return buf.String()
+	return format.Node(out, fset, f)
 }
