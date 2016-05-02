@@ -1,0 +1,90 @@
+Elm.Main = Elm.Main || {};
+Elm.Main.make = function (_elm) {
+   "use strict";
+   _elm.Main = _elm.Main || {};
+   if (_elm.Main.values) return _elm.Main.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Color = Elm.Color.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Graphics$Collage = Elm.Graphics.Collage.make(_elm),
+   $Graphics$Element = Elm.Graphics.Element.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Mouse = Elm.Mouse.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Signal$Extra = Elm.Signal.Extra.make(_elm),
+   $Text = Elm.Text.make(_elm),
+   $Transform2D = Elm.Transform2D.make(_elm),
+   $Window = Elm.Window.make(_elm);
+   var _op = {};
+   var stringCLI = {name: "base.StringCLI",inputs: _U.list([]),outputs: _U.list([{typ: "string"}])};
+   var upper = {name: "strings.ToUpper",inputs: _U.list([{typ: "string"}]),outputs: _U.list([{typ: "string"}])};
+   var graph = {nodes: _U.list([{process: stringCLI,position: {ctor: "_Tuple2",_0: -100,_1: 0}},{process: upper,position: {ctor: "_Tuple2",_0: 100,_1: 0}}])};
+   var Process = F3(function (a,b,c) {    return {name: a,inputs: b,outputs: c};});
+   var Port = function (a) {    return {typ: a};};
+   var Graph = function (a) {    return {nodes: a};};
+   var Node = F2(function (a,b) {    return {process: a,position: b};});
+   var formFromString = function (_p0) {    return $Graphics$Collage.toForm($Graphics$Element.centered($Text.fromString(_p0)));};
+   var viewPort = function (p) {    return A2($Graphics$Element.flow,$Graphics$Element.down,_U.list([$Graphics$Element.centered($Text.fromString(p.typ))]));};
+   var viewNode = function (n) {
+      var outputs = $Graphics$Collage.toForm(A2($Graphics$Element.flow,$Graphics$Element.down,A2($List.map,viewPort,n.process.outputs)));
+      var inputs = $Graphics$Collage.toForm(A2($Graphics$Element.flow,$Graphics$Element.down,A2($List.map,viewPort,n.process.inputs)));
+      var _p1 = n.position;
+      var x = _p1._0;
+      var y = _p1._1;
+      return A2($Graphics$Collage.groupTransform,
+      A2($Transform2D.translation,x,y),
+      _U.list([formFromString(n.process.name)
+              ,A2($Graphics$Collage.outlined,$Graphics$Collage.solid($Color.black),A2($Graphics$Collage.rect,150,50))
+              ,A2($Graphics$Collage.moveX,-75,inputs)
+              ,A2($Graphics$Collage.moveX,75,outputs)]));
+   };
+   var viewApp = function (g) {    return $Graphics$Collage.group(A2($List.map,viewNode,g.nodes));};
+   var box = F2(function (w,h) {
+      return A2($Graphics$Collage.outlined,$Graphics$Collage.solid($Color.black),A2($Graphics$Collage.rect,$Basics.toFloat(w),$Basics.toFloat(h)));
+   });
+   var pan = F3(function (f,_p3,_p2) {
+      var _p4 = _p3;
+      var _p5 = _p2;
+      var _p7 = _p5._0;
+      var _p6 = _p5._1;
+      return A3($Graphics$Collage.collage,
+      _p7,
+      _p6,
+      _U.list([A2(box,_p7,_p6),A2($Graphics$Collage.move,{ctor: "_Tuple2",_0: $Basics.toFloat(_p4._0),_1: $Basics.toFloat(_p4._1)},f)]));
+   });
+   var mouseDelta = A2($Signal.map,
+   function (_p8) {
+      var _p9 = _p8;
+      return {ctor: "_Tuple2",_0: _p9._1._0 - _p9._0._0,_1: _p9._1._1 - _p9._0._1};
+   },
+   $Signal$Extra.deltas($Mouse.position));
+   var dragDelta = A3($Signal$Extra.keepWhen,$Mouse.isDown,{ctor: "_Tuple2",_0: 0,_1: 0},mouseDelta);
+   var dragPosition = A3($Signal.foldp,
+   F2(function (_p11,_p10) {    var _p12 = _p11;var _p13 = _p10;return {ctor: "_Tuple2",_0: _p12._0 + _p13._0,_1: _p12._1 + _p13._1};}),
+   {ctor: "_Tuple2",_0: 0,_1: 0},
+   dragDelta);
+   var panPos = A2($Signal.map,function (_p14) {    var _p15 = _p14;return {ctor: "_Tuple2",_0: _p15._0,_1: 0 - _p15._1};},dragPosition);
+   var main = A3($Signal.map2,pan(viewApp(graph)),panPos,$Window.dimensions);
+   return _elm.Main.values = {_op: _op
+                             ,main: main
+                             ,mouseDelta: mouseDelta
+                             ,dragDelta: dragDelta
+                             ,dragPosition: dragPosition
+                             ,panPos: panPos
+                             ,pan: pan
+                             ,box: box
+                             ,viewApp: viewApp
+                             ,viewNode: viewNode
+                             ,viewPort: viewPort
+                             ,formFromString: formFromString
+                             ,Node: Node
+                             ,Graph: Graph
+                             ,Port: Port
+                             ,Process: Process
+                             ,graph: graph
+                             ,upper: upper
+                             ,stringCLI: stringCLI};
+};
