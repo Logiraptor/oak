@@ -6,39 +6,17 @@ import Text
 import Graphics.Element as Element
 import Graphics.Collage as Collage
 import Mouse
-import Signal.Extra as SE
 import Color
 import Window
 import Transform2D
+import Stage
 
 
---main : Signal Html.Html
---main =
---    Signal.constant (Html.div [] [Html.text "Hi", Html.fromElement (viewApp graph)])
+main = Signal.map2 frame (Stage.panned (Signal.constant (viewApp graph))) Window.dimensions
 
-main = Signal.map2 (pan (viewApp graph)) panPos Window.dimensions
-
-mouseDelta : Signal (Int, Int)
-mouseDelta =
-    Signal.map (\((x2, y2),(x, y)) -> (x-x2, y-y2)) (SE.deltas Mouse.position)
-
-
-dragDelta : Signal (Int, Int)
-dragDelta =
-    SE.keepWhen Mouse.isDown (0, 0) mouseDelta
-
-
-dragPosition : Signal (Int, Int)
-dragPosition =
-    Signal.foldp (\ (x, y) (x2, y2) -> (x+x2, y+y2)) (0, 0) dragDelta
-
-panPos : Signal (Int, Int)
-panPos =
-    Signal.map (\(x, y) -> (x, -y)) dragPosition
-
-pan : Collage.Form -> (Int, Int) -> (Int, Int) -> Element.Element
-pan f (x, y) (w, h) =
-    Collage.collage w h [box w h, Collage.move (toFloat x, toFloat y) f]
+frame : Collage.Form -> (Int, Int) -> Element.Element
+frame f (w, h) =
+    Collage.collage w h [box w h, f]
 
 box : Int -> Int -> Collage.Form
 box w h =

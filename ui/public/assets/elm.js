@@ -10287,6 +10287,34 @@ Elm.Html.make = function (_elm) {
                              ,menuitem: menuitem
                              ,menu: menu};
 };
+Elm.Stage = Elm.Stage || {};
+Elm.Stage.make = function (_elm) {
+   "use strict";
+   _elm.Stage = _elm.Stage || {};
+   if (_elm.Stage.values) return _elm.Stage.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Graphics$Collage = Elm.Graphics.Collage.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Mouse = Elm.Mouse.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Signal$Extra = Elm.Signal.Extra.make(_elm);
+   var _op = {};
+   var panPos = function () {
+      var invertY = function (_p0) {    var _p1 = _p0;return {ctor: "_Tuple2",_0: _p1._0,_1: 0 - _p1._1};};
+      var diff = F2(function (_p3,_p2) {    var _p4 = _p3;var _p5 = _p2;return {ctor: "_Tuple2",_0: _p5._0 - _p4._0,_1: _p5._1 - _p4._1};});
+      var sum = F2(function (_p7,_p6) {    var _p8 = _p7;var _p9 = _p6;return {ctor: "_Tuple2",_0: _p8._0 + _p9._0,_1: _p8._1 + _p9._1};});
+      var tof = function (_p10) {    var _p11 = _p10;return {ctor: "_Tuple2",_0: $Basics.toFloat(_p11._0),_1: $Basics.toFloat(_p11._1)};};
+      var mouseDelta = A2($Signal.map,function (_p12) {    return invertY(tof(A2($Basics.uncurry,diff,_p12)));},$Signal$Extra.deltas($Mouse.position));
+      var dragDelta = A3($Signal$Extra.keepWhen,$Mouse.isDown,{ctor: "_Tuple2",_0: 0,_1: 0},mouseDelta);
+      return A3($Signal.foldp,sum,{ctor: "_Tuple2",_0: 0,_1: 0},dragDelta);
+   }();
+   var panned = function (form) {    return A3($Signal.map2,$Graphics$Collage.move,panPos,form);};
+   return _elm.Stage.values = {_op: _op,panned: panned,panPos: panPos};
+};
 Elm.Main = Elm.Main || {};
 Elm.Main.make = function (_elm) {
    "use strict";
@@ -10300,10 +10328,9 @@ Elm.Main.make = function (_elm) {
    $Graphics$Element = Elm.Graphics.Element.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
-   $Mouse = Elm.Mouse.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
-   $Signal$Extra = Elm.Signal.Extra.make(_elm),
+   $Stage = Elm.Stage.make(_elm),
    $Text = Elm.Text.make(_elm),
    $Transform2D = Elm.Transform2D.make(_elm),
    $Window = Elm.Window.make(_elm);
@@ -10334,36 +10361,16 @@ Elm.Main.make = function (_elm) {
    var box = F2(function (w,h) {
       return A2($Graphics$Collage.outlined,$Graphics$Collage.solid($Color.black),A2($Graphics$Collage.rect,$Basics.toFloat(w),$Basics.toFloat(h)));
    });
-   var pan = F3(function (f,_p3,_p2) {
-      var _p4 = _p3;
-      var _p5 = _p2;
-      var _p7 = _p5._0;
-      var _p6 = _p5._1;
-      return A3($Graphics$Collage.collage,
-      _p7,
-      _p6,
-      _U.list([A2(box,_p7,_p6),A2($Graphics$Collage.move,{ctor: "_Tuple2",_0: $Basics.toFloat(_p4._0),_1: $Basics.toFloat(_p4._1)},f)]));
+   var frame = F2(function (f,_p2) {
+      var _p3 = _p2;
+      var _p5 = _p3._0;
+      var _p4 = _p3._1;
+      return A3($Graphics$Collage.collage,_p5,_p4,_U.list([A2(box,_p5,_p4),f]));
    });
-   var mouseDelta = A2($Signal.map,
-   function (_p8) {
-      var _p9 = _p8;
-      return {ctor: "_Tuple2",_0: _p9._1._0 - _p9._0._0,_1: _p9._1._1 - _p9._0._1};
-   },
-   $Signal$Extra.deltas($Mouse.position));
-   var dragDelta = A3($Signal$Extra.keepWhen,$Mouse.isDown,{ctor: "_Tuple2",_0: 0,_1: 0},mouseDelta);
-   var dragPosition = A3($Signal.foldp,
-   F2(function (_p11,_p10) {    var _p12 = _p11;var _p13 = _p10;return {ctor: "_Tuple2",_0: _p12._0 + _p13._0,_1: _p12._1 + _p13._1};}),
-   {ctor: "_Tuple2",_0: 0,_1: 0},
-   dragDelta);
-   var panPos = A2($Signal.map,function (_p14) {    var _p15 = _p14;return {ctor: "_Tuple2",_0: _p15._0,_1: 0 - _p15._1};},dragPosition);
-   var main = A3($Signal.map2,pan(viewApp(graph)),panPos,$Window.dimensions);
+   var main = A3($Signal.map2,frame,$Stage.panned($Signal.constant(viewApp(graph))),$Window.dimensions);
    return _elm.Main.values = {_op: _op
                              ,main: main
-                             ,mouseDelta: mouseDelta
-                             ,dragDelta: dragDelta
-                             ,dragPosition: dragPosition
-                             ,panPos: panPos
-                             ,pan: pan
+                             ,frame: frame
                              ,box: box
                              ,viewApp: viewApp
                              ,viewNode: viewNode
