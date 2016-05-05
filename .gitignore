@@ -48,3 +48,12 @@ gin-bin
 # sftp configuration file
 sftp-config.json
 
+
+# Created by https://www.gitignore.io/api/elm
+
+### Elm ###
+# elm-package generated files
+elm-stuff/
+# elm-repl generated files
+repl-temp-*
+
