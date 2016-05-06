@@ -4,6 +4,7 @@ Elm.Main.make = function (_elm) {
    _elm.Main = _elm.Main || {};
    if (_elm.Main.values) return _elm.Main.values;
    var _U = Elm.Native.Utils.make(_elm),
+   $Application = Elm.Application.make(_elm),
    $Basics = Elm.Basics.make(_elm),
    $Color = Elm.Color.make(_elm),
    $Debug = Elm.Debug.make(_elm),
@@ -11,59 +12,36 @@ Elm.Main.make = function (_elm) {
    $Graphics$Element = Elm.Graphics.Element.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
+   $NodeRenderer = Elm.NodeRenderer.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $Stage = Elm.Stage.make(_elm),
-   $Text = Elm.Text.make(_elm),
-   $Transform2D = Elm.Transform2D.make(_elm),
    $Window = Elm.Window.make(_elm);
    var _op = {};
    var stringCLI = {name: "base.StringCLI",inputs: _U.list([]),outputs: _U.list([{typ: "string"}])};
    var upper = {name: "strings.ToUpper",inputs: _U.list([{typ: "string"}]),outputs: _U.list([{typ: "string"}])};
-   var graph = {nodes: _U.list([{process: stringCLI,position: {ctor: "_Tuple2",_0: -100,_1: 0}},{process: upper,position: {ctor: "_Tuple2",_0: 100,_1: 0}}])};
-   var Process = F3(function (a,b,c) {    return {name: a,inputs: b,outputs: c};});
-   var Port = function (a) {    return {typ: a};};
-   var Graph = function (a) {    return {nodes: a};};
-   var Node = F2(function (a,b) {    return {process: a,position: b};});
-   var formFromString = function (_p0) {    return $Graphics$Collage.toForm($Graphics$Element.centered($Text.fromString(_p0)));};
-   var viewPort = function (p) {    return A2($Graphics$Element.flow,$Graphics$Element.down,_U.list([$Graphics$Element.centered($Text.fromString(p.typ))]));};
-   var viewNode = function (n) {
-      var outputs = $Graphics$Collage.toForm(A2($Graphics$Element.flow,$Graphics$Element.down,A2($List.map,viewPort,n.process.outputs)));
-      var inputs = $Graphics$Collage.toForm(A2($Graphics$Element.flow,$Graphics$Element.down,A2($List.map,viewPort,n.process.inputs)));
-      var _p1 = n.position;
-      var x = _p1._0;
-      var y = _p1._1;
-      return A2($Graphics$Collage.groupTransform,
-      A2($Transform2D.translation,x,y),
-      _U.list([formFromString(n.process.name)
-              ,A2($Graphics$Collage.outlined,$Graphics$Collage.solid($Color.black),A2($Graphics$Collage.rect,150,50))
-              ,A2($Graphics$Collage.moveX,-75,inputs)
-              ,A2($Graphics$Collage.moveX,75,outputs)]));
+   var complex = {name: "complex.Process"
+                 ,inputs: _U.list([{typ: "string"},{typ: "int"},{typ: "*http.Request"}])
+                 ,outputs: _U.list([{typ: "map[string]int"},{typ: "bool"}])};
+   var graph = {nodes: _U.list([{process: stringCLI,position: {ctor: "_Tuple2",_0: -100,_1: 0}}
+                               ,{process: upper,position: {ctor: "_Tuple2",_0: 100,_1: 0}}
+                               ,{process: complex,position: {ctor: "_Tuple2",_0: 100,_1: 200}}])
+               ,edges: _U.list([{from: {ctor: "_Tuple2",_0: 0,_1: 0},to: {ctor: "_Tuple2",_0: 1,_1: 0}}
+                               ,{from: {ctor: "_Tuple2",_0: 1,_1: 0},to: {ctor: "_Tuple2",_0: 2,_1: 0}}
+                               ,{from: {ctor: "_Tuple2",_0: 1,_1: 0},to: {ctor: "_Tuple2",_0: 2,_1: 1}}
+                               ,{from: {ctor: "_Tuple2",_0: 0,_1: 0},to: {ctor: "_Tuple2",_0: 2,_1: 2}}])};
+   var viewApp = function (g) {
+      return $Graphics$Collage.group(A2($Basics._op["++"],A2($List.map,$NodeRenderer.viewNode,g.nodes),A2($List.map,$NodeRenderer.viewEdge(g),g.edges)));
    };
-   var viewApp = function (g) {    return $Graphics$Collage.group(A2($List.map,viewNode,g.nodes));};
    var box = F2(function (w,h) {
       return A2($Graphics$Collage.outlined,$Graphics$Collage.solid($Color.black),A2($Graphics$Collage.rect,$Basics.toFloat(w),$Basics.toFloat(h)));
    });
-   var frame = F2(function (f,_p2) {
-      var _p3 = _p2;
-      var _p5 = _p3._0;
-      var _p4 = _p3._1;
-      return A3($Graphics$Collage.collage,_p5,_p4,_U.list([A2(box,_p5,_p4),f]));
+   var frame = F2(function (f,_p0) {
+      var _p1 = _p0;
+      var _p3 = _p1._0;
+      var _p2 = _p1._1;
+      return A3($Graphics$Collage.collage,_p3,_p2,_U.list([A2(box,_p3,_p2),f]));
    });
    var main = A3($Signal.map2,frame,$Stage.panned($Signal.constant(viewApp(graph))),$Window.dimensions);
-   return _elm.Main.values = {_op: _op
-                             ,main: main
-                             ,frame: frame
-                             ,box: box
-                             ,viewApp: viewApp
-                             ,viewNode: viewNode
-                             ,viewPort: viewPort
-                             ,formFromString: formFromString
-                             ,Node: Node
-                             ,Graph: Graph
-                             ,Port: Port
-                             ,Process: Process
-                             ,graph: graph
-                             ,upper: upper
-                             ,stringCLI: stringCLI};
+   return _elm.Main.values = {_op: _op,main: main,frame: frame,box: box,viewApp: viewApp,graph: graph,complex: complex,upper: upper,stringCLI: stringCLI};
 };
