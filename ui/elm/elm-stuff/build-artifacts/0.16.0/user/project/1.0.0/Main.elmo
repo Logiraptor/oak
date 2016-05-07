@@ -12,10 +12,12 @@ Elm.Main.make = function (_elm) {
    $Graphics$Element = Elm.Graphics.Element.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
+   $Mouse = Elm.Mouse.make(_elm),
    $NodeRenderer = Elm.NodeRenderer.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $Stage = Elm.Stage.make(_elm),
+   $Time = Elm.Time.make(_elm),
    $Window = Elm.Window.make(_elm);
    var _op = {};
    var stringCLI = {name: "base.StringCLI",inputs: _U.list([]),outputs: _U.list([{typ: "string"}])};
@@ -23,25 +25,54 @@ Elm.Main.make = function (_elm) {
    var complex = {name: "complex.Process"
                  ,inputs: _U.list([{typ: "string"},{typ: "int"},{typ: "*http.Request"}])
                  ,outputs: _U.list([{typ: "map[string]int"},{typ: "bool"}])};
-   var graph = {nodes: _U.list([{process: stringCLI,position: {ctor: "_Tuple2",_0: -100,_1: 0}}
-                               ,{process: upper,position: {ctor: "_Tuple2",_0: 100,_1: 0}}
-                               ,{process: complex,position: {ctor: "_Tuple2",_0: 100,_1: 200}}])
-               ,edges: _U.list([{from: {ctor: "_Tuple2",_0: 0,_1: 0},to: {ctor: "_Tuple2",_0: 1,_1: 0}}
-                               ,{from: {ctor: "_Tuple2",_0: 1,_1: 0},to: {ctor: "_Tuple2",_0: 2,_1: 0}}
-                               ,{from: {ctor: "_Tuple2",_0: 1,_1: 0},to: {ctor: "_Tuple2",_0: 2,_1: 1}}
-                               ,{from: {ctor: "_Tuple2",_0: 0,_1: 0},to: {ctor: "_Tuple2",_0: 2,_1: 2}}])};
    var viewApp = function (g) {
       return $Graphics$Collage.group(A2($Basics._op["++"],A2($List.map,$NodeRenderer.viewNode,g.nodes),A2($List.map,$NodeRenderer.viewEdge(g),g.edges)));
    };
    var box = F2(function (w,h) {
       return A2($Graphics$Collage.outlined,$Graphics$Collage.solid($Color.black),A2($Graphics$Collage.rect,$Basics.toFloat(w),$Basics.toFloat(h)));
    });
-   var frame = F2(function (f,_p0) {
-      var _p1 = _p0;
-      var _p3 = _p1._0;
-      var _p2 = _p1._1;
-      return A3($Graphics$Collage.collage,_p3,_p2,_U.list([A2(box,_p3,_p2),f]));
+   var frame = F2(function (f,_p0) {    var _p1 = _p0;return A3($Graphics$Collage.collage,_p1._0,_p1._1,_U.list([f]));});
+   var withExtra = F2(function (extra,rest) {
+      return A3($Signal.map2,function (_p2) {    return $Graphics$Element.above($Graphics$Element.show(_p2));},extra,rest);
    });
-   var main = A3($Signal.map2,frame,$Stage.panned($Signal.constant(viewApp(graph))),$Window.dimensions);
-   return _elm.Main.values = {_op: _op,main: main,frame: frame,box: box,viewApp: viewApp,graph: graph,complex: complex,upper: upper,stringCLI: stringCLI};
+   var onNode = F2(function (_p3,n) {
+      var _p4 = _p3;
+      var _p5 = n.position;
+      var nx = _p5._0;
+      var ny = _p5._1;
+      var _p6 = {ctor: "_Tuple2",_0: $Basics.toFloat(_p4._0),_1: $Basics.toFloat(_p4._1)};
+      var fx = _p6._0;
+      var fy = _p6._1;
+      return {ctor: "_Tuple2"
+             ,_0: _U.cmp(fx,nx) > 0 && _U.cmp(fx,nx + 150) < 0
+             ,_1: _U.cmp(fy,ny) > 0 && _U.cmp(fy,
+             ny + 20 * A2($Basics.max,$Basics.toFloat($List.length(n.process.inputs)),$Basics.toFloat($List.length(n.process.outputs)))) < 0};
+   });
+   var onStuff = F2(function (pos,graph) {    return A2($List.map,onNode(pos),graph.nodes);});
+   var changingGraph = function (t) {
+      return {nodes: _U.list([{process: stringCLI,position: {ctor: "_Tuple2",_0: -100,_1: 0}}
+                             ,{process: upper,position: {ctor: "_Tuple2",_0: 100,_1: 0}}
+                             ,{process: complex,position: {ctor: "_Tuple2",_0: 100,_1: 200}}])
+             ,edges: _U.list([{from: {ctor: "_Tuple2",_0: 0,_1: 0},to: {ctor: "_Tuple2",_0: 1,_1: 0}}
+                             ,{from: {ctor: "_Tuple2",_0: 1,_1: 0},to: {ctor: "_Tuple2",_0: 2,_1: 0}}
+                             ,{from: {ctor: "_Tuple2",_0: 1,_1: 0},to: {ctor: "_Tuple2",_0: 2,_1: 1}}
+                             ,{from: {ctor: "_Tuple2",_0: 0,_1: 0},to: {ctor: "_Tuple2",_0: 2,_1: A2($Basics._op["%"],$Basics.round($Time.inSeconds(t)),3)}}])};
+   };
+   var graphSig = A2($Signal.map,changingGraph,$Time.every($Time.second));
+   var main = A2(withExtra,
+   A3($Signal.map2,onStuff,$Mouse.position,graphSig),
+   A3($Signal.map2,frame,A2($Stage.panned,$Signal.constant(true),A2($Signal.map,viewApp,graphSig)),$Window.dimensions));
+   return _elm.Main.values = {_op: _op
+                             ,graphSig: graphSig
+                             ,changingGraph: changingGraph
+                             ,main: main
+                             ,onNode: onNode
+                             ,onStuff: onStuff
+                             ,withExtra: withExtra
+                             ,frame: frame
+                             ,box: box
+                             ,viewApp: viewApp
+                             ,complex: complex
+                             ,upper: upper
+                             ,stringCLI: stringCLI};
 };

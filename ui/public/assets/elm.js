@@ -5576,6 +5576,162 @@ Elm.Signal.Extra.make = function (_elm) {
                                      ,passiveMap2: passiveMap2
                                      ,withPassive: withPassive};
 };
+Elm.Native.Time = {};
+
+Elm.Native.Time.make = function(localRuntime)
+{
+	localRuntime.Native = localRuntime.Native || {};
+	localRuntime.Native.Time = localRuntime.Native.Time || {};
+	if (localRuntime.Native.Time.values)
+	{
+		return localRuntime.Native.Time.values;
+	}
+
+	var NS = Elm.Native.Signal.make(localRuntime);
+	var Maybe = Elm.Maybe.make(localRuntime);
+
+
+	// FRAMES PER SECOND
+
+	function fpsWhen(desiredFPS, isOn)
+	{
+		var msPerFrame = 1000 / desiredFPS;
+		var ticker = NS.input('fps-' + desiredFPS, null);
+
+		function notifyTicker()
+		{
+			localRuntime.notify(ticker.id, null);
+		}
+
+		function firstArg(x, y)
+		{
+			return x;
+		}
+
+		// input fires either when isOn changes, or when ticker fires.
+		// Its value is a tuple with the current timestamp, and the state of isOn
+		var input = NS.timestamp(A3(NS.map2, F2(firstArg), NS.dropRepeats(isOn), ticker));
+
+		var initialState = {
+			isOn: false,
+			time: localRuntime.timer.programStart,
+			delta: 0
+		};
+
+		var timeoutId;
+
+		function update(input, state)
+		{
+			var currentTime = input._0;
+			var isOn = input._1;
+			var wasOn = state.isOn;
+			var previousTime = state.time;
+
+			if (isOn)
+			{
+				timeoutId = localRuntime.setTimeout(notifyTicker, msPerFrame);
+			}
+			else if (wasOn)
+			{
+				clearTimeout(timeoutId);
+			}
+
+			return {
+				isOn: isOn,
+				time: currentTime,
+				delta: (isOn && !wasOn) ? 0 : currentTime - previousTime
+			};
+		}
+
+		return A2(
+			NS.map,
+			function(state) { return state.delta; },
+			A3(NS.foldp, F2(update), update(input.value, initialState), input)
+		);
+	}
+
+
+	// EVERY
+
+	function every(t)
+	{
+		var ticker = NS.input('every-' + t, null);
+		function tellTime()
+		{
+			localRuntime.notify(ticker.id, null);
+		}
+		var clock = A2(NS.map, fst, NS.timestamp(ticker));
+		setInterval(tellTime, t);
+		return clock;
+	}
+
+
+	function fst(pair)
+	{
+		return pair._0;
+	}
+
+
+	function read(s)
+	{
+		var t = Date.parse(s);
+		return isNaN(t) ? Maybe.Nothing : Maybe.Just(t);
+	}
+
+	return localRuntime.Native.Time.values = {
+		fpsWhen: F2(fpsWhen),
+		every: every,
+		toDate: function(t) { return new Date(t); },
+		read: read
+	};
+};
+
+Elm.Time = Elm.Time || {};
+Elm.Time.make = function (_elm) {
+   "use strict";
+   _elm.Time = _elm.Time || {};
+   if (_elm.Time.values) return _elm.Time.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Native$Signal = Elm.Native.Signal.make(_elm),
+   $Native$Time = Elm.Native.Time.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var _op = {};
+   var delay = $Native$Signal.delay;
+   var since = F2(function (time,signal) {
+      var stop = A2($Signal.map,$Basics.always(-1),A2(delay,time,signal));
+      var start = A2($Signal.map,$Basics.always(1),signal);
+      var delaydiff = A3($Signal.foldp,F2(function (x,y) {    return x + y;}),0,A2($Signal.merge,start,stop));
+      return A2($Signal.map,F2(function (x,y) {    return !_U.eq(x,y);})(0),delaydiff);
+   });
+   var timestamp = $Native$Signal.timestamp;
+   var every = $Native$Time.every;
+   var fpsWhen = $Native$Time.fpsWhen;
+   var fps = function (targetFrames) {    return A2(fpsWhen,targetFrames,$Signal.constant(true));};
+   var inMilliseconds = function (t) {    return t;};
+   var millisecond = 1;
+   var second = 1000 * millisecond;
+   var minute = 60 * second;
+   var hour = 60 * minute;
+   var inHours = function (t) {    return t / hour;};
+   var inMinutes = function (t) {    return t / minute;};
+   var inSeconds = function (t) {    return t / second;};
+   return _elm.Time.values = {_op: _op
+                             ,millisecond: millisecond
+                             ,second: second
+                             ,minute: minute
+                             ,hour: hour
+                             ,inMilliseconds: inMilliseconds
+                             ,inSeconds: inSeconds
+                             ,inMinutes: inMinutes
+                             ,inHours: inHours
+                             ,fps: fps
+                             ,fpsWhen: fpsWhen
+                             ,every: every
+                             ,timestamp: timestamp
+                             ,delay: delay
+                             ,since: since};
+};
 Elm.Native.Array = {};
 Elm.Native.Array.make = function(localRuntime) {
 
@@ -10323,16 +10479,17 @@ Elm.Stage.make = function (_elm) {
    $Signal = Elm.Signal.make(_elm),
    $Signal$Extra = Elm.Signal.Extra.make(_elm);
    var _op = {};
-   var panPos = function () {
+   var panPos = function (pannable) {
+      var draggable = A3($Signal.map2,F2(function (x,y) {    return x && y;}),$Mouse.isDown,pannable);
       var invertY = function (_p0) {    var _p1 = _p0;return {ctor: "_Tuple2",_0: _p1._0,_1: 0 - _p1._1};};
       var diff = F2(function (_p3,_p2) {    var _p4 = _p3;var _p5 = _p2;return {ctor: "_Tuple2",_0: _p5._0 - _p4._0,_1: _p5._1 - _p4._1};});
       var sum = F2(function (_p7,_p6) {    var _p8 = _p7;var _p9 = _p6;return {ctor: "_Tuple2",_0: _p8._0 + _p9._0,_1: _p8._1 + _p9._1};});
       var tof = function (_p10) {    var _p11 = _p10;return {ctor: "_Tuple2",_0: $Basics.toFloat(_p11._0),_1: $Basics.toFloat(_p11._1)};};
       var mouseDelta = A2($Signal.map,function (_p12) {    return invertY(tof(A2($Basics.uncurry,diff,_p12)));},$Signal$Extra.deltas($Mouse.position));
-      var dragDelta = A3($Signal$Extra.keepWhen,$Mouse.isDown,{ctor: "_Tuple2",_0: 0,_1: 0},mouseDelta);
+      var dragDelta = A3($Signal$Extra.keepWhen,draggable,{ctor: "_Tuple2",_0: 0,_1: 0},mouseDelta);
       return A3($Signal.foldp,sum,{ctor: "_Tuple2",_0: 0,_1: 0},dragDelta);
-   }();
-   var panned = function (form) {    return A3($Signal.map2,$Graphics$Collage.move,panPos,form);};
+   };
+   var panned = F2(function (pannable,form) {    return A3($Signal.map2,$Graphics$Collage.move,panPos(pannable),form);});
    return _elm.Stage.values = {_op: _op,panned: panned,panPos: panPos};
 };
 Elm.NodeRenderer = Elm.NodeRenderer || {};
@@ -10432,6 +10589,55 @@ Elm.NodeRenderer.make = function (_elm) {
                                      ,formFlow: formFlow
                                      ,emptyForm: emptyForm};
 };
+Elm.SceneTree = Elm.SceneTree || {};
+Elm.SceneTree.make = function (_elm) {
+   "use strict";
+   _elm.SceneTree = _elm.SceneTree || {};
+   if (_elm.SceneTree.values) return _elm.SceneTree.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Graphics$Collage = Elm.Graphics.Collage.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var _op = {};
+   var collide = F2(function (_p0,tree) {
+      collide: while (true) {
+         var _p1 = _p0;
+         var _p5 = _p1._1;
+         var _p4 = _p1._0;
+         var _p2 = tree;
+         switch (_p2.ctor)
+         {case "Leaf": return _U.cmp(_p4,_p2._0._0) < 0 && (_U.cmp(_p4,0) > 0 && (_U.cmp(_p5,_p2._0._1) < 0 && _U.cmp(_p5,0) > 0));
+            case "Move": var _p3 = _p2._0._0;
+              var _v2 = {ctor: "_Tuple2",_0: _p4 - _p3,_1: _p5 - _p3},_v3 = _p2._1;
+              _p0 = _v2;
+              tree = _v3;
+              continue collide;
+            case "Group": return A2($List.any,collide({ctor: "_Tuple2",_0: _p4,_1: _p5}),_p2._0);
+            default: return false;}
+      }
+   });
+   var toForm = function (tree) {
+      toForm: while (true) {
+         var _p6 = tree;
+         switch (_p6.ctor)
+         {case "Leaf": return _p6._1;
+            case "Move": return A2($Graphics$Collage.move,_p6._0,toForm(_p6._1));
+            case "Group": return $Graphics$Collage.group(A2($List.map,toForm,_p6._0));
+            default: var _v5 = _p6._0;
+              tree = _v5;
+              continue toForm;}
+      }
+   };
+   var NoCollide = function (a) {    return {ctor: "NoCollide",_0: a};};
+   var Group = function (a) {    return {ctor: "Group",_0: a};};
+   var Move = F2(function (a,b) {    return {ctor: "Move",_0: a,_1: b};});
+   var Leaf = F2(function (a,b) {    return {ctor: "Leaf",_0: a,_1: b};});
+   return _elm.SceneTree.values = {_op: _op,Leaf: Leaf,Move: Move,Group: Group,NoCollide: NoCollide,toForm: toForm,collide: collide};
+};
 Elm.Main = Elm.Main || {};
 Elm.Main.make = function (_elm) {
    "use strict";
@@ -10446,10 +10652,12 @@ Elm.Main.make = function (_elm) {
    $Graphics$Element = Elm.Graphics.Element.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
+   $Mouse = Elm.Mouse.make(_elm),
    $NodeRenderer = Elm.NodeRenderer.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $Stage = Elm.Stage.make(_elm),
+   $Time = Elm.Time.make(_elm),
    $Window = Elm.Window.make(_elm);
    var _op = {};
    var stringCLI = {name: "base.StringCLI",inputs: _U.list([]),outputs: _U.list([{typ: "string"}])};
@@ -10457,25 +10665,54 @@ Elm.Main.make = function (_elm) {
    var complex = {name: "complex.Process"
                  ,inputs: _U.list([{typ: "string"},{typ: "int"},{typ: "*http.Request"}])
                  ,outputs: _U.list([{typ: "map[string]int"},{typ: "bool"}])};
-   var graph = {nodes: _U.list([{process: stringCLI,position: {ctor: "_Tuple2",_0: -100,_1: 0}}
-                               ,{process: upper,position: {ctor: "_Tuple2",_0: 100,_1: 0}}
-                               ,{process: complex,position: {ctor: "_Tuple2",_0: 100,_1: 200}}])
-               ,edges: _U.list([{from: {ctor: "_Tuple2",_0: 0,_1: 0},to: {ctor: "_Tuple2",_0: 1,_1: 0}}
-                               ,{from: {ctor: "_Tuple2",_0: 1,_1: 0},to: {ctor: "_Tuple2",_0: 2,_1: 0}}
-                               ,{from: {ctor: "_Tuple2",_0: 1,_1: 0},to: {ctor: "_Tuple2",_0: 2,_1: 1}}
-                               ,{from: {ctor: "_Tuple2",_0: 0,_1: 0},to: {ctor: "_Tuple2",_0: 2,_1: 2}}])};
    var viewApp = function (g) {
       return $Graphics$Collage.group(A2($Basics._op["++"],A2($List.map,$NodeRenderer.viewNode,g.nodes),A2($List.map,$NodeRenderer.viewEdge(g),g.edges)));
    };
    var box = F2(function (w,h) {
       return A2($Graphics$Collage.outlined,$Graphics$Collage.solid($Color.black),A2($Graphics$Collage.rect,$Basics.toFloat(w),$Basics.toFloat(h)));
    });
-   var frame = F2(function (f,_p0) {
-      var _p1 = _p0;
-      var _p3 = _p1._0;
-      var _p2 = _p1._1;
-      return A3($Graphics$Collage.collage,_p3,_p2,_U.list([A2(box,_p3,_p2),f]));
+   var frame = F2(function (f,_p0) {    var _p1 = _p0;return A3($Graphics$Collage.collage,_p1._0,_p1._1,_U.list([f]));});
+   var withExtra = F2(function (extra,rest) {
+      return A3($Signal.map2,function (_p2) {    return $Graphics$Element.above($Graphics$Element.show(_p2));},extra,rest);
    });
-   var main = A3($Signal.map2,frame,$Stage.panned($Signal.constant(viewApp(graph))),$Window.dimensions);
-   return _elm.Main.values = {_op: _op,main: main,frame: frame,box: box,viewApp: viewApp,graph: graph,complex: complex,upper: upper,stringCLI: stringCLI};
+   var onNode = F2(function (_p3,n) {
+      var _p4 = _p3;
+      var _p5 = n.position;
+      var nx = _p5._0;
+      var ny = _p5._1;
+      var _p6 = {ctor: "_Tuple2",_0: $Basics.toFloat(_p4._0),_1: $Basics.toFloat(_p4._1)};
+      var fx = _p6._0;
+      var fy = _p6._1;
+      return {ctor: "_Tuple2"
+             ,_0: _U.cmp(fx,nx) > 0 && _U.cmp(fx,nx + 150) < 0
+             ,_1: _U.cmp(fy,ny) > 0 && _U.cmp(fy,
+             ny + 20 * A2($Basics.max,$Basics.toFloat($List.length(n.process.inputs)),$Basics.toFloat($List.length(n.process.outputs)))) < 0};
+   });
+   var onStuff = F2(function (pos,graph) {    return A2($List.map,onNode(pos),graph.nodes);});
+   var changingGraph = function (t) {
+      return {nodes: _U.list([{process: stringCLI,position: {ctor: "_Tuple2",_0: -100,_1: 0}}
+                             ,{process: upper,position: {ctor: "_Tuple2",_0: 100,_1: 0}}
+                             ,{process: complex,position: {ctor: "_Tuple2",_0: 100,_1: 200}}])
+             ,edges: _U.list([{from: {ctor: "_Tuple2",_0: 0,_1: 0},to: {ctor: "_Tuple2",_0: 1,_1: 0}}
+                             ,{from: {ctor: "_Tuple2",_0: 1,_1: 0},to: {ctor: "_Tuple2",_0: 2,_1: 0}}
+                             ,{from: {ctor: "_Tuple2",_0: 1,_1: 0},to: {ctor: "_Tuple2",_0: 2,_1: 1}}
+                             ,{from: {ctor: "_Tuple2",_0: 0,_1: 0},to: {ctor: "_Tuple2",_0: 2,_1: A2($Basics._op["%"],$Basics.round($Time.inSeconds(t)),3)}}])};
+   };
+   var graphSig = A2($Signal.map,changingGraph,$Time.every($Time.second));
+   var main = A2(withExtra,
+   A3($Signal.map2,onStuff,$Mouse.position,graphSig),
+   A3($Signal.map2,frame,A2($Stage.panned,$Signal.constant(true),A2($Signal.map,viewApp,graphSig)),$Window.dimensions));
+   return _elm.Main.values = {_op: _op
+                             ,graphSig: graphSig
+                             ,changingGraph: changingGraph
+                             ,main: main
+                             ,onNode: onNode
+                             ,onStuff: onStuff
+                             ,withExtra: withExtra
+                             ,frame: frame
+                             ,box: box
+                             ,viewApp: viewApp
+                             ,complex: complex
+                             ,upper: upper
+                             ,stringCLI: stringCLI};
 };
