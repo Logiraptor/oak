@@ -1,113 +1,97 @@
-module Main where
+module Main exposing (..)
 
+-- where
+
+import Html.App
+import Task
 import Html
-
-import Text
-import Graphics.Element as Element
-import Graphics.Collage as Collage
-import Mouse
-import Color
+import DataTypes exposing (..)
+import Layout
 import Window
-import Transform2D
-import Stage
-import Application
-import NodeRenderer
-import Time
-import SceneTree
+import Graph
+import Mouse
+import Debug
+import Platform.Sub
 
 
-
-graphSig = Signal.map changingGraph (Time.every Time.second)
-
-changingGraph : Time.Time -> Application.Graph
-changingGraph t =
-    { nodes=
-        [ { process= stringCLI
-          , position=(-100, 0)
-          }
-        , { process= upper
-          , position=(100, 0)
-          }
-        , { process= complex
-          , position=(100, 200)
-          }
-        ]
-    , edges=
-        [ { from=(0,0)
-          , to=(1,0)
-          },
-          { from=(1,0)
-          , to=(2,0)
-          },
-          { from=(1,0)
-          , to=(2,1)
-          },
-          { from=(0,0)
-          , to=(2,((round (Time.inSeconds t)) % 3))
-          }
-        ]
-    }
-
-
+main : Program Never
 main =
-    (Signal.map2 onStuff Mouse.position graphSig)
-        `withExtra`
-        Signal.map2 frame (Stage.panned (Signal.constant True) (Signal.map viewApp graphSig)) Window.dimensions
+    Html.App.program
+        { init = init
+        , view = view
+        , update = update
+        , subscriptions = initialSubs
+        }
 
 
-onNode : (Int, Int) -> Application.Node -> (Bool, Bool)
-onNode (x, y) n =
-    let
-        (fx, fy) = (toFloat x, toFloat y)
-        (nx, ny) = n.position
-    in
-        (fx > nx && fx < (nx + 150),
-        fy > ny && fy < (ny + (20 * (max (toFloat (List.length n.process.inputs)) (toFloat (List.length n.process.outputs))))))
+initialSubs : Model -> Sub Msg
+initialSubs model =
+    Platform.Sub.batch [ windowResize, mouseMove ]
 
 
-onStuff : (Int, Int) -> Application.Graph -> List (Bool, Bool)
-onStuff pos graph =
-    List.map (onNode pos) graph.nodes
+init : ( Model, Cmd Msg )
+init =
+    ( state0, Task.perform Resize Resize Window.size )
 
 
-withExtra : Signal a -> Signal Element.Element -> Signal Element.Element
-withExtra extra rest =
-    Signal.map2 (Element.above << Element.show) extra rest
+view : Model -> Html.Html Msg
+view =
+    Layout.layout
 
 
-
-frame : Collage.Form -> (Int, Int) -> Element.Element
-frame f (w, h) =
-    Collage.collage w h [f]
-
-box : Int -> Int -> Collage.Form
-box w h =
-    Collage.outlined (Collage.solid Color.black) (Collage.rect (Basics.toFloat w) (Basics.toFloat h))
-
-viewApp : Application.Graph -> Collage.Form
-viewApp g =
-    Collage.group ((List.map NodeRenderer.viewNode g.nodes)++(List.map (NodeRenderer.viewEdge g) g.edges))
+noFx : Model -> ( Model, Cmd Msg )
+noFx m =
+    ( m, Cmd.none )
 
 
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    case msg of
+        Resize dim ->
+            noFx <| { model | dim = dim }
 
-complex : Application.Process
-complex =
-    { name="complex.Process"
-    , inputs= [{typ="string"}, {typ="int"}, {typ="*http.Request"}]
-    , outputs= [{typ="map[string]int"}, {typ="bool"}]
-    }
+        Click id ->
+            noFx <| { model | selected = Just id }
+
+        Unclick ->
+            noFx <| { model | selected = Nothing }
+
+        Drag p ->
+            case model.selected of
+                Nothing ->
+                    noFx <| model
+
+                Just id ->
+                    noFx <| moveNode model id p
 
 
-upper : Application.Process
-upper =
-    { name="strings.ToUpper"
-    , inputs= [{typ="string"}]
-    , outputs= [{typ="string"}]
-    }
+moveNode : Model -> Graph.NodeID -> Mouse.Position -> Model
+moveNode model id pos =
+    case Graph.nodeByID model.graph id of
+        Nothing ->
+            Debug.crash "undefined node! wtf!"
 
-stringCLI : Application.Process
-stringCLI =
-    { name = "base.StringCLI"
-    , inputs= []
-    , outputs= [{typ="string"}]
-    }
+        Just oldNode ->
+            let
+                oldProc =
+                    oldNode.label
+
+                newNode =
+                    Graph.Node id { oldProc | pos = ( Basics.toFloat pos.x, Basics.toFloat pos.y ) }
+            in
+                { model | graph = Graph.insertNode model.graph newNode }
+
+
+windowResize : Sub Msg
+windowResize =
+    Window.resizes Resize
+
+
+mouseMove : Sub Msg
+mouseMove =
+    Mouse.moves (translateMouse >> Drag)
+
+
+translateMouse : Mouse.Position -> Mouse.Position
+translateMouse p =
+    { x = p.x - 300, y = p.y - 50 }
