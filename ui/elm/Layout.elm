@@ -21,6 +21,10 @@ procWidth =
     150
 
 
+portSpacing =
+    25
+
+
 layout : Model -> Html.Html Msg
 layout model =
     Html.div [ Html.Events.onMouseUp Unclick ]
@@ -54,53 +58,49 @@ searchbar =
 editor : Model -> Html.Html Msg
 editor model =
     let
-        procs =
-            Graph.nodes model.graph
-
-        procElems =
-            List.map (viewNode model) procs
-
-        pipes =
-            Graph.edges model.graph
-
-        pipeElems =
-            List.map (viewPipe model) pipes
+        elems =
+            Graph.mapNodes viewNodeAndPipe model.graph
     in
         Html.div [ Html.Attributes.class "editor" ]
             [ Svg.svg
                 [ Svg.Attributes.width ("100%")
                 , Svg.Attributes.height ("100%")
                 ]
-                [ Svg.g [] pipeElems
-                , Svg.g [] procElems
-                , Svg.g [] filters
-                , Svg.g []
-                    [ text 14 [] (toString model)
-                    ]
+                [ Svg.g [] elems
+                , Svg.g [] defs
+                  --, Svg.g []
+                  --    [ text 14 [] (toString model)
+                  --    ]
                 ]
             ]
 
 
-viewPipe : Model -> Graph.Edge Pipe -> Svg.Svg Msg
-viewPipe model pipe =
+viewNodeAndPipe : Graph.NodeContext Process Pipe -> Svg.Svg Msg
+viewNodeAndPipe ctx =
     let
-        from =
-            Graph.nodeByID model.graph pipe.from
-
-        to =
-            Graph.nodeByID model.graph pipe.to
+        box =
+            viewNode ctx
     in
-        case ( from, to ) of
-            ( Just from, Just to ) ->
-                line ( procWidth + (fst from.label.pos), snd from.label.pos )
-                    to.label.pos
-                    [ Svg.Attributes.stroke "#000"
-                    , Svg.Attributes.fill "none"
-                    ]
-                    []
+        box
 
-            _ ->
-                Svg.text ""
+
+viewPipe : Graph.NodeContext Process Pipe -> ( Graph.Edge Pipe, Graph.Node Process ) -> Svg.Svg Msg
+viewPipe ctx ( pipe, to ) =
+    let
+        ( x, y ) =
+            ctx.node.label.pos
+
+        ( x2, y2 ) =
+            to.label.pos
+    in
+        line ( procWidth, portSpacing * (toFloat pipe.label.output) )
+            ( x2 - x, (y2 - y) + (portSpacing * (toFloat pipe.label.input)) )
+            [ Svg.Attributes.stroke "#000"
+            , Svg.Attributes.fill "none"
+            , Svg.Attributes.strokeWidth "2px"
+            , Svg.Attributes.markerEnd "url(#arrow-head)"
+            ]
+            []
 
 
 line : ( Float, Float ) -> ( Float, Float ) -> List (Svg.Attribute Msg) -> List (Svg.Svg Msg) -> Svg.Svg Msg
@@ -126,8 +126,8 @@ line from to =
         Svg.path << (::) (Svg.Attributes.d d)
 
 
-viewNode : Model -> Graph.Node Process -> Svg.Svg Msg
-viewNode model node =
+viewNode : Graph.NodeContext Process Pipe -> Svg.Svg Msg
+viewNode ctx =
     let
         text14 =
             text 14
@@ -139,31 +139,34 @@ viewNode model node =
             text14 [ Svg.Attributes.textAnchor "end" ]
 
         ( x, y ) =
-            node.label.pos
+            ctx.node.label.pos
 
-        outgoing =
-            Graph.outgoing model.graph node.id
+        neighbors =
+            ctx.neighbors
 
-        incoming =
-            Graph.incoming model.graph node.id
+        ancestors =
+            ctx.ancestors
 
-        inPorts =
-            List.map (fst >> .input >> right) incoming
+        outPipes =
+            List.map (viewPipe ctx) neighbors
 
         outPorts =
-            List.map (fst >> .output >> left) outgoing
+            List.map left ctx.node.label.outputs
+
+        inPorts =
+            List.map right ctx.node.label.inputs
 
         flowDown i p =
-            Svg.g [ Svg.Attributes.transform (translate 0 ((toFloat i) * 25)) ] [ p ]
-
-        translatedInPorts =
-            List.indexedMap flowDown inPorts
+            Svg.g [ Svg.Attributes.transform (translate 0 ((toFloat i) * portSpacing)) ] [ p ]
 
         translatedOutPorts =
             List.indexedMap flowDown outPorts
 
+        translatedInPorts =
+            List.indexedMap flowDown inPorts
+
         textNode =
-            left node.label.name
+            left ctx.node.label.name
 
         box =
             Svg.rect
@@ -178,9 +181,10 @@ viewNode model node =
     in
         Svg.g
             [ Svg.Attributes.transform (translate x y)
-            , Html.Events.onMouseDown (Click node.id)
+            , Html.Events.onMouseDown (Click ctx.node.id)
             ]
-            [ box
+            [ Svg.g [] outPipes
+            , box
             , textNode
             , Svg.g [ Svg.Attributes.transform (translate 0 0) ] translatedInPorts
             , Svg.g [ Svg.Attributes.transform (translate procWidth 0) ] translatedOutPorts
@@ -215,12 +219,27 @@ text size attrs content =
 
 
 
--- Filters
+-- SVG Extras
 
 
-filters : List (Svg.Svg Msg)
-filters =
-    [ dropShadowFilter 3 1 1 ]
+defs : List (Svg.Svg Msg)
+defs =
+    [ dropShadowFilter 3 1 1, arrowHead ]
+
+
+arrowHead : Svg.Svg Msg
+arrowHead =
+    Svg.defs []
+        [ Svg.marker
+            [ Svg.Attributes.id "arrow-head"
+            , Svg.Attributes.orient "auto"
+            , Svg.Attributes.markerWidth "2"
+            , Svg.Attributes.markerHeight "4"
+            , Svg.Attributes.refX "0.1"
+            , Svg.Attributes.refY "2"
+            ]
+            [ Svg.path [ Svg.Attributes.d "M0,0 V4 L2,2 Z", Svg.Attributes.fill "#000" ] [] ]
+        ]
 
 
 withDropShadow : String

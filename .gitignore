@@ -57,3 +57,10 @@ elm-stuff/
 # elm-repl generated files
 repl-temp-*
 
+
+# Created by https://www.gitignore.io/api/sass
+
+### Sass ###
+.sass-cache/
+*.css.map
+

@@ -22,8 +22,10 @@ labeledPipes =
 
 
 pipes =
-    [ ( 0, 1, { defaultPipe | output = "SUCCESS" } )
-    , ( 0, 2, { defaultPipe | output = "ERROR" } )
+    [ ( 0, 1, Pipe 1 0 )
+    , ( 0, 2, Pipe 0 0 )
+    , ( 1, 3, Pipe 0 0 )
+    , ( 2, 3, Pipe 0 1 )
     ]
 
 
@@ -33,29 +35,52 @@ labeledProcs =
 
 
 procs =
-    [ { defaultProc | name = "strings.ToUpper", pos = ( 0, 100 ) }
-    , { defaultProc | name = "fmt.Println", pos = ( 300, 200 ) }
-    , { defaultProc | name = "fmt.Scanln", pos = ( 400, 100 ) }
+    [ { name = "something.MightFail"
+      , pos = ( 50, 100 )
+      , inputs = [ "INPUT" ]
+      , outputs = [ "SUCCESS", "ERROR" ]
+      }
+    , { name = "log.Error"
+      , pos = ( 300, 200 )
+      , inputs = [ "INPUT" ]
+      , outputs = [ "OUTPUT" ]
+      }
+    , { name = "fmt.Println"
+      , pos = ( 400, 100 )
+      , inputs = [ "INPUT" ]
+      , outputs = [ "OUTPUT" ]
+      }
+    , { name = "base.Aggregator"
+      , pos = ( 600, 200 )
+      , inputs = [ "ACCUM", "NEXT" ]
+      , outputs = [ "ACCUM" ]
+      }
     ]
 
 
 defaultProc =
-    { name = "", pos = ( 0, 0 ) }
+    { name = "", pos = ( 0, 0 ), inputs = [], outputs = [] }
 
 
-defaultPipe =
-    { input = "INPUT", output = "OUTPUT" }
+type alias Port =
+    String
+
+
+type alias PortID =
+    Int
 
 
 type alias Process =
     { name : String
     , pos : ( Float, Float )
+    , inputs : List Port
+    , outputs : List Port
     }
 
 
 type alias Pipe =
-    { input : String
-    , output : String
+    { output : PortID
+    , input : PortID
     }
 
 

@@ -4,9 +4,11 @@ module Graph
         , NodeID
         , Node
         , Edge
+        , NodeContext
         , fromNodesAndEdges
         , nodes
         , edges
+        , mapNodes
         , outgoing
         , incoming
         , insertNode
@@ -40,11 +42,52 @@ type alias GraphInner n e =
     }
 
 
+type alias NodeContext n e =
+    { node : Node n
+    , neighbors : List ( Edge e, Node n )
+    , ancestors : List ( Edge e, Node n )
+    }
+
+
 gToStruct : Graph n e -> GraphInner n e
 gToStruct g =
     case g of
         GraphI g ->
             g
+
+
+mapNodes : (NodeContext n e -> a) -> Graph n e -> List a
+mapNodes f g =
+    List.map (f << buildContext g) (nodes g)
+
+
+buildContext : Graph n e -> Node n -> NodeContext n e
+buildContext g n =
+    let
+        outgoingEdges =
+            List.filter (\e -> e.from == n.id) (edges g)
+
+        incomingEdges =
+            List.filter (\e -> e.to == n.id) (edges g)
+
+        neighbors =
+            List.map (\e -> ( e, nodeByID g e.to )) outgoingEdges
+
+        ancestors =
+            List.map (\e -> ( e, nodeByID g e.from )) incomingEdges
+
+        keepExisting ( e, n ) =
+            case n of
+                Nothing ->
+                    Nothing
+
+                Just n ->
+                    Just ( e, n )
+    in
+        { node = n
+        , neighbors = List.filterMap keepExisting neighbors
+        , ancestors = List.filterMap keepExisting ancestors
+        }
 
 
 insertNode : Graph n e -> Node n -> Graph n e

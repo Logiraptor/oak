@@ -11064,8 +11064,8 @@ var _user$project$Graph$unsafeGetNode = F2(
 			return _elm_lang$core$Native_Utils.crashCase(
 				'Graph',
 				{
-					start: {line: 119, column: 9},
-					end: {line: 124, column: 18}
+					start: {line: 163, column: 9},
+					end: {line: 168, column: 18}
 				},
 				_p2)('Unreachable code: Unknown graph node');
 		} else {
@@ -11075,6 +11075,66 @@ var _user$project$Graph$unsafeGetNode = F2(
 var _user$project$Graph$edges = function (g) {
 	return _user$project$Graph$gToStruct(g).edges;
 };
+var _user$project$Graph$buildContext = F2(
+	function (g, n) {
+		var keepExisting = function (_p4) {
+			var _p5 = _p4;
+			var _p6 = _p5._1;
+			if (_p6.ctor === 'Nothing') {
+				return _elm_lang$core$Maybe$Nothing;
+			} else {
+				return _elm_lang$core$Maybe$Just(
+					{ctor: '_Tuple2', _0: _p5._0, _1: _p6._0});
+			}
+		};
+		var incomingEdges = A2(
+			_elm_lang$core$List$filter,
+			function (e) {
+				return _elm_lang$core$Native_Utils.eq(e.to, n.id);
+			},
+			_user$project$Graph$edges(g));
+		var ancestors = A2(
+			_elm_lang$core$List$map,
+			function (e) {
+				return {
+					ctor: '_Tuple2',
+					_0: e,
+					_1: A2(_user$project$Graph$nodeByID, g, e.from)
+				};
+			},
+			incomingEdges);
+		var outgoingEdges = A2(
+			_elm_lang$core$List$filter,
+			function (e) {
+				return _elm_lang$core$Native_Utils.eq(e.from, n.id);
+			},
+			_user$project$Graph$edges(g));
+		var neighbors = A2(
+			_elm_lang$core$List$map,
+			function (e) {
+				return {
+					ctor: '_Tuple2',
+					_0: e,
+					_1: A2(_user$project$Graph$nodeByID, g, e.to)
+				};
+			},
+			outgoingEdges);
+		return {
+			node: n,
+			neighbors: A2(_elm_lang$core$List$filterMap, keepExisting, neighbors),
+			ancestors: A2(_elm_lang$core$List$filterMap, keepExisting, ancestors)
+		};
+	});
+var _user$project$Graph$mapNodes = F2(
+	function (f, g) {
+		return A2(
+			_elm_lang$core$List$map,
+			function (_p7) {
+				return f(
+					A2(_user$project$Graph$buildContext, g, _p7));
+			},
+			_user$project$Graph$nodes(g));
+	});
 var _user$project$Graph$outgoing = F2(
 	function (graph, id) {
 		var outgoingEdges = A2(
@@ -11127,6 +11187,10 @@ var _user$project$Graph$GraphInner = F2(
 	function (a, b) {
 		return {nodes: a, edges: b};
 	});
+var _user$project$Graph$NodeContext = F3(
+	function (a, b, c) {
+		return {node: a, neighbors: b, ancestors: c};
+	});
 var _user$project$Graph$GraphI = function (a) {
 	return {ctor: 'GraphI', _0: a};
 };
@@ -11135,7 +11199,7 @@ var _user$project$Graph$insertNode = F2(
 		var struct = _user$project$Graph$gToStruct(graph);
 		var otherNodes = A2(
 			_elm_lang$core$List$filter,
-			function (_p4) {
+			function (_p8) {
 				return A2(
 					F2(
 						function (x, y) {
@@ -11144,7 +11208,7 @@ var _user$project$Graph$insertNode = F2(
 					node.id,
 					function (_) {
 						return _.id;
-					}(_p4));
+					}(_p8));
 			},
 			_user$project$Graph$nodes(graph));
 		return _user$project$Graph$GraphI(
@@ -11160,50 +11224,83 @@ var _user$project$Graph$fromNodesAndEdges = F2(
 			{nodes: nodes, edges: edges});
 	});
 
-var _user$project$DataTypes$defaultPipe = {input: 'INPUT', output: 'OUTPUT'};
 var _user$project$DataTypes$defaultProc = {
 	name: '',
-	pos: {ctor: '_Tuple2', _0: 0, _1: 0}
+	pos: {ctor: '_Tuple2', _0: 0, _1: 0},
+	inputs: _elm_lang$core$Native_List.fromArray(
+		[]),
+	outputs: _elm_lang$core$Native_List.fromArray(
+		[])
 };
 var _user$project$DataTypes$procs = _elm_lang$core$Native_List.fromArray(
 	[
-		_elm_lang$core$Native_Utils.update(
-		_user$project$DataTypes$defaultProc,
 		{
-			name: 'strings.ToUpper',
-			pos: {ctor: '_Tuple2', _0: 0, _1: 100}
-		}),
-		_elm_lang$core$Native_Utils.update(
-		_user$project$DataTypes$defaultProc,
+		name: 'something.MightFail',
+		pos: {ctor: '_Tuple2', _0: 50, _1: 100},
+		inputs: _elm_lang$core$Native_List.fromArray(
+			['INPUT']),
+		outputs: _elm_lang$core$Native_List.fromArray(
+			['SUCCESS', 'ERROR'])
+	},
 		{
-			name: 'fmt.Println',
-			pos: {ctor: '_Tuple2', _0: 300, _1: 200}
-		}),
-		_elm_lang$core$Native_Utils.update(
-		_user$project$DataTypes$defaultProc,
+		name: 'log.Error',
+		pos: {ctor: '_Tuple2', _0: 300, _1: 200},
+		inputs: _elm_lang$core$Native_List.fromArray(
+			['INPUT']),
+		outputs: _elm_lang$core$Native_List.fromArray(
+			['OUTPUT'])
+	},
 		{
-			name: 'fmt.Scanln',
-			pos: {ctor: '_Tuple2', _0: 400, _1: 100}
-		})
+		name: 'fmt.Println',
+		pos: {ctor: '_Tuple2', _0: 400, _1: 100},
+		inputs: _elm_lang$core$Native_List.fromArray(
+			['INPUT']),
+		outputs: _elm_lang$core$Native_List.fromArray(
+			['OUTPUT'])
+	},
+		{
+		name: 'base.Aggregator',
+		pos: {ctor: '_Tuple2', _0: 600, _1: 200},
+		inputs: _elm_lang$core$Native_List.fromArray(
+			['ACCUM', 'NEXT']),
+		outputs: _elm_lang$core$Native_List.fromArray(
+			['ACCUM'])
+	}
 	]);
 var _user$project$DataTypes$labeledProcs = A2(_elm_lang$core$List$indexedMap, _user$project$Graph$Node, _user$project$DataTypes$procs);
+var _user$project$DataTypes$Process = F4(
+	function (a, b, c, d) {
+		return {name: a, pos: b, inputs: c, outputs: d};
+	});
+var _user$project$DataTypes$Pipe = F2(
+	function (a, b) {
+		return {output: a, input: b};
+	});
 var _user$project$DataTypes$pipes = _elm_lang$core$Native_List.fromArray(
 	[
 		{
 		ctor: '_Tuple3',
 		_0: 0,
 		_1: 1,
-		_2: _elm_lang$core$Native_Utils.update(
-			_user$project$DataTypes$defaultPipe,
-			{output: 'SUCCESS'})
+		_2: A2(_user$project$DataTypes$Pipe, 1, 0)
 	},
 		{
 		ctor: '_Tuple3',
 		_0: 0,
 		_1: 2,
-		_2: _elm_lang$core$Native_Utils.update(
-			_user$project$DataTypes$defaultPipe,
-			{output: 'ERROR'})
+		_2: A2(_user$project$DataTypes$Pipe, 0, 0)
+	},
+		{
+		ctor: '_Tuple3',
+		_0: 1,
+		_1: 3,
+		_2: A2(_user$project$DataTypes$Pipe, 0, 0)
+	},
+		{
+		ctor: '_Tuple3',
+		_0: 2,
+		_1: 3,
+		_2: A2(_user$project$DataTypes$Pipe, 0, 1)
 	}
 	]);
 var _user$project$DataTypes$labeledPipes = A2(
@@ -11218,14 +11315,6 @@ var _user$project$DataTypes$state0 = {
 	dim: {width: 0, height: 0},
 	selected: _elm_lang$core$Maybe$Nothing
 };
-var _user$project$DataTypes$Process = F2(
-	function (a, b) {
-		return {name: a, pos: b};
-	});
-var _user$project$DataTypes$Pipe = F2(
-	function (a, b) {
-		return {input: a, output: b};
-	});
 var _user$project$DataTypes$Model = F3(
 	function (a, b, c) {
 		return {graph: a, dim: b, selected: c};
@@ -11298,9 +11387,40 @@ var _user$project$Layout$dropShadowFilter = F3(
 				]));
 	});
 var _user$project$Layout$withDropShadow = 'filter:url(#dropshadow)';
-var _user$project$Layout$filters = _elm_lang$core$Native_List.fromArray(
+var _user$project$Layout$arrowHead = A2(
+	_elm_lang$svg$Svg$defs,
+	_elm_lang$core$Native_List.fromArray(
+		[]),
+	_elm_lang$core$Native_List.fromArray(
+		[
+			A2(
+			_elm_lang$svg$Svg$marker,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$svg$Svg_Attributes$id('arrow-head'),
+					_elm_lang$svg$Svg_Attributes$orient('auto'),
+					_elm_lang$svg$Svg_Attributes$markerWidth('2'),
+					_elm_lang$svg$Svg_Attributes$markerHeight('4'),
+					_elm_lang$svg$Svg_Attributes$refX('0.1'),
+					_elm_lang$svg$Svg_Attributes$refY('2')
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					A2(
+					_elm_lang$svg$Svg$path,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$svg$Svg_Attributes$d('M0,0 V4 L2,2 Z'),
+							_elm_lang$svg$Svg_Attributes$fill('#000')
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[]))
+				]))
+		]));
+var _user$project$Layout$defs = _elm_lang$core$Native_List.fromArray(
 	[
-		A3(_user$project$Layout$dropShadowFilter, 3, 1, 1)
+		A3(_user$project$Layout$dropShadowFilter, 3, 1, 1),
+		_user$project$Layout$arrowHead
 	]);
 var _user$project$Layout$nodeColor = '#fff';
 var _user$project$Layout$px = function (n) {
@@ -11420,146 +11540,138 @@ var _user$project$Layout$navbar = A2(
 					_elm_lang$html$Html$text('Oak Editor')
 				]))
 		]));
+var _user$project$Layout$portSpacing = 25;
 var _user$project$Layout$procWidth = 150;
 var _user$project$Layout$viewPipe = F2(
-	function (model, pipe) {
-		var to = A2(_user$project$Graph$nodeByID, model.graph, pipe.to);
-		var from = A2(_user$project$Graph$nodeByID, model.graph, pipe.from);
-		var _p3 = {ctor: '_Tuple2', _0: from, _1: to};
-		if (((_p3.ctor === '_Tuple2') && (_p3._0.ctor === 'Just')) && (_p3._1.ctor === 'Just')) {
-			var _p4 = _p3._0._0;
-			return A4(
-				_user$project$Layout$line,
-				{
-					ctor: '_Tuple2',
-					_0: _user$project$Layout$procWidth + _elm_lang$core$Basics$fst(_p4.label.pos),
-					_1: _elm_lang$core$Basics$snd(_p4.label.pos)
-				},
-				_p3._1._0.label.pos,
+	function (ctx, _p3) {
+		var _p4 = _p3;
+		var _p7 = _p4._0;
+		var _p5 = _p4._1.label.pos;
+		var x2 = _p5._0;
+		var y2 = _p5._1;
+		var _p6 = ctx.node.label.pos;
+		var x = _p6._0;
+		var y = _p6._1;
+		return A4(
+			_user$project$Layout$line,
+			{
+				ctor: '_Tuple2',
+				_0: _user$project$Layout$procWidth,
+				_1: _user$project$Layout$portSpacing * _elm_lang$core$Basics$toFloat(_p7.label.output)
+			},
+			{
+				ctor: '_Tuple2',
+				_0: x2 - x,
+				_1: (y2 - y) + (_user$project$Layout$portSpacing * _elm_lang$core$Basics$toFloat(_p7.label.input))
+			},
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$svg$Svg_Attributes$stroke('#000'),
+					_elm_lang$svg$Svg_Attributes$fill('none'),
+					_elm_lang$svg$Svg_Attributes$strokeWidth('2px'),
+					_elm_lang$svg$Svg_Attributes$markerEnd('url(#arrow-head)')
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[]));
+	});
+var _user$project$Layout$viewNode = function (ctx) {
+	var box = A2(
+		_elm_lang$svg$Svg$rect,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$svg$Svg_Attributes$fill(_user$project$Layout$nodeColor),
+				_elm_lang$svg$Svg_Attributes$width(
+				_user$project$Layout$px(_user$project$Layout$procWidth)),
+				_elm_lang$svg$Svg_Attributes$height(
+				_user$project$Layout$px(50)),
+				_elm_lang$svg$Svg_Attributes$rx(
+				_user$project$Layout$px(3)),
+				_elm_lang$svg$Svg_Attributes$ry(
+				_user$project$Layout$px(3)),
+				_elm_lang$svg$Svg_Attributes$style(_user$project$Layout$withDropShadow)
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[]));
+	var flowDown = F2(
+		function (i, p) {
+			return A2(
+				_elm_lang$svg$Svg$g,
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$svg$Svg_Attributes$stroke('#000'),
-						_elm_lang$svg$Svg_Attributes$fill('none')
+						_elm_lang$svg$Svg_Attributes$transform(
+						A2(
+							_user$project$Layout$translate,
+							0,
+							_elm_lang$core$Basics$toFloat(i) * _user$project$Layout$portSpacing))
 					]),
 				_elm_lang$core$Native_List.fromArray(
-					[]));
-		} else {
-			return _elm_lang$svg$Svg$text('');
-		}
-	});
-var _user$project$Layout$viewNode = F2(
-	function (model, node) {
-		var box = A2(
-			_elm_lang$svg$Svg$rect,
-			_elm_lang$core$Native_List.fromArray(
-				[
-					_elm_lang$svg$Svg_Attributes$fill(_user$project$Layout$nodeColor),
-					_elm_lang$svg$Svg_Attributes$width(
-					_user$project$Layout$px(_user$project$Layout$procWidth)),
-					_elm_lang$svg$Svg_Attributes$height(
-					_user$project$Layout$px(50)),
-					_elm_lang$svg$Svg_Attributes$rx(
-					_user$project$Layout$px(3)),
-					_elm_lang$svg$Svg_Attributes$ry(
-					_user$project$Layout$px(3)),
-					_elm_lang$svg$Svg_Attributes$style(_user$project$Layout$withDropShadow)
-				]),
-			_elm_lang$core$Native_List.fromArray(
-				[]));
-		var flowDown = F2(
-			function (i, p) {
-				return A2(
-					_elm_lang$svg$Svg$g,
-					_elm_lang$core$Native_List.fromArray(
-						[
-							_elm_lang$svg$Svg_Attributes$transform(
-							A2(
-								_user$project$Layout$translate,
-								0,
-								_elm_lang$core$Basics$toFloat(i) * 25))
-						]),
-					_elm_lang$core$Native_List.fromArray(
-						[p]));
-			});
-		var incoming = A2(_user$project$Graph$incoming, model.graph, node.id);
-		var outgoing = A2(_user$project$Graph$outgoing, model.graph, node.id);
-		var _p5 = node.label.pos;
-		var x = _p5._0;
-		var y = _p5._1;
-		var text14 = _user$project$Layout$text(14);
-		var left = text14(
-			_elm_lang$core$Native_List.fromArray(
-				[]));
-		var outPorts = A2(
-			_elm_lang$core$List$map,
-			function (_p6) {
-				return left(
-					function (_) {
-						return _.output;
-					}(
-						_elm_lang$core$Basics$fst(_p6)));
-			},
-			outgoing);
-		var translatedOutPorts = A2(_elm_lang$core$List$indexedMap, flowDown, outPorts);
-		var textNode = left(node.label.name);
-		var right = text14(
-			_elm_lang$core$Native_List.fromArray(
-				[
-					_elm_lang$svg$Svg_Attributes$textAnchor('end')
-				]));
-		var inPorts = A2(
-			_elm_lang$core$List$map,
-			function (_p7) {
-				return right(
-					function (_) {
-						return _.input;
-					}(
-						_elm_lang$core$Basics$fst(_p7)));
-			},
-			incoming);
-		var translatedInPorts = A2(_elm_lang$core$List$indexedMap, flowDown, inPorts);
-		return A2(
-			_elm_lang$svg$Svg$g,
-			_elm_lang$core$Native_List.fromArray(
-				[
-					_elm_lang$svg$Svg_Attributes$transform(
-					A2(_user$project$Layout$translate, x, y)),
-					_elm_lang$html$Html_Events$onMouseDown(
-					_user$project$DataTypes$Click(node.id))
-				]),
-			_elm_lang$core$Native_List.fromArray(
-				[
-					box,
-					textNode,
-					A2(
-					_elm_lang$svg$Svg$g,
-					_elm_lang$core$Native_List.fromArray(
-						[
-							_elm_lang$svg$Svg_Attributes$transform(
-							A2(_user$project$Layout$translate, 0, 0))
-						]),
-					translatedInPorts),
-					A2(
-					_elm_lang$svg$Svg$g,
-					_elm_lang$core$Native_List.fromArray(
-						[
-							_elm_lang$svg$Svg_Attributes$transform(
-							A2(_user$project$Layout$translate, _user$project$Layout$procWidth, 0))
-						]),
-					translatedOutPorts)
-				]));
-	});
+					[p]));
+		});
+	var ancestors = ctx.ancestors;
+	var neighbors = ctx.neighbors;
+	var outPipes = A2(
+		_elm_lang$core$List$map,
+		_user$project$Layout$viewPipe(ctx),
+		neighbors);
+	var _p8 = ctx.node.label.pos;
+	var x = _p8._0;
+	var y = _p8._1;
+	var text14 = _user$project$Layout$text(14);
+	var left = text14(
+		_elm_lang$core$Native_List.fromArray(
+			[]));
+	var outPorts = A2(_elm_lang$core$List$map, left, ctx.node.label.outputs);
+	var translatedOutPorts = A2(_elm_lang$core$List$indexedMap, flowDown, outPorts);
+	var textNode = left(ctx.node.label.name);
+	var right = text14(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$svg$Svg_Attributes$textAnchor('end')
+			]));
+	var inPorts = A2(_elm_lang$core$List$map, right, ctx.node.label.inputs);
+	var translatedInPorts = A2(_elm_lang$core$List$indexedMap, flowDown, inPorts);
+	return A2(
+		_elm_lang$svg$Svg$g,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$svg$Svg_Attributes$transform(
+				A2(_user$project$Layout$translate, x, y)),
+				_elm_lang$html$Html_Events$onMouseDown(
+				_user$project$DataTypes$Click(ctx.node.id))
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$svg$Svg$g,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				outPipes),
+				box,
+				textNode,
+				A2(
+				_elm_lang$svg$Svg$g,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$svg$Svg_Attributes$transform(
+						A2(_user$project$Layout$translate, 0, 0))
+					]),
+				translatedInPorts),
+				A2(
+				_elm_lang$svg$Svg$g,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$svg$Svg_Attributes$transform(
+						A2(_user$project$Layout$translate, _user$project$Layout$procWidth, 0))
+					]),
+				translatedOutPorts)
+			]));
+};
+var _user$project$Layout$viewNodeAndPipe = function (ctx) {
+	var box = _user$project$Layout$viewNode(ctx);
+	return box;
+};
 var _user$project$Layout$editor = function (model) {
-	var pipes = _user$project$Graph$edges(model.graph);
-	var pipeElems = A2(
-		_elm_lang$core$List$map,
-		_user$project$Layout$viewPipe(model),
-		pipes);
-	var procs = _user$project$Graph$nodes(model.graph);
-	var procElems = A2(
-		_elm_lang$core$List$map,
-		_user$project$Layout$viewNode(model),
-		procs);
+	var elems = A2(_user$project$Graph$mapNodes, _user$project$Layout$viewNodeAndPipe, model.graph);
 	return A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
@@ -11581,30 +11693,12 @@ var _user$project$Layout$editor = function (model) {
 						_elm_lang$svg$Svg$g,
 						_elm_lang$core$Native_List.fromArray(
 							[]),
-						pipeElems),
+						elems),
 						A2(
 						_elm_lang$svg$Svg$g,
 						_elm_lang$core$Native_List.fromArray(
 							[]),
-						procElems),
-						A2(
-						_elm_lang$svg$Svg$g,
-						_elm_lang$core$Native_List.fromArray(
-							[]),
-						_user$project$Layout$filters),
-						A2(
-						_elm_lang$svg$Svg$g,
-						_elm_lang$core$Native_List.fromArray(
-							[]),
-						_elm_lang$core$Native_List.fromArray(
-							[
-								A3(
-								_user$project$Layout$text,
-								14,
-								_elm_lang$core$Native_List.fromArray(
-									[]),
-								_elm_lang$core$Basics$toString(model))
-							]))
+						_user$project$Layout$defs)
 					]))
 			]));
 };

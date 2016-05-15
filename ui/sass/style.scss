@@ -31,7 +31,7 @@ h1 {
 }
 
 .sidebar {
-	height: 100%;
+	height: calc(100vh - 50px);
 	flex: 1 300px;
 	background-color: $dark;
 	color: $base;
@@ -48,6 +48,7 @@ h1 {
 
 .editor {
 	flex: 1 100%;
+	height: calc(100vh - 50px)
 }
 
 svg {

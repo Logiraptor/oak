@@ -18,7 +18,7 @@ h1 {
   flex-direction: row; }
 
 .sidebar {
-  height: 100%;
+  height: calc(100vh - 50px);
   flex: 1 300px;
   background-color: #2E1C2B;
   color: #EAEAEA;
@@ -32,7 +32,8 @@ h1 {
   padding: 4px; }
 
 .editor {
-  flex: 1 100%; }
+  flex: 1 100%;
+  height: calc(100vh - 50px); }
 
 svg {
   -webkit-user-select: none;
