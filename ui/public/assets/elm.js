@@ -11232,45 +11232,65 @@ var _user$project$DataTypes$defaultProc = {
 	outputs: _elm_lang$core$Native_List.fromArray(
 		[])
 };
+var _user$project$DataTypes$typ4 = {
+	name: 'typ4',
+	inputs: _elm_lang$core$Native_List.fromArray(
+		['ACCUM', 'NEXT']),
+	outputs: _elm_lang$core$Native_List.fromArray(
+		['ACCUM'])
+};
+var _user$project$DataTypes$typ3 = {
+	name: 'typ3',
+	inputs: _elm_lang$core$Native_List.fromArray(
+		['INPUT']),
+	outputs: _elm_lang$core$Native_List.fromArray(
+		['OUTPUT'])
+};
+var _user$project$DataTypes$typ2 = {
+	name: 'typ2',
+	inputs: _elm_lang$core$Native_List.fromArray(
+		['INPUT']),
+	outputs: _elm_lang$core$Native_List.fromArray(
+		['OUTPUT'])
+};
+var _user$project$DataTypes$typ1 = {
+	name: 'typ1',
+	inputs: _elm_lang$core$Native_List.fromArray(
+		['INPUT']),
+	outputs: _elm_lang$core$Native_List.fromArray(
+		['SUCCESS', 'ERROR'])
+};
 var _user$project$DataTypes$procs = _elm_lang$core$Native_List.fromArray(
 	[
 		{
-		name: 'something.MightFail',
-		pos: {ctor: '_Tuple2', _0: 50, _1: 100},
-		inputs: _elm_lang$core$Native_List.fromArray(
-			['INPUT']),
-		outputs: _elm_lang$core$Native_List.fromArray(
-			['SUCCESS', 'ERROR'])
+		name: 'if',
+		pos: {ctor: '_Tuple2', _0: 100, _1: 100},
+		type$: _user$project$DataTypes$typ1
 	},
 		{
 		name: 'log.Error',
 		pos: {ctor: '_Tuple2', _0: 300, _1: 200},
-		inputs: _elm_lang$core$Native_List.fromArray(
-			['INPUT']),
-		outputs: _elm_lang$core$Native_List.fromArray(
-			['OUTPUT'])
+		type$: _user$project$DataTypes$typ2
 	},
 		{
 		name: 'fmt.Println',
 		pos: {ctor: '_Tuple2', _0: 400, _1: 100},
-		inputs: _elm_lang$core$Native_List.fromArray(
-			['INPUT']),
-		outputs: _elm_lang$core$Native_List.fromArray(
-			['OUTPUT'])
+		type$: _user$project$DataTypes$typ3
 	},
 		{
 		name: 'base.Aggregator',
 		pos: {ctor: '_Tuple2', _0: 600, _1: 200},
-		inputs: _elm_lang$core$Native_List.fromArray(
-			['ACCUM', 'NEXT']),
-		outputs: _elm_lang$core$Native_List.fromArray(
-			['ACCUM'])
+		type$: _user$project$DataTypes$typ4
 	}
 	]);
 var _user$project$DataTypes$labeledProcs = A2(_elm_lang$core$List$indexedMap, _user$project$Graph$Node, _user$project$DataTypes$procs);
-var _user$project$DataTypes$Process = F4(
-	function (a, b, c, d) {
-		return {name: a, pos: b, inputs: c, outputs: d};
+var _user$project$DataTypes$Process = F3(
+	function (a, b, c) {
+		return {name: a, pos: b, type$: c};
+	});
+var _user$project$DataTypes$ProcessType = F3(
+	function (a, b, c) {
+		return {name: a, inputs: b, outputs: c};
 	});
 var _user$project$DataTypes$Pipe = F2(
 	function (a, b) {
@@ -11491,8 +11511,8 @@ var _user$project$Layout$line = F2(
 			_elm_lang$core$Native_List.fromArray(
 				[
 					A3(pre, 'M ', x1, y1),
-					A3(pre, 'C ', (x2 + x1) / 2, y1),
-					A3(pre, '', (x2 + x1) / 2, y2),
+					A3(pre, 'C ', x1 + 100, y1),
+					A3(pre, '', x2 - 100, y2),
 					A3(pre, '', x2, y2)
 				]));
 		return function (_p2) {
@@ -11541,6 +11561,16 @@ var _user$project$Layout$navbar = A2(
 				]))
 		]));
 var _user$project$Layout$portSpacing = 25;
+var _user$project$Layout$portY = function (index) {
+	return _user$project$Layout$portSpacing + (_elm_lang$core$Basics$toFloat(index) * _user$project$Layout$portSpacing);
+};
+var _user$project$Layout$procHeight = function (proc) {
+	return _user$project$Layout$portSpacing + (_elm_lang$core$Basics$toFloat(
+		A2(
+			_elm_lang$core$Basics$max,
+			_elm_lang$core$List$length(proc.type$.inputs),
+			_elm_lang$core$List$length(proc.type$.outputs))) * _user$project$Layout$portSpacing);
+};
 var _user$project$Layout$procWidth = 150;
 var _user$project$Layout$viewPipe = F2(
 	function (ctx, _p3) {
@@ -11557,18 +11587,17 @@ var _user$project$Layout$viewPipe = F2(
 			{
 				ctor: '_Tuple2',
 				_0: _user$project$Layout$procWidth,
-				_1: _user$project$Layout$portSpacing * _elm_lang$core$Basics$toFloat(_p7.label.output)
+				_1: _user$project$Layout$portY(_p7.label.output)
 			},
 			{
 				ctor: '_Tuple2',
 				_0: x2 - x,
-				_1: (y2 - y) + (_user$project$Layout$portSpacing * _elm_lang$core$Basics$toFloat(_p7.label.input))
+				_1: (y2 - y) + _user$project$Layout$portY(_p7.label.input)
 			},
 			_elm_lang$core$Native_List.fromArray(
 				[
 					_elm_lang$svg$Svg_Attributes$stroke('#000'),
 					_elm_lang$svg$Svg_Attributes$fill('none'),
-					_elm_lang$svg$Svg_Attributes$strokeWidth('2px'),
 					_elm_lang$svg$Svg_Attributes$markerEnd('url(#arrow-head)')
 				]),
 			_elm_lang$core$Native_List.fromArray(
@@ -11583,7 +11612,8 @@ var _user$project$Layout$viewNode = function (ctx) {
 				_elm_lang$svg$Svg_Attributes$width(
 				_user$project$Layout$px(_user$project$Layout$procWidth)),
 				_elm_lang$svg$Svg_Attributes$height(
-				_user$project$Layout$px(50)),
+				_user$project$Layout$px(
+					_user$project$Layout$procHeight(ctx.node.label))),
 				_elm_lang$svg$Svg_Attributes$rx(
 				_user$project$Layout$px(3)),
 				_elm_lang$svg$Svg_Attributes$ry(
@@ -11620,15 +11650,20 @@ var _user$project$Layout$viewNode = function (ctx) {
 	var left = text14(
 		_elm_lang$core$Native_List.fromArray(
 			[]));
-	var outPorts = A2(_elm_lang$core$List$map, left, ctx.node.label.outputs);
+	var outPorts = A2(_elm_lang$core$List$map, left, ctx.node.label.type$.outputs);
 	var translatedOutPorts = A2(_elm_lang$core$List$indexedMap, flowDown, outPorts);
-	var textNode = left(ctx.node.label.name);
+	var middle = text14(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$svg$Svg_Attributes$textAnchor('middle')
+			]));
+	var textNode = middle(ctx.node.label.name);
 	var right = text14(
 		_elm_lang$core$Native_List.fromArray(
 			[
 				_elm_lang$svg$Svg_Attributes$textAnchor('end')
 			]));
-	var inPorts = A2(_elm_lang$core$List$map, right, ctx.node.label.inputs);
+	var inPorts = A2(_elm_lang$core$List$map, right, ctx.node.label.type$.inputs);
 	var translatedInPorts = A2(_elm_lang$core$List$indexedMap, flowDown, inPorts);
 	return A2(
 		_elm_lang$svg$Svg$g,
@@ -11647,7 +11682,15 @@ var _user$project$Layout$viewNode = function (ctx) {
 					[]),
 				outPipes),
 				box,
-				textNode,
+				A2(
+				_elm_lang$svg$Svg$g,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$svg$Svg_Attributes$transform(
+						A2(_user$project$Layout$translate, _user$project$Layout$procWidth / 2, 0))
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[textNode])),
 				A2(
 				_elm_lang$svg$Svg$g,
 				_elm_lang$core$Native_List.fromArray(

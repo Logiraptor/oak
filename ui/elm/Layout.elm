@@ -25,6 +25,15 @@ portSpacing =
     25
 
 
+portY index =
+    portSpacing + (toFloat index) * portSpacing
+
+
+procHeight : Process -> Float
+procHeight proc =
+    portSpacing + (toFloat (Basics.max (List.length proc.type'.inputs) (List.length proc.type'.outputs)) * portSpacing)
+
+
 layout : Model -> Html.Html Msg
 layout model =
     Html.div [ Html.Events.onMouseUp Unclick ]
@@ -93,11 +102,10 @@ viewPipe ctx ( pipe, to ) =
         ( x2, y2 ) =
             to.label.pos
     in
-        line ( procWidth, portSpacing * (toFloat pipe.label.output) )
-            ( x2 - x, (y2 - y) + (portSpacing * (toFloat pipe.label.input)) )
+        line ( procWidth, portY pipe.label.output )
+            ( x2 - x, (y2 - y) + (portY pipe.label.input) )
             [ Svg.Attributes.stroke "#000"
             , Svg.Attributes.fill "none"
-            , Svg.Attributes.strokeWidth "2px"
             , Svg.Attributes.markerEnd "url(#arrow-head)"
             ]
             []
@@ -118,8 +126,8 @@ line from to =
         d =
             String.join ", "
                 [ pre "M " x1 y1
-                , pre "C " ((x2 + x1) / 2) y1
-                , pre "" ((x2 + x1) / 2) y2
+                , pre "C " (x1 + 100) y1
+                , pre "" (x2 - 100) y2
                 , pre "" x2 y2
                 ]
     in
@@ -134,6 +142,9 @@ viewNode ctx =
 
         left =
             text14 []
+
+        middle =
+            text14 [ Svg.Attributes.textAnchor "middle" ]
 
         right =
             text14 [ Svg.Attributes.textAnchor "end" ]
@@ -151,10 +162,10 @@ viewNode ctx =
             List.map (viewPipe ctx) neighbors
 
         outPorts =
-            List.map left ctx.node.label.outputs
+            List.map left ctx.node.label.type'.outputs
 
         inPorts =
-            List.map right ctx.node.label.inputs
+            List.map right ctx.node.label.type'.inputs
 
         flowDown i p =
             Svg.g [ Svg.Attributes.transform (translate 0 ((toFloat i) * portSpacing)) ] [ p ]
@@ -166,13 +177,13 @@ viewNode ctx =
             List.indexedMap flowDown inPorts
 
         textNode =
-            left ctx.node.label.name
+            middle ctx.node.label.name
 
         box =
             Svg.rect
                 [ Svg.Attributes.fill nodeColor
                 , Svg.Attributes.width (px procWidth)
-                , Svg.Attributes.height (px 50)
+                , Svg.Attributes.height (px (procHeight ctx.node.label))
                 , Svg.Attributes.rx (px 3)
                 , Svg.Attributes.ry (px 3)
                 , Svg.Attributes.style withDropShadow
@@ -185,7 +196,7 @@ viewNode ctx =
             ]
             [ Svg.g [] outPipes
             , box
-            , textNode
+            , Svg.g [ Svg.Attributes.transform (translate (procWidth / 2) 0) ] [ textNode ]
             , Svg.g [ Svg.Attributes.transform (translate 0 0) ] translatedInPorts
             , Svg.g [ Svg.Attributes.transform (translate procWidth 0) ] translatedOutPorts
             ]

@@ -35,27 +35,51 @@ labeledProcs =
 
 
 procs =
-    [ { name = "something.MightFail"
-      , pos = ( 50, 100 )
-      , inputs = [ "INPUT" ]
-      , outputs = [ "SUCCESS", "ERROR" ]
+    [ { name = "if"
+      , pos = ( 100, 100 )
+      , type' = typ1
       }
     , { name = "log.Error"
       , pos = ( 300, 200 )
-      , inputs = [ "INPUT" ]
-      , outputs = [ "OUTPUT" ]
+      , type' = typ2
       }
     , { name = "fmt.Println"
       , pos = ( 400, 100 )
-      , inputs = [ "INPUT" ]
-      , outputs = [ "OUTPUT" ]
+      , type' = typ3
       }
     , { name = "base.Aggregator"
       , pos = ( 600, 200 )
-      , inputs = [ "ACCUM", "NEXT" ]
-      , outputs = [ "ACCUM" ]
+      , type' = typ4
       }
     ]
+
+
+typ1 =
+    { name = "typ1"
+    , inputs = [ "INPUT" ]
+    , outputs = [ "SUCCESS", "ERROR" ]
+    }
+
+
+typ2 =
+    { name = "typ2"
+    , inputs = [ "INPUT" ]
+    , outputs = [ "OUTPUT" ]
+    }
+
+
+typ3 =
+    { name = "typ3"
+    , inputs = [ "INPUT" ]
+    , outputs = [ "OUTPUT" ]
+    }
+
+
+typ4 =
+    { name = "typ4"
+    , inputs = [ "ACCUM", "NEXT" ]
+    , outputs = [ "ACCUM" ]
+    }
 
 
 defaultProc =
@@ -73,6 +97,12 @@ type alias PortID =
 type alias Process =
     { name : String
     , pos : ( Float, Float )
+    , type' : ProcessType
+    }
+
+
+type alias ProcessType =
+    { name : String
     , inputs : List Port
     , outputs : List Port
     }
