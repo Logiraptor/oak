@@ -1,0 +1,31 @@
+
+# data values are immutable
+data Money < Decimal
+end
+
+data Account
+	balance : Money
+
+	def increaseBalance(amount : Money)
+		Amount(balance: self.balance + amount)
+	end
+
+	def decreaseBalance(amount : Money)
+		Amount(balance: self.balance - amount)
+	end
+end
+
+
+# contexts define roles and send data messages between them
+context Transfer
+	# roles can hold data values and mutate the references.
+	# methods can take data as arguments, but not other roles.
+	role SourceAccount : Account
+		def transfer
+		end
+	end
+
+	role DestinationAccount : Account
+	end
+
+end
