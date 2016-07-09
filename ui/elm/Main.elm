@@ -1,7 +1,5 @@
 module Main exposing (..)
 
--- where
-
 import Html.App
 import Task
 import Html

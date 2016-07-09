@@ -1,7 +1,5 @@
 module DataTypes exposing (..)
 
---where
-
 import Graph
 import Mouse
 

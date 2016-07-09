@@ -1,7 +1,5 @@
 module Layout exposing (..)
 
--- where
-
 import Collage
 import DataTypes exposing (..)
 import Element

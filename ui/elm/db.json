@@ -1,0 +1,12 @@
+{
+  "components": [
+    {
+      "id": 1,
+      "name": "Authentication"
+    },
+    {
+      "id": 3,
+      "name": "Persistence"
+    }
+  ]
+}
