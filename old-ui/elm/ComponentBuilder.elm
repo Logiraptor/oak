@@ -146,14 +146,6 @@ type alias Record r =
     { r | id : Int }
 
 
-type Msg
-    = Error Http.Error
-    | ListComponents (List Component)
-    | UpdateComponent Component
-    | DeleteComponent Int
-    | Finished
-
-
 type alias Cmd =
     Platform.Cmd.Cmd Msg
 
