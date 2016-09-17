@@ -1,0 +1,125 @@
+var _user$project$DataTypes$defaultProc = {
+	name: '',
+	pos: {ctor: '_Tuple2', _0: 0, _1: 0},
+	inputs: _elm_lang$core$Native_List.fromArray(
+		[]),
+	outputs: _elm_lang$core$Native_List.fromArray(
+		[])
+};
+var _user$project$DataTypes$typ4 = {
+	name: 'typ4',
+	inputs: _elm_lang$core$Native_List.fromArray(
+		['ACCUM', 'NEXT']),
+	outputs: _elm_lang$core$Native_List.fromArray(
+		['ACCUM'])
+};
+var _user$project$DataTypes$typ3 = {
+	name: 'typ3',
+	inputs: _elm_lang$core$Native_List.fromArray(
+		['INPUT']),
+	outputs: _elm_lang$core$Native_List.fromArray(
+		['OUTPUT'])
+};
+var _user$project$DataTypes$typ2 = {
+	name: 'typ2',
+	inputs: _elm_lang$core$Native_List.fromArray(
+		['INPUT']),
+	outputs: _elm_lang$core$Native_List.fromArray(
+		['OUTPUT'])
+};
+var _user$project$DataTypes$typ1 = {
+	name: 'typ1',
+	inputs: _elm_lang$core$Native_List.fromArray(
+		['INPUT']),
+	outputs: _elm_lang$core$Native_List.fromArray(
+		['SUCCESS', 'ERROR'])
+};
+var _user$project$DataTypes$procs = _elm_lang$core$Native_List.fromArray(
+	[
+		{
+		name: 'if',
+		pos: {ctor: '_Tuple2', _0: 100, _1: 100},
+		type$: _user$project$DataTypes$typ1
+	},
+		{
+		name: 'log.Error',
+		pos: {ctor: '_Tuple2', _0: 300, _1: 200},
+		type$: _user$project$DataTypes$typ2
+	},
+		{
+		name: 'fmt.Println',
+		pos: {ctor: '_Tuple2', _0: 400, _1: 100},
+		type$: _user$project$DataTypes$typ3
+	},
+		{
+		name: 'base.Aggregator',
+		pos: {ctor: '_Tuple2', _0: 600, _1: 200},
+		type$: _user$project$DataTypes$typ4
+	}
+	]);
+var _user$project$DataTypes$labeledProcs = A2(_elm_lang$core$List$indexedMap, _user$project$Graph$Node, _user$project$DataTypes$procs);
+var _user$project$DataTypes$Process = F3(
+	function (a, b, c) {
+		return {name: a, pos: b, type$: c};
+	});
+var _user$project$DataTypes$ProcessType = F3(
+	function (a, b, c) {
+		return {name: a, inputs: b, outputs: c};
+	});
+var _user$project$DataTypes$Pipe = F2(
+	function (a, b) {
+		return {output: a, input: b};
+	});
+var _user$project$DataTypes$pipes = _elm_lang$core$Native_List.fromArray(
+	[
+		{
+		ctor: '_Tuple3',
+		_0: 0,
+		_1: 1,
+		_2: A2(_user$project$DataTypes$Pipe, 1, 0)
+	},
+		{
+		ctor: '_Tuple3',
+		_0: 0,
+		_1: 2,
+		_2: A2(_user$project$DataTypes$Pipe, 0, 0)
+	},
+		{
+		ctor: '_Tuple3',
+		_0: 1,
+		_1: 3,
+		_2: A2(_user$project$DataTypes$Pipe, 0, 0)
+	},
+		{
+		ctor: '_Tuple3',
+		_0: 2,
+		_1: 3,
+		_2: A2(_user$project$DataTypes$Pipe, 0, 1)
+	}
+	]);
+var _user$project$DataTypes$labeledPipes = A2(
+	_elm_lang$core$List$map,
+	function (_p0) {
+		var _p1 = _p0;
+		return A3(_user$project$Graph$Edge, _p1._0, _p1._1, _p1._2);
+	},
+	_user$project$DataTypes$pipes);
+var _user$project$DataTypes$state0 = {
+	graph: A2(_user$project$Graph$fromNodesAndEdges, _user$project$DataTypes$labeledProcs, _user$project$DataTypes$labeledPipes),
+	dim: {width: 0, height: 0},
+	selected: _elm_lang$core$Maybe$Nothing
+};
+var _user$project$DataTypes$Model = F3(
+	function (a, b, c) {
+		return {graph: a, dim: b, selected: c};
+	});
+var _user$project$DataTypes$Drag = function (a) {
+	return {ctor: 'Drag', _0: a};
+};
+var _user$project$DataTypes$Unclick = {ctor: 'Unclick'};
+var _user$project$DataTypes$Click = function (a) {
+	return {ctor: 'Click', _0: a};
+};
+var _user$project$DataTypes$Resize = function (a) {
+	return {ctor: 'Resize', _0: a};
+};

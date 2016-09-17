@@ -1,0 +1,193 @@
+var _user$project$Graph$gToStruct = function (g) {
+	var _p0 = g;
+	return _p0._0;
+};
+var _user$project$Graph$nodes = function (g) {
+	return _user$project$Graph$gToStruct(g).nodes;
+};
+var _user$project$Graph$nodeByID = F2(
+	function (graph, id) {
+		var available = _user$project$Graph$nodes(graph);
+		var filtered = A2(
+			_elm_lang$core$List$filter,
+			function (_p1) {
+				return A2(
+					F2(
+						function (x, y) {
+							return _elm_lang$core$Native_Utils.eq(x, y);
+						}),
+					id,
+					function (_) {
+						return _.id;
+					}(_p1));
+			},
+			available);
+		return _elm_lang$core$List$head(filtered);
+	});
+var _user$project$Graph$unsafeGetNode = F2(
+	function (g, id) {
+		var result = A2(_user$project$Graph$nodeByID, g, id);
+		var _p2 = result;
+		if (_p2.ctor === 'Nothing') {
+			return _elm_lang$core$Native_Utils.crashCase(
+				'Graph',
+				{
+					start: {line: 160, column: 9},
+					end: {line: 165, column: 18}
+				},
+				_p2)('Unreachable code: Unknown graph node');
+		} else {
+			return _p2._0;
+		}
+	});
+var _user$project$Graph$edges = function (g) {
+	return _user$project$Graph$gToStruct(g).edges;
+};
+var _user$project$Graph$buildContext = F2(
+	function (g, n) {
+		var keepExisting = function (_p4) {
+			var _p5 = _p4;
+			var _p6 = _p5._1;
+			if (_p6.ctor === 'Nothing') {
+				return _elm_lang$core$Maybe$Nothing;
+			} else {
+				return _elm_lang$core$Maybe$Just(
+					{ctor: '_Tuple2', _0: _p5._0, _1: _p6._0});
+			}
+		};
+		var incomingEdges = A2(
+			_elm_lang$core$List$filter,
+			function (e) {
+				return _elm_lang$core$Native_Utils.eq(e.to, n.id);
+			},
+			_user$project$Graph$edges(g));
+		var ancestors = A2(
+			_elm_lang$core$List$map,
+			function (e) {
+				return {
+					ctor: '_Tuple2',
+					_0: e,
+					_1: A2(_user$project$Graph$nodeByID, g, e.from)
+				};
+			},
+			incomingEdges);
+		var outgoingEdges = A2(
+			_elm_lang$core$List$filter,
+			function (e) {
+				return _elm_lang$core$Native_Utils.eq(e.from, n.id);
+			},
+			_user$project$Graph$edges(g));
+		var neighbors = A2(
+			_elm_lang$core$List$map,
+			function (e) {
+				return {
+					ctor: '_Tuple2',
+					_0: e,
+					_1: A2(_user$project$Graph$nodeByID, g, e.to)
+				};
+			},
+			outgoingEdges);
+		return {
+			node: n,
+			neighbors: A2(_elm_lang$core$List$filterMap, keepExisting, neighbors),
+			ancestors: A2(_elm_lang$core$List$filterMap, keepExisting, ancestors)
+		};
+	});
+var _user$project$Graph$mapNodes = F2(
+	function (f, g) {
+		return A2(
+			_elm_lang$core$List$map,
+			function (_p7) {
+				return f(
+					A2(_user$project$Graph$buildContext, g, _p7));
+			},
+			_user$project$Graph$nodes(g));
+	});
+var _user$project$Graph$outgoing = F2(
+	function (graph, id) {
+		var outgoingEdges = A2(
+			_elm_lang$core$List$filter,
+			function (e) {
+				return _elm_lang$core$Native_Utils.eq(e.from, id);
+			},
+			_user$project$Graph$edges(graph));
+		var outgoingNodes = A2(
+			_elm_lang$core$List$map,
+			function (e) {
+				return {
+					ctor: '_Tuple2',
+					_0: e.label,
+					_1: A2(_user$project$Graph$unsafeGetNode, graph, e.to).label
+				};
+			},
+			outgoingEdges);
+		return outgoingNodes;
+	});
+var _user$project$Graph$incoming = F2(
+	function (graph, id) {
+		var incomingEdges = A2(
+			_elm_lang$core$List$filter,
+			function (e) {
+				return _elm_lang$core$Native_Utils.eq(e.to, id);
+			},
+			_user$project$Graph$edges(graph));
+		var incomingNodes = A2(
+			_elm_lang$core$List$map,
+			function (e) {
+				return {
+					ctor: '_Tuple2',
+					_0: e.label,
+					_1: A2(_user$project$Graph$unsafeGetNode, graph, e.from).label
+				};
+			},
+			incomingEdges);
+		return incomingNodes;
+	});
+var _user$project$Graph$Node = F2(
+	function (a, b) {
+		return {id: a, label: b};
+	});
+var _user$project$Graph$Edge = F3(
+	function (a, b, c) {
+		return {from: a, to: b, label: c};
+	});
+var _user$project$Graph$GraphInner = F2(
+	function (a, b) {
+		return {nodes: a, edges: b};
+	});
+var _user$project$Graph$NodeContext = F3(
+	function (a, b, c) {
+		return {node: a, neighbors: b, ancestors: c};
+	});
+var _user$project$Graph$GraphI = function (a) {
+	return {ctor: 'GraphI', _0: a};
+};
+var _user$project$Graph$insertNode = F2(
+	function (graph, node) {
+		var struct = _user$project$Graph$gToStruct(graph);
+		var otherNodes = A2(
+			_elm_lang$core$List$filter,
+			function (_p8) {
+				return A2(
+					F2(
+						function (x, y) {
+							return !_elm_lang$core$Native_Utils.eq(x, y);
+						}),
+					node.id,
+					function (_) {
+						return _.id;
+					}(_p8));
+			},
+			_user$project$Graph$nodes(graph));
+		return _user$project$Graph$GraphI(
+			_elm_lang$core$Native_Utils.update(
+				struct,
+				{
+					nodes: A2(_elm_lang$core$List_ops['::'], node, otherNodes)
+				}));
+	});
+var _user$project$Graph$fromNodesAndEdges = F2(
+	function (nodes, edges) {
+		return _user$project$Graph$GraphI(
+			{nodes: nodes, edges: edges});
+	});

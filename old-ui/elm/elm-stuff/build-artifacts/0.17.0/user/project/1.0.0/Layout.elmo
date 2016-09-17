@@ -1,0 +1,418 @@
+var _user$project$Layout$dropShadowFilter = F3(
+	function (blur, dx, dy) {
+		return A2(
+			_elm_lang$svg$Svg$filter,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$svg$Svg_Attributes$id('dropshadow'),
+					_elm_lang$svg$Svg_Attributes$height('130%')
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					A2(
+					_elm_lang$svg$Svg$feGaussianBlur,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$svg$Svg_Attributes$in$('SourceAlpha'),
+							_elm_lang$svg$Svg_Attributes$stdDeviation(
+							_elm_lang$core$Basics$toString(blur))
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[])),
+					A2(
+					_elm_lang$svg$Svg$feOffset,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$svg$Svg_Attributes$dx(
+							_elm_lang$core$Basics$toString(dx)),
+							_elm_lang$svg$Svg_Attributes$dy(
+							_elm_lang$core$Basics$toString(dy)),
+							_elm_lang$svg$Svg_Attributes$result('offsetblur')
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[])),
+					A2(
+					_elm_lang$svg$Svg$feMerge,
+					_elm_lang$core$Native_List.fromArray(
+						[]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							A2(
+							_elm_lang$svg$Svg$feMergeNode,
+							_elm_lang$core$Native_List.fromArray(
+								[]),
+							_elm_lang$core$Native_List.fromArray(
+								[])),
+							A2(
+							_elm_lang$svg$Svg$feMergeNode,
+							_elm_lang$core$Native_List.fromArray(
+								[
+									_elm_lang$svg$Svg_Attributes$in$('SourceGraphic')
+								]),
+							_elm_lang$core$Native_List.fromArray(
+								[]))
+						]))
+				]));
+	});
+var _user$project$Layout$withDropShadow = 'filter:url(#dropshadow)';
+var _user$project$Layout$arrowHead = A2(
+	_elm_lang$svg$Svg$defs,
+	_elm_lang$core$Native_List.fromArray(
+		[]),
+	_elm_lang$core$Native_List.fromArray(
+		[
+			A2(
+			_elm_lang$svg$Svg$marker,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$svg$Svg_Attributes$id('arrow-head'),
+					_elm_lang$svg$Svg_Attributes$orient('auto'),
+					_elm_lang$svg$Svg_Attributes$markerWidth('2'),
+					_elm_lang$svg$Svg_Attributes$markerHeight('4'),
+					_elm_lang$svg$Svg_Attributes$refX('0.1'),
+					_elm_lang$svg$Svg_Attributes$refY('2')
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					A2(
+					_elm_lang$svg$Svg$path,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$svg$Svg_Attributes$d('M0,0 V4 L2,2 Z'),
+							_elm_lang$svg$Svg_Attributes$fill('#000')
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[]))
+				]))
+		]));
+var _user$project$Layout$defs = _elm_lang$core$Native_List.fromArray(
+	[
+		A3(_user$project$Layout$dropShadowFilter, 3, 1, 1),
+		_user$project$Layout$arrowHead
+	]);
+var _user$project$Layout$nodeColor = '#fff';
+var _user$project$Layout$px = function (n) {
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		_elm_lang$core$Basics$toString(n),
+		'px');
+};
+var _user$project$Layout$text = F3(
+	function (size, attrs, content) {
+		return A2(
+			_elm_lang$svg$Svg$text$,
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$svg$Svg_Attributes$y(
+						_user$project$Layout$px(size)),
+						_elm_lang$svg$Svg_Attributes$fontSize(
+						_user$project$Layout$px(size))
+					]),
+				attrs),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$svg$Svg$text(content)
+				]));
+	});
+var _user$project$Layout$translate = F2(
+	function (x, y) {
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			'translate(',
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				_elm_lang$core$Basics$toString(x),
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					' ',
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						_elm_lang$core$Basics$toString(y),
+						')'))));
+	});
+var _user$project$Layout$line = F2(
+	function (from, to) {
+		var _p0 = to;
+		var x2 = _p0._0;
+		var y2 = _p0._1;
+		var _p1 = from;
+		var x1 = _p1._0;
+		var y1 = _p1._1;
+		var pre = F3(
+			function (p, x, y) {
+				return A2(
+					_elm_lang$core$Basics_ops['++'],
+					p,
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						_elm_lang$core$Basics$toString(x),
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							' ',
+							_elm_lang$core$Basics$toString(y))));
+			});
+		var d = A2(
+			_elm_lang$core$String$join,
+			', ',
+			_elm_lang$core$Native_List.fromArray(
+				[
+					A3(pre, 'M ', x1, y1),
+					A3(pre, 'C ', x1 + 100, y1),
+					A3(pre, '', x2 - 100, y2),
+					A3(pre, '', x2, y2)
+				]));
+		return function (_p2) {
+			return _elm_lang$svg$Svg$path(
+				A2(
+					F2(
+						function (x, y) {
+							return A2(_elm_lang$core$List_ops['::'], x, y);
+						}),
+					_elm_lang$svg$Svg_Attributes$d(d),
+					_p2));
+		};
+	});
+var _user$project$Layout$searchbar = A2(
+	_elm_lang$html$Html$input,
+	_elm_lang$core$Native_List.fromArray(
+		[
+			_elm_lang$html$Html_Attributes$type$('text'),
+			_elm_lang$html$Html_Attributes$class('search')
+		]),
+	_elm_lang$core$Native_List.fromArray(
+		[]));
+var _user$project$Layout$sidebar = A2(
+	_elm_lang$html$Html$div,
+	_elm_lang$core$Native_List.fromArray(
+		[
+			_elm_lang$html$Html_Attributes$class('sidebar')
+		]),
+	_elm_lang$core$Native_List.fromArray(
+		[_user$project$Layout$searchbar]));
+var _user$project$Layout$navbar = A2(
+	_elm_lang$html$Html$div,
+	_elm_lang$core$Native_List.fromArray(
+		[
+			_elm_lang$html$Html_Attributes$class('navbar')
+		]),
+	_elm_lang$core$Native_List.fromArray(
+		[
+			A2(
+			_elm_lang$html$Html$h1,
+			_elm_lang$core$Native_List.fromArray(
+				[]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html$text('Oak Editor')
+				]))
+		]));
+var _user$project$Layout$portSpacing = 25;
+var _user$project$Layout$portY = function (index) {
+	return _user$project$Layout$portSpacing + (_elm_lang$core$Basics$toFloat(index) * _user$project$Layout$portSpacing);
+};
+var _user$project$Layout$procHeight = function (proc) {
+	return _user$project$Layout$portSpacing + (_elm_lang$core$Basics$toFloat(
+		A2(
+			_elm_lang$core$Basics$max,
+			_elm_lang$core$List$length(proc.type$.inputs),
+			_elm_lang$core$List$length(proc.type$.outputs))) * _user$project$Layout$portSpacing);
+};
+var _user$project$Layout$procWidth = 150;
+var _user$project$Layout$viewPipe = F2(
+	function (ctx, _p3) {
+		var _p4 = _p3;
+		var _p7 = _p4._0;
+		var _p5 = _p4._1.label.pos;
+		var x2 = _p5._0;
+		var y2 = _p5._1;
+		var _p6 = ctx.node.label.pos;
+		var x = _p6._0;
+		var y = _p6._1;
+		return A4(
+			_user$project$Layout$line,
+			{
+				ctor: '_Tuple2',
+				_0: _user$project$Layout$procWidth,
+				_1: _user$project$Layout$portY(_p7.label.output)
+			},
+			{
+				ctor: '_Tuple2',
+				_0: x2 - x,
+				_1: (y2 - y) + _user$project$Layout$portY(_p7.label.input)
+			},
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$svg$Svg_Attributes$stroke('#000'),
+					_elm_lang$svg$Svg_Attributes$fill('none'),
+					_elm_lang$svg$Svg_Attributes$markerEnd('url(#arrow-head)')
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[]));
+	});
+var _user$project$Layout$viewNode = function (ctx) {
+	var box = A2(
+		_elm_lang$svg$Svg$rect,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$svg$Svg_Attributes$fill(_user$project$Layout$nodeColor),
+				_elm_lang$svg$Svg_Attributes$width(
+				_user$project$Layout$px(_user$project$Layout$procWidth)),
+				_elm_lang$svg$Svg_Attributes$height(
+				_user$project$Layout$px(
+					_user$project$Layout$procHeight(ctx.node.label))),
+				_elm_lang$svg$Svg_Attributes$rx(
+				_user$project$Layout$px(3)),
+				_elm_lang$svg$Svg_Attributes$ry(
+				_user$project$Layout$px(3)),
+				_elm_lang$svg$Svg_Attributes$style(_user$project$Layout$withDropShadow)
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[]));
+	var flowDown = F2(
+		function (i, p) {
+			return A2(
+				_elm_lang$svg$Svg$g,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$svg$Svg_Attributes$transform(
+						A2(
+							_user$project$Layout$translate,
+							0,
+							_elm_lang$core$Basics$toFloat(i) * _user$project$Layout$portSpacing))
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[p]));
+		});
+	var ancestors = ctx.ancestors;
+	var neighbors = ctx.neighbors;
+	var outPipes = A2(
+		_elm_lang$core$List$map,
+		_user$project$Layout$viewPipe(ctx),
+		neighbors);
+	var _p8 = ctx.node.label.pos;
+	var x = _p8._0;
+	var y = _p8._1;
+	var text14 = _user$project$Layout$text(14);
+	var left = text14(
+		_elm_lang$core$Native_List.fromArray(
+			[]));
+	var outPorts = A2(_elm_lang$core$List$map, left, ctx.node.label.type$.outputs);
+	var translatedOutPorts = A2(_elm_lang$core$List$indexedMap, flowDown, outPorts);
+	var middle = text14(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$svg$Svg_Attributes$textAnchor('middle')
+			]));
+	var textNode = middle(ctx.node.label.name);
+	var right = text14(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$svg$Svg_Attributes$textAnchor('end')
+			]));
+	var inPorts = A2(_elm_lang$core$List$map, right, ctx.node.label.type$.inputs);
+	var translatedInPorts = A2(_elm_lang$core$List$indexedMap, flowDown, inPorts);
+	return A2(
+		_elm_lang$svg$Svg$g,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$svg$Svg_Attributes$transform(
+				A2(_user$project$Layout$translate, x, y)),
+				_elm_lang$html$Html_Events$onMouseDown(
+				_user$project$DataTypes$Click(ctx.node.id))
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$svg$Svg$g,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				outPipes),
+				box,
+				A2(
+				_elm_lang$svg$Svg$g,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$svg$Svg_Attributes$transform(
+						A2(_user$project$Layout$translate, _user$project$Layout$procWidth / 2, 0))
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[textNode])),
+				A2(
+				_elm_lang$svg$Svg$g,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$svg$Svg_Attributes$transform(
+						A2(_user$project$Layout$translate, 0, 0))
+					]),
+				translatedInPorts),
+				A2(
+				_elm_lang$svg$Svg$g,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$svg$Svg_Attributes$transform(
+						A2(_user$project$Layout$translate, _user$project$Layout$procWidth, 0))
+					]),
+				translatedOutPorts)
+			]));
+};
+var _user$project$Layout$viewNodeAndPipe = function (ctx) {
+	var box = _user$project$Layout$viewNode(ctx);
+	return box;
+};
+var _user$project$Layout$editor = function (model) {
+	var elems = A2(_user$project$Graph$mapNodes, _user$project$Layout$viewNodeAndPipe, model.graph);
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('editor')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$svg$Svg$svg,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$svg$Svg_Attributes$width('100%'),
+						_elm_lang$svg$Svg_Attributes$height('100%')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$svg$Svg$g,
+						_elm_lang$core$Native_List.fromArray(
+							[]),
+						elems),
+						A2(
+						_elm_lang$svg$Svg$g,
+						_elm_lang$core$Native_List.fromArray(
+							[]),
+						_user$project$Layout$defs)
+					]))
+			]));
+};
+var _user$project$Layout$layout = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Events$onMouseUp(_user$project$DataTypes$Unclick)
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_user$project$Layout$navbar,
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('content')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_user$project$Layout$sidebar,
+						_user$project$Layout$editor(model)
+					]))
+			]));
+};

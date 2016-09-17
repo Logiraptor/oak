@@ -1,0 +1,354 @@
+var _user$project$ComponentBuilder$decodeID = A2(
+	_elm_lang$core$Json_Decode$object1,
+	function (id) {
+		return {id: id};
+	},
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'id', _elm_lang$core$Json_Decode$int));
+var _user$project$ComponentBuilder$encodeComponent = function (c) {
+	return _elm_lang$core$Json_Encode$object(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				{
+				ctor: '_Tuple2',
+				_0: 'id',
+				_1: _elm_lang$core$Json_Encode$int(c.id)
+			},
+				{
+				ctor: '_Tuple2',
+				_0: 'name',
+				_1: _elm_lang$core$Json_Encode$string(c.name)
+			}
+			]));
+};
+var _user$project$ComponentBuilder$delete = F2(
+	function (decoder, url) {
+		var req = {
+			verb: 'DELETE',
+			body: _evancz$elm_http$Http$empty,
+			url: url,
+			headers: _elm_lang$core$Native_List.fromArray(
+				[])
+		};
+		return A2(
+			_evancz$elm_http$Http$fromJson,
+			decoder,
+			A2(_evancz$elm_http$Http$send, _evancz$elm_http$Http$defaultSettings, req));
+	});
+var _user$project$ComponentBuilder$put = F3(
+	function (decoder, url, body) {
+		var req = {
+			verb: 'PUT',
+			body: body,
+			url: url,
+			headers: _elm_lang$core$Native_List.fromArray(
+				[
+					{ctor: '_Tuple2', _0: 'Content-Type', _1: 'application/json'}
+				])
+		};
+		return A2(
+			_evancz$elm_http$Http$fromJson,
+			decoder,
+			A2(_evancz$elm_http$Http$send, _evancz$elm_http$Http$defaultSettings, req));
+	});
+var _user$project$ComponentBuilder$state0 = {
+	components: _elm_lang$core$Native_List.fromArray(
+		[]),
+	err: _elm_lang$core$Maybe$Nothing
+};
+var _user$project$ComponentBuilder$newID = function (list) {
+	var _p0 = _elm_lang$core$List$maximum(
+		A2(
+			_elm_lang$core$List$map,
+			function (_) {
+				return _.id;
+			},
+			list));
+	if (_p0.ctor === 'Nothing') {
+		return 0;
+	} else {
+		return _p0._0 + 1;
+	}
+};
+var _user$project$ComponentBuilder$Model = F2(
+	function (a, b) {
+		return {components: a, err: b};
+	});
+var _user$project$ComponentBuilder$Component = F2(
+	function (a, b) {
+		return {name: a, id: b};
+	});
+var _user$project$ComponentBuilder$decodeComponent = A3(
+	_elm_lang$core$Json_Decode$object2,
+	_user$project$ComponentBuilder$Component,
+	_elm_lang$core$Json_Decode$oneOf(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(_elm_lang$core$Json_Decode_ops[':='], 'name', _elm_lang$core$Json_Decode$string),
+				_elm_lang$core$Json_Decode$succeed('')
+			])),
+	A2(_elm_lang$core$Json_Decode_ops[':='], 'id', _elm_lang$core$Json_Decode$int));
+var _user$project$ComponentBuilder$decodeComponents = _elm_lang$core$Json_Decode$list(_user$project$ComponentBuilder$decodeComponent);
+var _user$project$ComponentBuilder$Finished = {ctor: 'Finished'};
+var _user$project$ComponentBuilder$finish = function (_p1) {
+	return _user$project$ComponentBuilder$Finished;
+};
+var _user$project$ComponentBuilder$DeleteComponent = function (a) {
+	return {ctor: 'DeleteComponent', _0: a};
+};
+var _user$project$ComponentBuilder$UpdateComponent = function (a) {
+	return {ctor: 'UpdateComponent', _0: a};
+};
+var _user$project$ComponentBuilder$viewComponent = function (component) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$input,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$value(component.name),
+						_elm_lang$html$Html_Events$onInput(
+						function (name) {
+							return _user$project$ComponentBuilder$UpdateComponent(
+								_elm_lang$core$Native_Utils.update(
+									component,
+									{name: name}));
+						})
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[])),
+				A2(
+				_elm_lang$html$Html$button,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Events$onClick(
+						_user$project$ComponentBuilder$DeleteComponent(component.id))
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Delete')
+					]))
+			]));
+};
+var _user$project$ComponentBuilder$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				A2(_elm_lang$core$List$map, _user$project$ComponentBuilder$viewComponent, model.components)),
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$html$Html$button,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Events$onClick(
+								_user$project$ComponentBuilder$UpdateComponent(
+									{
+										id: _user$project$ComponentBuilder$newID(model.components),
+										name: ''
+									}))
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text('Add Component')
+							]))
+					])),
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text(
+						_elm_lang$core$Basics$toString(model.err))
+					]))
+			]));
+};
+var _user$project$ComponentBuilder$ListComponents = function (a) {
+	return {ctor: 'ListComponents', _0: a};
+};
+var _user$project$ComponentBuilder$Error = function (a) {
+	return {ctor: 'Error', _0: a};
+};
+var _user$project$ComponentBuilder$initialCmds = function () {
+	var t = A2(_evancz$elm_http$Http$get, _user$project$ComponentBuilder$decodeComponents, 'http://localhost:3000/components');
+	return A3(_elm_lang$core$Task$perform, _user$project$ComponentBuilder$Error, _user$project$ComponentBuilder$ListComponents, t);
+}();
+var _user$project$ComponentBuilder$init = {ctor: '_Tuple2', _0: _user$project$ComponentBuilder$state0, _1: _user$project$ComponentBuilder$initialCmds};
+var _user$project$ComponentBuilder$createComponent = function (component) {
+	return A3(
+		_elm_lang$core$Task$perform,
+		_user$project$ComponentBuilder$Error,
+		_user$project$ComponentBuilder$finish,
+		A3(
+			_evancz$elm_http$Http$post,
+			_user$project$ComponentBuilder$decodeID,
+			'http://localhost:3000/components/',
+			_evancz$elm_http$Http$string(
+				A2(
+					_elm_lang$core$Json_Encode$encode,
+					0,
+					_user$project$ComponentBuilder$encodeComponent(component)))));
+};
+var _user$project$ComponentBuilder$updateComponent = function (component) {
+	return A3(
+		_elm_lang$core$Task$perform,
+		_user$project$ComponentBuilder$Error,
+		_user$project$ComponentBuilder$finish,
+		A3(
+			_user$project$ComponentBuilder$put,
+			_user$project$ComponentBuilder$decodeID,
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'http://localhost:3000/components/',
+				_elm_lang$core$Basics$toString(component.id)),
+			_evancz$elm_http$Http$string(
+				A2(
+					_elm_lang$core$Json_Encode$encode,
+					0,
+					_user$project$ComponentBuilder$encodeComponent(component)))));
+};
+var _user$project$ComponentBuilder$replaceComponent = F2(
+	function (components, component) {
+		var _p2 = components;
+		if (_p2.ctor === '[]') {
+			return {
+				ctor: '_Tuple2',
+				_0: A2(_elm_lang$core$List_ops['::'], component, components),
+				_1: _user$project$ComponentBuilder$createComponent(component)
+			};
+		} else {
+			var _p5 = _p2._1;
+			var _p4 = _p2._0;
+			if (_elm_lang$core$Native_Utils.eq(_p4.id, component.id)) {
+				return {
+					ctor: '_Tuple2',
+					_0: A2(_elm_lang$core$List_ops['::'], component, _p5),
+					_1: _user$project$ComponentBuilder$updateComponent(component)
+				};
+			} else {
+				var _p3 = A2(_user$project$ComponentBuilder$replaceComponent, _p5, component);
+				var components = _p3._0;
+				var cmd = _p3._1;
+				return {
+					ctor: '_Tuple2',
+					_0: A2(_elm_lang$core$List_ops['::'], _p4, components),
+					_1: cmd
+				};
+			}
+		}
+	});
+var _user$project$ComponentBuilder$deleteComponent = function (id) {
+	return A3(
+		_elm_lang$core$Task$perform,
+		_user$project$ComponentBuilder$Error,
+		_user$project$ComponentBuilder$finish,
+		A2(
+			_user$project$ComponentBuilder$delete,
+			_elm_lang$core$Json_Decode$succeed(id),
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				'http://localhost:3000/components/',
+				_elm_lang$core$Basics$toString(id))));
+};
+var _user$project$ComponentBuilder$removeComponent = F2(
+	function (components, id) {
+		var _p6 = components;
+		if (_p6.ctor === '[]') {
+			return {ctor: '_Tuple2', _0: components, _1: _elm_lang$core$Platform_Cmd$none};
+		} else {
+			var _p9 = _p6._1;
+			var _p8 = _p6._0;
+			if (_elm_lang$core$Native_Utils.eq(_p8.id, id)) {
+				return {
+					ctor: '_Tuple2',
+					_0: _p9,
+					_1: _user$project$ComponentBuilder$deleteComponent(id)
+				};
+			} else {
+				var _p7 = A2(_user$project$ComponentBuilder$removeComponent, _p9, id);
+				var components = _p7._0;
+				var cmd = _p7._1;
+				return {
+					ctor: '_Tuple2',
+					_0: A2(_elm_lang$core$List_ops['::'], _p8, components),
+					_1: cmd
+				};
+			}
+		}
+	});
+var _user$project$ComponentBuilder$update = F2(
+	function (msg, model) {
+		var noFx = function (m) {
+			return {ctor: '_Tuple2', _0: m, _1: _elm_lang$core$Platform_Cmd$none};
+		};
+		var _p10 = msg;
+		switch (_p10.ctor) {
+			case 'Error':
+				return noFx(
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{
+							err: _elm_lang$core$Maybe$Just(_p10._0)
+						}));
+			case 'ListComponents':
+				return noFx(
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{components: _p10._0}));
+			case 'UpdateComponent':
+				var _p11 = A2(_user$project$ComponentBuilder$replaceComponent, model.components, _p10._0);
+				var components = _p11._0;
+				var cmd = _p11._1;
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{components: components}),
+					_1: cmd
+				};
+			case 'DeleteComponent':
+				var _p12 = A2(_user$project$ComponentBuilder$removeComponent, model.components, _p10._0);
+				var components = _p12._0;
+				var cmd = _p12._1;
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{components: components}),
+					_1: cmd
+				};
+			default:
+				return noFx(model);
+		}
+	});
+var _user$project$ComponentBuilder$main = {
+	main: _elm_lang$html$Html_App$program(
+		{
+			init: _user$project$ComponentBuilder$init,
+			view: _user$project$ComponentBuilder$view,
+			update: _user$project$ComponentBuilder$update,
+			subscriptions: function (_p13) {
+				return _elm_lang$core$Platform_Sub$none;
+			}
+		})
+};
+var _user$project$ComponentBuilder$listComponents = A3(
+	_elm_lang$core$Task$perform,
+	_user$project$ComponentBuilder$Error,
+	_user$project$ComponentBuilder$ListComponents,
+	A2(_evancz$elm_http$Http$get, _user$project$ComponentBuilder$decodeComponents, 'http://localhost:3000/components'));

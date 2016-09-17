@@ -1,0 +1,15 @@
+ ✔ Test Coverage @done (16-05-01 11:32)
+   ✔ parser @done (16-05-01 11:32)
+   ✔ loader @done (16-05-01 11:32)
+   ✔ codegen @done (16-05-01 11:32)
+ ☐ Named pipes
+   ☐ Splitting Behavior
+   ☐ Edge Uniqueness
+ ☐ Asynchronous Processes
+   ☐ Opt-out or in?
+ ☐ Auto scaling?
+   ☐ Monitoring?
+ ☐ FLOW file format (mapbe just FBP)
+ ☐ Better error handling
+   ☐ Syntactically malformed FLOW
+   ☐ Semantically malformed FLOW
