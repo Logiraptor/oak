@@ -16,8 +16,7 @@ func (s *SQLStorage) PrepareType(t values.Type) error {
 	var columns []string
 
 	rt := t.(values.RecordType)
-	for i := 0; i < rt.NumFields(); i++ {
-		var field = rt.Field(i)
+	for _, field := range rt.Fields {
 		sqlType, err := typeToSql(field.Type)
 		if err != nil {
 			return err
@@ -32,16 +31,18 @@ func (s *SQLStorage) PrepareType(t values.Type) error {
 }
 
 func typeToSql(t values.Type) (string, error) {
-	switch t.GetKind() {
-	case values.Bool:
-		return "bit", nil
-	case values.String:
-		return "text", nil
-	case values.Int:
-		return "int", nil
-	default:
-		return "", fmt.Errorf("Cannot prepare sql table with a column of type: %s", t)
+	switch v := t.(type) {
+	case values.PrimitiveType:
+		switch v {
+		case values.BoolType:
+			return "bit", nil
+		case values.StringType:
+			return "text", nil
+		case values.IntType:
+			return "int", nil
+		}
 	}
+	return "", fmt.Errorf("Cannot prepare sql table with a column of type: %s", values.TypeToString(t))
 }
 
 func (s *SQLStorage) Find(typ values.Type, matcher values.Value) ([]values.Value, error) {
@@ -52,8 +53,7 @@ func (s *SQLStorage) Find(typ values.Type, matcher values.Value) ([]values.Value
 		var whereParts []string
 
 		matchRecord := matcher.(values.RecordValue)
-		for i := 0; i < matchRecord.NumFields(); i++ {
-			var field = matchRecord.Field(i)
+		for _, field := range matchRecord.Fields {
 			sqlVal, err := valToSql(field.Value)
 			if err != nil {
 				return nil, err
@@ -84,10 +84,11 @@ func (s *SQLStorage) Find(typ values.Type, matcher values.Value) ([]values.Value
 	for rows.Next() {
 		rows.Scan(scanPtrs...)
 
-		var rec values.MapRecord
+		var rec values.RecordValue
+		rec.Name = typ.Name()
 
 		for i := 0; i < len(columns); i++ {
-			rec = append(rec, values.Field{
+			rec.Fields = append(rec.Fields, values.Field{
 				Name:  columns[i],
 				Value: values.NewValue(scanPtrs[i]),
 			})
@@ -106,15 +107,19 @@ func (s *SQLStorage) Find(typ values.Type, matcher values.Value) ([]values.Value
 func createScanPtrs(typ values.Type) ([]interface{}, error) {
 	var output []interface{}
 	rt := typ.(values.RecordType)
-	for i := 0; i < rt.NumFields(); i++ {
-		var field = rt.Field(i)
-		switch field.Type.GetKind() {
-		case values.String:
-			output = append(output, new(string))
-		case values.Int:
-			output = append(output, new(int))
-		case values.Bool:
-			output = append(output, new(bool))
+	for _, field := range rt.Fields {
+		switch p := field.Type.(type) {
+		case values.PrimitiveType:
+			switch p {
+			case values.StringType:
+				output = append(output, new(string))
+			case values.IntType:
+				output = append(output, new(int))
+			case values.BoolType:
+				output = append(output, new(bool))
+			default:
+				return nil, fmt.Errorf("Cannot scan value of type: %s", values.TypeToString(typ))
+			}
 		default:
 			return nil, fmt.Errorf("Cannot scan value of type: %s", values.TypeToString(typ))
 		}
@@ -128,8 +133,7 @@ func (s *SQLStorage) Put(value values.Value) error {
 	var data []string
 
 	var recordValue = value.(values.RecordValue)
-	for i := 0; i < recordValue.NumFields(); i++ {
-		var field = recordValue.Field(i)
+	for _, field := range recordValue.Fields {
 		val, err := valToSql(field.Value)
 		if err != nil {
 			return err
@@ -150,26 +154,23 @@ func columnNames(typ values.Type) []string {
 	var columns []string
 
 	var recordValue = typ.(values.RecordType)
-	for i := 0; i < recordValue.NumFields(); i++ {
-		var field = recordValue.Field(i)
+	for _, field := range recordValue.Fields {
 		columns = append(columns, field.Name)
 	}
 	return columns
 }
 
 func valToSql(val values.Value) (string, error) {
-	switch val.GetType().GetKind() {
-	case values.Int:
-		return fmt.Sprint(val.(values.IntValue).IntValue()), nil
-	case values.Bool:
-		var bVal = val.(values.BoolValue).BoolValue()
-		if bVal {
+	switch v := val.(type) {
+	case values.IntValue:
+		return fmt.Sprint(v), nil
+	case values.BoolValue:
+		if v {
 			return "1", nil
 		}
 		return "0", nil
-	case values.String:
-		sVal := val.(values.StringValue).StringValue()
-		sanitized := strings.Replace(sVal, "'", "\\'", -1)
+	case values.StringValue:
+		sanitized := strings.Replace(string(v), "'", "\\'", -1)
 		return fmt.Sprintf("'%s'", sanitized), nil
 	default:
 		return "", fmt.Errorf("cannot convert value to sql: %s", values.ValueToString(val))

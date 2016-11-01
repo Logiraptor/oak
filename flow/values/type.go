@@ -7,24 +7,55 @@ import (
 
 type Type interface {
 	Name() string
-	GetKind() Kind
 }
 
-type RecordType interface {
-	Type
-	NumFields() int
-	Field(int) FieldType
+type RecordType struct {
+	RecordName string
+	Fields     []FieldType
+}
+
+func (r RecordType) Name() string {
+	return r.RecordName
 }
 
 type FieldType struct {
-	Type
 	Name string
+	Type
 }
 
-type ListType interface {
-	Type
-	ElementType() Type
+type ListType struct {
+	ElementType Type
 }
+
+func (l ListType) Name() string {
+	return fmt.Sprintf("[%s]", l.ElementType.Name())
+}
+
+type PrimitiveType Kind
+
+func (p PrimitiveType) GetKind() Kind {
+	return Kind(p)
+}
+
+func (p PrimitiveType) Name() string {
+	switch p {
+	case IntType:
+		return "int"
+	case StringType:
+		return "string"
+	case BoolType:
+		return "bool"
+	}
+	panic(fmt.Sprintf("Cannot name primitiveType: %d", p))
+}
+
+var _ = Type(PrimitiveType(0))
+
+const (
+	IntType    PrimitiveType = PrimitiveType(Int)
+	StringType PrimitiveType = PrimitiveType(String)
+	BoolType   PrimitiveType = PrimitiveType(Bool)
+)
 
 type Kind int
 
@@ -37,21 +68,16 @@ const (
 )
 
 func EqualTypes(a, b Type) bool {
-	if a.GetKind() != b.GetKind() {
-		return false
-	}
-	switch a.GetKind() {
-	case String, Int, Bool:
-		return true
-	case Record:
-		arec := a.(RecordType)
+	switch v := a.(type) {
+	case PrimitiveType:
+		return v == b.(PrimitiveType)
+	case RecordType:
 		brec := b.(RecordType)
-		if arec.NumFields() != brec.NumFields() {
+		if len(v.Fields) != len(brec.Fields) {
 			return false
 		}
-		for i := 0; i < arec.NumFields(); i++ {
-			aField := arec.Field(i)
-			bField := brec.Field(i)
+		for i, aField := range v.Fields {
+			bField := brec.Fields[i]
 			if aField.Name != bField.Name {
 				return false
 			}
@@ -60,24 +86,20 @@ func EqualTypes(a, b Type) bool {
 			}
 		}
 		return true
-	case List:
-		return EqualTypes(a.(ListType).ElementType(), b.(ListType).ElementType())
+	case ListType:
+		return EqualTypes(v.ElementType, b.(ListType).ElementType)
 	}
 	return false
 }
 
 func TypeToString(typ Type) string {
-	switch typ.GetKind() {
-	case Record:
-		return recordTypeToString(typ.(RecordType))
-	case List:
-		return fmt.Sprintf("[%s]", TypeToString(typ.(ListType).ElementType()))
-	case Int:
-		return "int"
-	case String:
-		return "string"
-	case Bool:
-		return "bool"
+	switch v := typ.(type) {
+	case PrimitiveType:
+		return v.Name()
+	case RecordType:
+		return recordTypeToString(v)
+	case ListType:
+		return fmt.Sprintf("[%s]", TypeToString(v.ElementType))
 	default:
 		panic(fmt.Sprintf("Cannot convert type to string: %s", typ))
 	}
@@ -85,8 +107,7 @@ func TypeToString(typ Type) string {
 
 func recordTypeToString(typ RecordType) string {
 	var parts []string
-	for i := 0; i < typ.NumFields(); i++ {
-		var field = typ.Field(i)
+	for _, field := range typ.Fields {
 		parts = append(parts, fmt.Sprintf("%s: %s", field.Name, TypeToString(field.Type)))
 	}
 	return fmt.Sprintf("record{%s}", strings.Join(parts, ", "))

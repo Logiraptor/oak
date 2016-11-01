@@ -1,38 +1,34 @@
 package values
 
-import "reflect"
+import (
+	"fmt"
+	"reflect"
+)
 
-type reflectValue struct {
-	value reflect.Value
-}
+func NewValue(i interface{}) Value {
+	v := reflect.ValueOf(i)
 
-func (r *reflectValue) GetType() Type {
-	return &reflectType{
-		typ: r.value.Type(),
+	for v.Kind() == reflect.Ptr {
+		v = v.Elem()
 	}
-}
 
-func (r *reflectValue) NumFields() int {
-	return r.value.NumField()
-}
-
-func (r *reflectValue) Field(i int) Field {
-	return Field{
-		Name: r.value.Type().Field(i).Name,
-		Value: &reflectValue{
-			r.value.Field(i),
-		},
+	switch v.Kind() {
+	case reflect.Int:
+		return IntValue(v.Int())
+	case reflect.String:
+		return StringValue(v.String())
+	case reflect.Struct:
+		var output RecordValue
+		output.Name = v.Type().Name()
+		for i := 0; i < v.NumField(); i++ {
+			field := v.Field(i)
+			output.Fields = append(output.Fields, Field{
+				Name:  v.Type().Field(i).Name,
+				Value: NewValue(field.Interface()),
+			})
+		}
+		return output
+	default:
+		panic(fmt.Sprintf("Cannot create a Value from %s", v.Type().String()))
 	}
-}
-
-func (r *reflectValue) StringValue() string {
-	return r.value.String()
-}
-
-func (r *reflectValue) IntValue() int {
-	return int(r.value.Int())
-}
-
-func (r *reflectValue) BoolValue() bool {
-	return bool(r.value.Bool())
 }
