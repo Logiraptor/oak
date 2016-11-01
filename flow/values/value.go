@@ -22,7 +22,10 @@ type RecordValue struct {
 	Name   string
 	Fields []Field
 }
-type ListValue []Value
+type ListValue struct {
+	Elements []Value
+	Type     Type
+}
 
 type Field struct {
 	Value
@@ -57,7 +60,9 @@ func (r RecordValue) GetType() Type {
 }
 
 func (l ListValue) GetType() Type {
-	return ListType{}
+	return ListType{
+		ElementType: l.Type,
+	}
 }
 
 func EqualValues(a, b Value) bool {
@@ -87,12 +92,12 @@ func EqualValues(a, b Value) bool {
 	case ListValue:
 		alist := a.(ListValue)
 		blist := b.(ListValue)
-		if len(alist) != len(blist) {
+		if len(alist.Elements) != len(blist.Elements) {
 			return false
 		}
 
-		for i, aElem := range alist {
-			var bElem = blist[i]
+		for i, aElem := range alist.Elements {
+			var bElem = blist.Elements[i]
 			if !EqualValues(aElem, bElem) {
 				return false
 			}
@@ -125,7 +130,7 @@ func recordValueToString(v RecordValue) string {
 
 func listValueToString(v ListValue) string {
 	var parts = []string{}
-	for _, elem := range v {
+	for _, elem := range v.Elements {
 		parts = append(parts, ValueToString(elem))
 	}
 	return fmt.Sprintf("[%s]", strings.Join(parts, ", "))

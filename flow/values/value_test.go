@@ -20,31 +20,30 @@ func TestNewValue(t *testing.T) {
 
 	typ := v.GetType()
 
-	assert.Equal(t, Record, typ.GetKind())
-	assert.Implements(t, (*RecordType)(nil), typ)
+	assert.IsType(t, RecordType{}, typ)
 
 	rt := typ.(RecordType)
 
-	assert.Equal(t, 2, rt.NumFields())
+	assert.Equal(t, 2, len(rt.Fields))
 
-	assert.Equal(t, String, rt.Field(0).GetKind())
-	assert.Equal(t, "Name", rt.Field(0).Name)
-	assert.Equal(t, Int, rt.Field(1).GetKind())
-	assert.Equal(t, "Age", rt.Field(1).Name)
+	assert.Equal(t, StringType, rt.Fields[0].Type)
+	assert.Equal(t, "Name", rt.Fields[0].Name)
+	assert.Equal(t, IntType, rt.Fields[1].Type)
+	assert.Equal(t, "Age", rt.Fields[1].Name)
 
-	assert.Implements(t, (*RecordValue)(nil), v)
+	assert.IsType(t, RecordValue{}, v)
 
 	rv := v.(RecordValue)
 
-	assert.Equal(t, 2, rv.NumFields())
-	assert.Equal(t, "Name", rv.Field(0).Name)
-	assert.Equal(t, String, rv.Field(0).Value.GetType().GetKind())
-	assert.Equal(t, "Age", rv.Field(1).Name)
-	assert.Equal(t, Int, rv.Field(1).Value.GetType().GetKind())
+	assert.Equal(t, 2, len(rv.Fields))
+	assert.Equal(t, "Name", rv.Fields[0].Name)
+	assert.Equal(t, StringType, rv.Fields[0].Value.GetType())
+	assert.Equal(t, "Age", rv.Fields[1].Name)
+	assert.Equal(t, IntType, rv.Fields[1].Value.GetType())
 
-	nameValue := rv.Field(0).Value.(StringValue)
-	ageValue := rv.Field(1).Value.(IntValue)
+	nameValue := rv.Fields[0].Value.(StringValue)
+	ageValue := rv.Fields[1].Value.(IntValue)
 
-	assert.Equal(t, "Foo", nameValue.StringValue())
-	assert.Equal(t, 23, ageValue.IntValue())
+	assert.Equal(t, "Foo", string(nameValue))
+	assert.Equal(t, 23, int(ageValue))
 }
