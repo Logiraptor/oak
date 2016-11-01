@@ -2,8 +2,6 @@ package sql
 
 import (
 	"database/sql"
-	"fmt"
-	"io"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -33,17 +31,6 @@ func NewPostgresDB() (DB, error) {
 		"-e", "PGDATA="+tempDir,
 		"postgres")
 
-	stderr, err := startCmd.StderrPipe()
-	if err != nil {
-		return DB{}, err
-	}
-	stdout, err := startCmd.StdoutPipe()
-	if err != nil {
-		return DB{}, err
-	}
-	go io.Copy(os.Stdout, stderr)
-	go io.Copy(os.Stdout, stdout)
-
 	err = startCmd.Start()
 	if err != nil {
 		return DB{}, err
@@ -60,7 +47,6 @@ func NewPostgresDB() (DB, error) {
 		if err == nil {
 			break
 		}
-		fmt.Println(err.Error())
 		time.Sleep(time.Millisecond * 100)
 	}
 
