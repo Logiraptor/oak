@@ -32,7 +32,7 @@ func main() {
 	cond := core.Cond()
 	constant := core.Constant(values.StringValue("Hello, World!"))
 	constant2 := core.Constant(values.StringValue("Hello, World!"))
-	repeater := core.Repeater(time.Second * 5)
+	repeater := core.Repeater(time.Second * 1)
 	logger := core.Logger()
 	var p = pipeline.Pipeline{
 		Components: []pipeline.Component{

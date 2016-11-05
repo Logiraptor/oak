@@ -77,7 +77,6 @@ func Cond() pipeline.Component {
 				Consequence, Alternative string
 			})
 			values.FillNative(val, input)
-
 			if input.Condition {
 				emitter.Emit(output, values.StringValue(input.Consequence))
 			} else {

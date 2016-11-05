@@ -6,6 +6,14 @@ import (
 	"github.com/Logiraptor/oak/flow/values"
 )
 
+const DEBUG = false
+
+func debugPrint(args ...interface{}) {
+	if DEBUG {
+		fmt.Println(args...)
+	}
+}
+
 func (p *Pipeline) Run() {
 
 	type Update struct {
@@ -34,10 +42,10 @@ func (p *Pipeline) Run() {
 
 		go func(componentIndex int, component Component) {
 			var currentState values.RecordValue
-			currentState.Name = fmt.Sprintf("input$%d", componentIndex)
-			for portIndex := range component.InputPorts {
+			currentState.Name = fmt.Sprintf("ComponentInputType$%d", componentIndex)
+			for _, port := range component.InputPorts {
 				currentState.Fields = append(currentState.Fields, values.Field{
-					Name:  fmt.Sprintf("input$%d$%d", componentIndex, portIndex),
+					Name:  port.Name.Name,
 					Value: nil,
 				})
 			}
@@ -50,11 +58,11 @@ func (p *Pipeline) Run() {
 				}))
 				return
 			}
-			fmt.Println("Listening for inputs to component", componentIndex)
+			debugPrint("Listening for inputs to component", componentIndex)
 			for {
 				select {
 				case input := <-handle.Inputs:
-					fmt.Println("Component", componentIndex, "received input: ", values.ValueToString(input.val))
+					debugPrint("Component", componentIndex, "received input: ", values.ValueToString(input.val))
 					for i := range currentState.Fields {
 						if currentState.Fields[i].Name == input.port.Name {
 							currentState.Fields[i].Value = input.val
@@ -64,6 +72,7 @@ func (p *Pipeline) Run() {
 					var isValid = true
 					for i := range currentState.Fields {
 						if currentState.Fields[i].Value == nil {
+							debugPrint("Missing field", currentState.Fields[i].Name)
 							isValid = false
 						}
 					}
@@ -83,16 +92,17 @@ func (p *Pipeline) Run() {
 
 	for i, ch := range handles {
 		go func(i int, ch Handle) {
+			debugPrint("Listening for outputs from component", i)
 			for {
 				select {
 				case v := <-ch.Outputs:
-					fmt.Println("Component", i, "emitted output: ", values.ValueToString(v.val))
+					debugPrint("Component", i, "emitted output: ", values.ValueToString(v.val))
 
 					for _, pipe := range p.Pipes {
-						fmt.Println(pipe, i, v.port)
+						debugPrint(pipe, i, v.port)
 
 						if pipe.Source == v.port {
-							fmt.Println("Forwarding output from ", i, "to", pipe.Dest)
+							debugPrint("Forwarding output from ", i, "to", pipe.Dest)
 
 							destCh := chans[pipe.Dest]
 							destCh.Inputs <- Update{
