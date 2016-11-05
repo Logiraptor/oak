@@ -9,7 +9,7 @@ import (
 )
 
 func Repeater(interval time.Duration) pipeline.Component {
-	output := pipeline.NewToken("Output")
+	output := values.NewToken("Output")
 	return pipeline.Component{
 		InputPorts: []pipeline.Port{},
 		OutputPorts: []pipeline.Port{
@@ -27,7 +27,7 @@ func Repeater(interval time.Duration) pipeline.Component {
 }
 
 func Constant(val values.Value) pipeline.Component {
-	output := pipeline.NewToken("Output")
+	output := values.NewToken("Output")
 	return pipeline.Component{
 		InputPorts: []pipeline.Port{},
 		OutputPorts: []pipeline.Port{
@@ -43,10 +43,10 @@ func Constant(val values.Value) pipeline.Component {
 }
 
 func Logger() pipeline.Component {
-	input := pipeline.NewToken("Input")
+	input := values.NewToken("Input")
 	return pipeline.Component{
 		InputPorts: []pipeline.Port{
-			{Name: input, Type: values.StringType},
+			{Name: input, Type: values.NewGenericType("a")},
 		},
 		OutputPorts: []pipeline.Port{},
 		Invoke: func(val values.RecordValue, _ pipeline.Emitter) {
@@ -57,30 +57,26 @@ func Logger() pipeline.Component {
 
 func Cond() pipeline.Component {
 	var (
-		cond   = pipeline.NewToken("Condition")
-		conseq = pipeline.NewToken("Consequence")
-		alt    = pipeline.NewToken("Alternative")
-		output = pipeline.NewToken("Output")
+		cond   = values.NewToken("Condition")
+		conseq = values.NewToken("Consequence")
+		alt    = values.NewToken("Alternative")
+		output = values.NewToken("Output")
+		tout   = values.NewGenericType("a")
 	)
 	return pipeline.Component{
 		InputPorts: []pipeline.Port{
 			{Name: cond, Type: values.BoolType},
-			{Name: conseq, Type: values.StringType},
-			{Name: alt, Type: values.StringType},
+			{Name: conseq, Type: tout},
+			{Name: alt, Type: tout},
 		},
 		OutputPorts: []pipeline.Port{
-			{Name: output, Type: values.StringType},
+			{Name: output, Type: tout},
 		},
 		Invoke: func(val values.RecordValue, emitter pipeline.Emitter) {
-			var input = new(struct {
-				Condition                bool
-				Consequence, Alternative string
-			})
-			values.FillNative(val, input)
-			if input.Condition {
-				emitter.Emit(output, values.StringValue(input.Consequence))
+			if val.FieldByToken(cond).(values.BoolValue) {
+				emitter.Emit(output, val.FieldByToken(conseq))
 			} else {
-				emitter.Emit(output, values.StringValue(input.Alternative))
+				emitter.Emit(output, val.FieldByToken(alt))
 			}
 		},
 	}

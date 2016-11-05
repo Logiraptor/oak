@@ -59,6 +59,15 @@ func (r RecordValue) GetType() Type {
 	return output
 }
 
+func (r RecordValue) FieldByToken(tok Token) Value {
+	for _, field := range r.Fields {
+		if field.Name == tok.Name {
+			return field.Value
+		}
+	}
+	panic(fmt.Sprintf("No such field %s on record type %s", tok.Name, r.Name))
+}
+
 func (l ListValue) GetType() Type {
 	return ListType{
 		ElementType: l.Type,

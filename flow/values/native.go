@@ -39,7 +39,6 @@ func reflectFillNative(val Value, outVal reflect.Value) {
 
 func ToNative(val Value) interface{} {
 	ptr := createNativePtr(val.GetType())
-	fmt.Printf("%T", ptr)
 	FillNative(val, ptr)
 	return ptr
 }

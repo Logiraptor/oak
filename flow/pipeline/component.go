@@ -5,11 +5,11 @@ import (
 )
 
 type Emitter interface {
-	Emit(Token, values.Value)
+	Emit(values.Token, values.Value)
 }
 
 type Port struct {
-	Name Token
+	Name values.Token
 	Type values.Type
 }
 
@@ -19,7 +19,7 @@ type Component struct {
 	Invoke      func(values.RecordValue, Emitter)
 }
 
-func (c Component) PortTokenByName(name string) Token {
+func (c Component) PortTokenByName(name string) values.Token {
 	for _, port := range c.InputPorts {
 		if port.Name.Name == name {
 			return port.Name

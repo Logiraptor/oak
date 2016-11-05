@@ -7,7 +7,7 @@ import (
 )
 
 type Pipe struct {
-	Source, Dest Token
+	Source, Dest values.Token
 }
 
 type Pipeline struct {
@@ -16,20 +16,20 @@ type Pipeline struct {
 }
 
 func (p *Pipeline) Verify() error {
-	var specifiedInputs = make(map[Token]struct{})
+	var specifiedInputs = make(map[values.Token]struct{})
+	var derivedGenericTypes = make(values.TypeEnv)
 
 	for _, pipe := range p.Pipes {
 		if sourcePort, ok := findPortByName(p.Components, pipe.Source); ok {
 			if destPort, ok := findPortByName(p.Components, pipe.Dest); ok {
-
 				specifiedInputs[destPort.Name] = struct{}{}
 
-				if !values.EqualTypes(sourcePort.Type, destPort.Type) {
-					return fmt.Errorf("Type error: port %s expects type %s, but port %s produces type %s",
-						sourcePort.Name, values.TypeToString(sourcePort.Type),
-						destPort.Name, values.TypeToString(destPort.Type))
+				_, unifyable := values.UnifyType(derivedGenericTypes, sourcePort.Type, destPort.Type)
+				if !unifyable {
+					return fmt.Errorf("Type error: port %s produces type %s, but port %s expects type %s",
+						sourcePort.Name.Name, values.TypeToString(sourcePort.Type),
+						destPort.Name.Name, values.TypeToString(destPort.Type))
 				}
-				continue
 			}
 		}
 	}
@@ -37,7 +37,7 @@ func (p *Pipeline) Verify() error {
 	for _, component := range p.Components {
 		for _, input := range component.InputPorts {
 			if _, ok := specifiedInputs[input.Name]; !ok {
-				return fmt.Errorf("Port %s has not had its input specified", input.Name)
+				return fmt.Errorf("Port %s has not had its input specified", input.Name.Name)
 			}
 		}
 	}
@@ -53,7 +53,7 @@ func findNewName(usedNames map[string]struct{}, orig string) string {
 	return orig
 }
 
-func findPortByName(components []Component, name Token) (Port, bool) {
+func findPortByName(components []Component, name values.Token) (Port, bool) {
 	for _, component := range components {
 		for _, port := range component.InputPorts {
 			if port.Name == name {

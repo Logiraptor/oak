@@ -5,8 +5,49 @@ import (
 	"strings"
 )
 
+type TypeEnv map[Token]Type
+
 type Type interface {
 	Name() string
+}
+
+func NewGenericType(name string) *GenericType {
+	return &GenericType{
+		token: NewToken(name),
+	}
+}
+
+func UnifyType(env TypeEnv, a, b Type) (Type, bool) {
+	if EqualTypes(a, b) {
+		return a, true
+	}
+
+	switch v := a.(type) {
+	case *GenericType:
+		if derived, ok := env[v.token]; ok {
+			return UnifyType(env, derived, b)
+		}
+		env[v.token] = b
+		return b, true
+	}
+	switch v := b.(type) {
+	case *GenericType:
+		if derived, ok := env[v.token]; ok {
+			return UnifyType(env, derived, a)
+		}
+		env[v.token] = a
+		return a, true
+	}
+
+	return nil, false
+}
+
+type GenericType struct {
+	token Token
+}
+
+func (g *GenericType) Name() string {
+	return fmt.Sprint(g.token)
 }
 
 type RecordType struct {
@@ -70,9 +111,16 @@ const (
 func EqualTypes(a, b Type) bool {
 	switch v := a.(type) {
 	case PrimitiveType:
-		return v == b.(PrimitiveType)
+		bprim, ok := b.(PrimitiveType)
+		if !ok {
+			return false
+		}
+		return v == bprim
 	case RecordType:
-		brec := b.(RecordType)
+		brec, ok := b.(RecordType)
+		if !ok {
+			return false
+		}
 		if len(v.Fields) != len(brec.Fields) {
 			return false
 		}
@@ -100,8 +148,10 @@ func TypeToString(typ Type) string {
 		return recordTypeToString(v)
 	case ListType:
 		return fmt.Sprintf("[%s]", TypeToString(v.ElementType))
+	case *GenericType:
+		return fmt.Sprintf("'%s", v.token.Name)
 	default:
-		panic(fmt.Sprintf("Cannot convert type to string: %s", typ))
+		panic(fmt.Sprintf("Cannot convert type to string: %T", typ))
 	}
 }
 

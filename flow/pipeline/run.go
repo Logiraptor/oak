@@ -18,7 +18,7 @@ func (p *Pipeline) Run() {
 
 	type Update struct {
 		val  values.Value
-		port Token
+		port values.Token
 	}
 
 	type Handle struct {
@@ -26,7 +26,7 @@ func (p *Pipeline) Run() {
 		Outputs chan Update
 	}
 
-	var chans = make(map[Token]Handle)
+	var chans = make(map[values.Token]Handle)
 	var handles []Handle
 
 	for componentIndex, component := range p.Components {
@@ -50,7 +50,7 @@ func (p *Pipeline) Run() {
 				})
 			}
 			if len(component.InputPorts) == 0 {
-				component.Invoke(currentState, FuncEmitter(func(name Token, value values.Value) {
+				component.Invoke(currentState, FuncEmitter(func(name values.Token, value values.Value) {
 					handle.Outputs <- Update{
 						port: name,
 						val:  value,
@@ -78,7 +78,7 @@ func (p *Pipeline) Run() {
 					}
 
 					if isValid {
-						component.Invoke(currentState, FuncEmitter(func(name Token, value values.Value) {
+						component.Invoke(currentState, FuncEmitter(func(name values.Token, value values.Value) {
 							handle.Outputs <- Update{
 								port: name,
 								val:  value,
@@ -120,8 +120,8 @@ func (p *Pipeline) Run() {
 
 }
 
-type FuncEmitter func(Token, values.Value)
+type FuncEmitter func(values.Token, values.Value)
 
-func (f FuncEmitter) Emit(name Token, value values.Value) {
+func (f FuncEmitter) Emit(name values.Token, value values.Value) {
 	f(name, value)
 }
