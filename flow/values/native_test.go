@@ -20,14 +20,6 @@ type Pet struct {
 	Breed string
 }
 
-type IncompletePerson struct {
-	Name   string
-	Age    int
-	Active bool
-	Tags   []string
-	Pets   []Value
-}
-
 func TestFillNative(t *testing.T) {
 	err := quick.Check(func(p Person) bool {
 

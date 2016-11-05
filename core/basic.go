@@ -4,6 +4,9 @@ import (
 	"log"
 	"time"
 
+	"bufio"
+	"os"
+
 	"github.com/Logiraptor/oak/flow/pipeline"
 	"github.com/Logiraptor/oak/flow/values"
 )
@@ -50,7 +53,7 @@ func Logger() pipeline.Component {
 		},
 		OutputPorts: []pipeline.Port{},
 		Invoke: func(val values.RecordValue, _ pipeline.Emitter) {
-			log.Println(val)
+			log.Println(values.ValueToString(val.FieldByToken(input)))
 		},
 	}
 }
@@ -77,6 +80,22 @@ func Cond() pipeline.Component {
 				emitter.Emit(output, val.FieldByToken(conseq))
 			} else {
 				emitter.Emit(output, val.FieldByToken(alt))
+			}
+		},
+	}
+}
+
+func StdinLines() pipeline.Component {
+	var output = values.NewToken("Output")
+	return pipeline.Component{
+		InputPorts: []pipeline.Port{},
+		OutputPorts: []pipeline.Port{
+			{Name: output, Type: values.StringType},
+		},
+		Invoke: func(val values.RecordValue, emitter pipeline.Emitter) {
+			scanner := bufio.NewScanner(os.Stdin)
+			for scanner.Scan() {
+				emitter.Emit(output, values.StringValue(scanner.Text()))
 			}
 		},
 	}

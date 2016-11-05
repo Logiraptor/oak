@@ -12,14 +12,6 @@ import (
 	"github.com/Logiraptor/oak/flow/values"
 )
 
-const (
-	cond = iota
-	constant
-	repeater
-	logger
-	constant2
-)
-
 /*
 
 Repeater(5s)        ->
