@@ -34,20 +34,18 @@ func TestPipeline_Verify(t *testing.T) {
 				Components: []Component{
 					0: Component{
 						InputPorts:  []Port{},
-						OutputPorts: []Port{{Name: "Output", Type: values.NewValue(Struct1{}).GetType()}},
+						OutputPorts: []Port{{Name: Token{"Output", 1}, Type: values.NewValue(Struct1{}).GetType()}},
 					},
 					1: Component{
-						InputPorts:  []Port{{Name: "Input", Type: values.NewValue(Struct1{}).GetType()}},
+						InputPorts:  []Port{{Name: Token{"Input", 2}, Type: values.NewValue(Struct1{}).GetType()}},
 						OutputPorts: []Port{},
 					},
 				},
 
 				Pipes: []Pipe{
 					{
-						SourcePort:      "Output",
-						DestPort:        "Input",
-						SourceComponent: 0,
-						DestComponent:   1,
+						Source: Token{"Output", 1},
+						Dest:   Token{"Input", 2},
 					},
 				},
 			},
@@ -61,20 +59,18 @@ func TestPipeline_Verify(t *testing.T) {
 				Components: []Component{
 					0: Component{
 						InputPorts:  []Port{},
-						OutputPorts: []Port{{Name: "Output", Type: values.NewValue(Struct1{}).GetType()}},
+						OutputPorts: []Port{{Name: Token{"Output", 1}, Type: values.NewValue(Struct1{}).GetType()}},
 					},
 					1: Component{
-						InputPorts:  []Port{{Name: "Input", Type: values.NewValue(Struct2{}).GetType()}},
+						InputPorts:  []Port{{Name: Token{"Input", 2}, Type: values.NewValue(Struct2{}).GetType()}},
 						OutputPorts: []Port{},
 					},
 				},
 
 				Pipes: []Pipe{
 					{
-						SourcePort:      "Output",
-						DestPort:        "Input",
-						SourceComponent: 0,
-						DestComponent:   1,
+						Source: Token{"Output", 1},
+						Dest:   Token{"Input", 2},
 					},
 				},
 			},
@@ -88,12 +84,12 @@ func TestPipeline_Verify(t *testing.T) {
 				Components: []Component{
 					0: Component{
 						InputPorts:  []Port{},
-						OutputPorts: []Port{{Name: "Output", Type: values.NewValue(Struct1{}).GetType()}},
+						OutputPorts: []Port{{Name: Token{"Output", 1}, Type: values.NewValue(Struct1{}).GetType()}},
 					},
 					1: Component{
 						InputPorts: []Port{
-							{Name: "Input1", Type: values.NewValue(Struct1{}).GetType()},
-							{Name: "Input2", Type: values.NewValue(Struct1{}).GetType()},
+							{Name: Token{"Input1", 1}, Type: values.NewValue(Struct1{}).GetType()},
+							{Name: Token{"Input2", 1}, Type: values.NewValue(Struct1{}).GetType()},
 						},
 						OutputPorts: []Port{},
 					},
@@ -101,45 +97,8 @@ func TestPipeline_Verify(t *testing.T) {
 
 				Pipes: []Pipe{
 					{
-						SourcePort:      "Output",
-						DestPort:        "Input1",
-						SourceComponent: 0,
-						DestComponent:   1,
-					},
-				},
-			},
-		},
-
-		{
-			name:    "Alpha conversion prevents aliasing",
-			wantErr: true,
-			fields: fields{
-
-				Components: []Component{
-					0: Component{
-						InputPorts:  []Port{},
-						OutputPorts: []Port{{Name: "Output", Type: values.NewValue(Struct1{}).GetType()}},
-					},
-					1: Component{
-						InputPorts: []Port{
-							{Name: "Input", Type: values.NewValue(Struct1{}).GetType()},
-						},
-						OutputPorts: []Port{},
-					},
-					2: Component{
-						InputPorts: []Port{
-							{Name: "Input", Type: values.NewValue(Struct1{}).GetType()},
-						},
-						OutputPorts: []Port{},
-					},
-				},
-
-				Pipes: []Pipe{
-					{
-						SourcePort:      "Output",
-						DestPort:        "Input",
-						SourceComponent: 0,
-						DestComponent:   1,
+						Source: Token{"Output", 1},
+						Dest:   Token{"Input1", 1},
 					},
 				},
 			},
