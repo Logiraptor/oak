@@ -3,6 +3,8 @@ package pipeline
 import (
 	"fmt"
 
+	"context"
+
 	"github.com/Logiraptor/oak/flow/values"
 )
 
@@ -14,9 +16,10 @@ func debugPrint(args ...interface{}) {
 	}
 }
 
-func (p *Pipeline) Run() {
+func (p *Pipeline) Run(ctx context.Context) {
 
 	type Update struct {
+		ctx  context.Context
 		val  values.Value
 		port values.Token
 	}
@@ -50,8 +53,9 @@ func (p *Pipeline) Run() {
 				})
 			}
 			if len(component.InputPorts) == 0 {
-				component.Invoke(currentState, FuncEmitter(func(name values.Token, value values.Value) {
+				component.Invoke(ctx, currentState, FuncEmitter(func(ctx context.Context, name values.Token, value values.Value) {
 					handle.Outputs <- Update{
+						ctx:  ctx,
 						port: name,
 						val:  value,
 					}
@@ -78,8 +82,9 @@ func (p *Pipeline) Run() {
 					}
 
 					if isValid {
-						component.Invoke(currentState, FuncEmitter(func(name values.Token, value values.Value) {
+						component.Invoke(input.ctx, currentState, FuncEmitter(func(context context.Context, name values.Token, value values.Value) {
 							handle.Outputs <- Update{
+								ctx:  context,
 								port: name,
 								val:  value,
 							}
@@ -106,6 +111,7 @@ func (p *Pipeline) Run() {
 
 							destCh := chans[pipe.Dest]
 							destCh.Inputs <- Update{
+								ctx:  v.ctx,
 								port: pipe.Dest,
 								val:  v.val,
 							}
@@ -120,8 +126,8 @@ func (p *Pipeline) Run() {
 
 }
 
-type FuncEmitter func(values.Token, values.Value)
+type FuncEmitter func(context.Context, values.Token, values.Value)
 
-func (f FuncEmitter) Emit(name values.Token, value values.Value) {
-	f(name, value)
+func (f FuncEmitter) Emit(ctx context.Context, name values.Token, value values.Value) {
+	f(ctx, name, value)
 }

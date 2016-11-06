@@ -1,11 +1,13 @@
 package pipeline
 
 import (
+	"context"
+
 	"github.com/Logiraptor/oak/flow/values"
 )
 
 type Emitter interface {
-	Emit(values.Token, values.Value)
+	Emit(context.Context, values.Token, values.Value)
 }
 
 type Port struct {
@@ -16,7 +18,7 @@ type Port struct {
 type Component struct {
 	InputPorts  []Port
 	OutputPorts []Port
-	Invoke      func(values.RecordValue, Emitter)
+	Invoke      func(context.Context, values.RecordValue, Emitter)
 }
 
 func (c Component) PortTokenByName(name string) values.Token {

@@ -5,6 +5,8 @@ import (
 
 	"os"
 
+	"context"
+
 	"github.com/Logiraptor/oak/core"
 	"github.com/Logiraptor/oak/flow/pipeline"
 )
@@ -31,5 +33,5 @@ func main() {
 		os.Exit(1)
 	}
 
-	p.Run()
+	p.Run(context.Background())
 }

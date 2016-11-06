@@ -1,6 +1,7 @@
 package core
 
 import (
+	"context"
 	"log"
 	"time"
 
@@ -21,9 +22,9 @@ func Repeater(interval time.Duration) pipeline.Component {
 				Type: values.BoolType,
 			},
 		},
-		Invoke: func(_ values.RecordValue, emitter pipeline.Emitter) {
+		Invoke: func(ctx context.Context, _ values.RecordValue, emitter pipeline.Emitter) {
 			for range time.Tick(interval) {
-				emitter.Emit(output, values.BoolValue(true))
+				emitter.Emit(ctx, output, values.BoolValue(true))
 			}
 		},
 	}
@@ -39,8 +40,8 @@ func Constant(val values.Value) pipeline.Component {
 				Type: val.GetType(),
 			},
 		},
-		Invoke: func(_ values.RecordValue, emitter pipeline.Emitter) {
-			emitter.Emit(output, val)
+		Invoke: func(ctx context.Context, _ values.RecordValue, emitter pipeline.Emitter) {
+			emitter.Emit(ctx, output, val)
 		},
 	}
 }
@@ -52,7 +53,7 @@ func Logger() pipeline.Component {
 			{Name: input, Type: values.NewGenericType("a")},
 		},
 		OutputPorts: []pipeline.Port{},
-		Invoke: func(val values.RecordValue, _ pipeline.Emitter) {
+		Invoke: func(ctx context.Context, val values.RecordValue, _ pipeline.Emitter) {
 			log.Println(values.ValueToString(val.FieldByToken(input)))
 		},
 	}
@@ -75,11 +76,11 @@ func Cond() pipeline.Component {
 		OutputPorts: []pipeline.Port{
 			{Name: output, Type: tout},
 		},
-		Invoke: func(val values.RecordValue, emitter pipeline.Emitter) {
+		Invoke: func(ctx context.Context, val values.RecordValue, emitter pipeline.Emitter) {
 			if val.FieldByToken(cond).(values.BoolValue) {
-				emitter.Emit(output, val.FieldByToken(conseq))
+				emitter.Emit(ctx, output, val.FieldByToken(conseq))
 			} else {
-				emitter.Emit(output, val.FieldByToken(alt))
+				emitter.Emit(ctx, output, val.FieldByToken(alt))
 			}
 		},
 	}
@@ -92,10 +93,10 @@ func StdinLines() pipeline.Component {
 		OutputPorts: []pipeline.Port{
 			{Name: output, Type: values.StringType},
 		},
-		Invoke: func(val values.RecordValue, emitter pipeline.Emitter) {
+		Invoke: func(ctx context.Context, val values.RecordValue, emitter pipeline.Emitter) {
 			scanner := bufio.NewScanner(os.Stdin)
 			for scanner.Scan() {
-				emitter.Emit(output, values.StringValue(scanner.Text()))
+				emitter.Emit(ctx, output, values.StringValue(scanner.Text()))
 			}
 		},
 	}
