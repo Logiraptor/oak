@@ -1,3 +1,24 @@
 Generic Value System:
     ✔ Use type switches instead of the Kind system @done (11/1/2016, 12:58:04 PM)
     ✔ Add Value.toNative @done (11/1/2016, 7:44:51 PM)
+
+Components:
+    ☐ Request : _ -> RequestType
+    ✔ Respond : String -> Int -> _ @done (11/6/2016, 12:16:42 PM)
+    ☐ Field Accessor : [Name] -> {'Name :'a} -> 'a
+    ☐ = : 'a -> 'a -> Bool
+    ☐ Lazy : 'a -> 'b -> 'a
+
+Web Environment:
+    ✔ Simple static webpage (Hello, World) @done (11/6/2016, 12:16:44 PM)
+    ☐ Routing based on path
+    ☐ Static webpage from file
+    ☐ Fileserver based on path
+    ☐ Echo server for query params
+    ☐ Decode JSON body and echo back
+    ☐ Put Body
+    ☐ Query Previously put objects 
+
+Static Analysis:
+    ☐ context.Context dependencies
+    ☐ Write GO components natively with normal functions

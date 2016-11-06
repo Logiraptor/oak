@@ -65,6 +65,9 @@ func (p *Pipeline) Run(ctx context.Context) {
 			debugPrint("Listening for inputs to component", componentIndex)
 			for {
 				select {
+				case <-ctx.Done():
+					debugPrint("Shutting down input listener", componentIndex)
+					return
 				case input := <-handle.Inputs:
 					debugPrint("Component", componentIndex, "received input: ", values.ValueToString(input.val))
 					for i := range currentState.Fields {
@@ -100,6 +103,9 @@ func (p *Pipeline) Run(ctx context.Context) {
 			debugPrint("Listening for outputs from component", i)
 			for {
 				select {
+				case <-ctx.Done():
+					debugPrint("Shutting down output listener", i)
+					return
 				case v := <-ch.Outputs:
 					debugPrint("Component", i, "emitted output: ", values.ValueToString(v.val))
 
@@ -122,7 +128,7 @@ func (p *Pipeline) Run(ctx context.Context) {
 		}(i, ch)
 	}
 
-	select {}
+	<-ctx.Done()
 
 }
 
