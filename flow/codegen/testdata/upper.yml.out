@@ -1,3 +1,0 @@
-args:
- - hello
-stdout: "HELLO\n"
