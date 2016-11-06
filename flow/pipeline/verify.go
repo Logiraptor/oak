@@ -2,6 +2,7 @@ package pipeline
 
 import (
 	"fmt"
+	"io"
 
 	"github.com/Logiraptor/oak/flow/values"
 )
@@ -23,7 +24,7 @@ func (p *Pipeline) Verify() error {
 		if sourcePort, ok := findPortByName(p.Components, pipe.Source); ok {
 			if destPort, ok := findPortByName(p.Components, pipe.Dest); ok {
 				specifiedInputs[destPort.Name] = struct{}{}
-
+				fmt.Println(derivedGenericTypes, values.TypeToString(sourcePort.Type), values.TypeToString(destPort.Type))
 				_, unifyable := values.UnifyType(derivedGenericTypes, sourcePort.Type, destPort.Type)
 				if !unifyable {
 					return fmt.Errorf("Type error: port %s produces type %s, but port %s expects type %s",
@@ -43,6 +44,62 @@ func (p *Pipeline) Verify() error {
 	}
 
 	return nil
+}
+
+type errWriter struct {
+	err error
+	w   io.Writer
+}
+
+func (e *errWriter) Write(buf []byte) (int, error) {
+	if e.err != nil {
+		return 0, e.err
+	}
+	n, err := e.w.Write(buf)
+	e.err = err
+	return n, err
+}
+
+func (p *Pipeline) WriteToDot(w io.Writer) error {
+	we := &errWriter{w: w}
+	io.WriteString(we, "digraph {")
+	for _, pipe := range p.Pipes {
+		var sourceIndex int
+		var sourceType values.Type
+		var destIndex int
+		var destType values.Type
+		for i, component := range p.Components {
+			for _, port := range component.InputPorts {
+				if port.Name == pipe.Source {
+					sourceIndex = i
+					sourceType = port.Type
+				}
+				if port.Name == pipe.Dest {
+					destIndex = i
+					destType = port.Type
+				}
+			}
+			for _, port := range component.OutputPorts {
+				if port.Name == pipe.Source {
+					sourceIndex = i
+					sourceType = port.Type
+				}
+				if port.Name == pipe.Dest {
+					destIndex = i
+					destType = port.Type
+				}
+			}
+		}
+
+		_ = sourceType
+		_ = destType
+		fmt.Fprintf(we, "%q -> %q [label = %q];",
+			p.Components[sourceIndex].Name.Name,
+			p.Components[destIndex].Name.Name,
+			fmt.Sprintf("%s -> %s", values.TypeToString(sourceType), values.TypeToString(destType)))
+	}
+	io.WriteString(we, "}")
+	return we.err
 }
 
 func findNewName(usedNames map[string]struct{}, orig string) string {

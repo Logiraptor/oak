@@ -17,6 +17,7 @@ func HTTPResponder() pipeline.Component {
 	var status = values.NewToken("Status")
 
 	return pipeline.Component{
+		Name: values.NewToken("HTTPResponder"),
 		InputPorts: []pipeline.Port{
 			{Name: body, Type: values.StringType},
 			{Name: status, Type: values.IntType},

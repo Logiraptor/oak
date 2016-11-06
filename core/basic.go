@@ -8,6 +8,8 @@ import (
 	"bufio"
 	"os"
 
+	"fmt"
+
 	"github.com/Logiraptor/oak/flow/pipeline"
 	"github.com/Logiraptor/oak/flow/values"
 )
@@ -15,6 +17,7 @@ import (
 func Repeater(interval time.Duration) pipeline.Component {
 	output := values.NewToken("Output")
 	return pipeline.Component{
+		Name:       values.NewToken("Repeater"),
 		InputPorts: []pipeline.Port{},
 		OutputPorts: []pipeline.Port{
 			{
@@ -33,6 +36,7 @@ func Repeater(interval time.Duration) pipeline.Component {
 func Constant(val values.Value) pipeline.Component {
 	output := values.NewToken("Output")
 	return pipeline.Component{
+		Name:       values.NewToken(fmt.Sprintf("Constant %v\n", val)),
 		InputPorts: []pipeline.Port{},
 		OutputPorts: []pipeline.Port{
 			{
@@ -49,6 +53,7 @@ func Constant(val values.Value) pipeline.Component {
 func Logger() pipeline.Component {
 	input := values.NewToken("Input")
 	return pipeline.Component{
+		Name: values.NewToken("Logger"),
 		InputPorts: []pipeline.Port{
 			{Name: input, Type: values.NewGenericType("a")},
 		},
@@ -68,6 +73,7 @@ func Cond() pipeline.Component {
 		tout   = values.NewGenericType("a")
 	)
 	return pipeline.Component{
+		Name: values.NewToken("Cond"),
 		InputPorts: []pipeline.Port{
 			{Name: cond, Type: values.BoolType},
 			{Name: conseq, Type: tout},
@@ -89,6 +95,7 @@ func Cond() pipeline.Component {
 func StdinLines() pipeline.Component {
 	var output = values.NewToken("Output")
 	return pipeline.Component{
+		Name:       values.NewToken("StdinLines"),
 		InputPorts: []pipeline.Port{},
 		OutputPorts: []pipeline.Port{
 			{Name: output, Type: values.StringType},

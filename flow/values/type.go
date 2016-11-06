@@ -17,26 +17,50 @@ func NewGenericType(name string) *GenericType {
 	}
 }
 
-func UnifyType(env TypeEnv, a, b Type) (Type, bool) {
-	if EqualTypes(a, b) {
-		return a, true
+func UnifyType(env TypeEnv, def, use Type) (Type, bool) {
+	if EqualTypes(def, use) {
+		return def, true
 	}
 
-	switch v := a.(type) {
+	switch vuse := use.(type) {
 	case *GenericType:
-		if derived, ok := env[v.token]; ok {
-			return UnifyType(env, derived, b)
+		if derived, ok := env[vuse.token]; ok {
+			return UnifyType(env, def, derived)
 		}
-		env[v.token] = b
-		return b, true
-	}
-	switch v := b.(type) {
-	case *GenericType:
-		if derived, ok := env[v.token]; ok {
-			return UnifyType(env, derived, a)
+		env[vuse.token] = def
+		return def, true
+	case RecordType:
+		switch vdef := def.(type) {
+		case RecordType:
+			var result RecordType
+			result.RecordName = "UnifiedType"
+			fmt.Println("Unifying record types", TypeToString(vuse), TypeToString(vdef))
+		useloop:
+			for _, useField := range vuse.Fields {
+				for _, defField := range vdef.Fields {
+					if useField.Name == defField.Name {
+						fieldType, ok := UnifyType(env, defField.Type, useField.Type)
+						if !ok {
+							return nil, false
+						}
+						result.Fields = append(result.Fields, FieldType{
+							Name: useField.Name,
+							Type: fieldType,
+						})
+						continue useloop
+					}
+				}
+				fmt.Println("Missing field ", useField.Name)
+				return nil, false
+			}
+			return result, true
+		case *GenericType:
+			if derived, ok := env[vdef.token]; ok {
+				return UnifyType(env, derived, use)
+			}
+			env[vdef.token] = vuse
+			return vuse, true
 		}
-		env[v.token] = a
-		return a, true
 	}
 
 	return nil, false
@@ -151,7 +175,7 @@ func TypeToString(typ Type) string {
 	case *GenericType:
 		return fmt.Sprintf("'%s", v.token.Name)
 	default:
-		panic(fmt.Sprintf("Cannot convert type to string: %T", typ))
+		return fmt.Sprintf("<Cannot convert type to string: %T>", typ)
 	}
 }
 

@@ -28,4 +28,14 @@ func TestUnifyType_Generics(t *testing.T) {
 		_, ok := UnifyType(TypeEnv{b.token: IntType}, a, b)
 		assert.False(t, ok)
 	}
+	{
+		at := NewGenericType("a")
+		var a = RecordType{RecordName: "Record1", Fields: []FieldType{{Name: "Name", Type: StringType}}}
+		var b = RecordType{RecordName: "Record2", Fields: []FieldType{{Name: "Name", Type: at}}}
+		env := TypeEnv{}
+		out, ok := UnifyType(env, a, b)
+		assert.True(t, ok)
+		assert.True(t, EqualTypes(out, a))
+		assert.True(t, EqualTypes(env[at.token], StringType))
+	}
 }

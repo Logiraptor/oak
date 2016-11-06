@@ -16,6 +16,7 @@ type Port struct {
 }
 
 type Component struct {
+	Name        values.Token
 	InputPorts  []Port
 	OutputPorts []Port
 	Invoke      func(context.Context, values.RecordValue, Emitter)
