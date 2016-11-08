@@ -1,14 +1,26 @@
 /* Lexical Part */
 
 _letter : 'a' - 'z' | 'A' - 'Z';
+_digit : '0' - '9';
 
-id : _letter {_letter} ;
+_alphanumeric : _letter | _digit;
+
+id : _letter {_alphanumeric} ;
 
 !whitespace : ' ' | '\t' | '\n' | '\r' ;
 
+string_lit : '"' {.} '"' ;
+
+dot : '.';
+
+int_lit : _digit {_digit};
+
 /* Syntax Part */
 
-<< import "github.com/Logiraptor/oak/flow/language/ast" >>
+<< 
+import "github.com/Logiraptor/oak/flow/language/ast"
+import "github.com/Logiraptor/oak/flow/values"
+ >>
 
 Pipeline:
     empty <<ast.Pipeline{}, nil>>
@@ -16,7 +28,26 @@ Pipeline:
     | Connection ";" Pipeline <<ast.AddConnection($2, $0), nil>>;
 
 Component:
-    "component" id id "()" << ast.NewComponent($1, $2), nil >>;
+    "component" id id "(" PossiblyEmptyArgList ")" << ast.NewComponent($1, $2, $4), nil >>;
+
+PossiblyEmptyArgList:
+    empty <<[]values.Value{}, nil>>
+    | ArgList;
+
+ArgList :
+    Value <<[]values.Value{$0.(values.Value)}, nil>>
+    | Value "," ArgList <<append([]values.Value{$0.(values.Value)}, $2.([]values.Value)...), nil>>;
 
 Connection:
-    "connect" id "." id id "." id << ast.NewConnection($1, $3, $4, $6), nil >>;
+    "connect" id dot id "to" id dot id << ast.NewConnection($1, $3, $5, $7), nil >>;
+
+Value :
+    String
+    | Int
+    | Bool;
+
+String : string_lit <<ast.NewString($0), nil>>;
+Int : int_lit <<ast.NewInt($0)>>;
+
+Bool : "true" <<values.BoolValue(true), nil>>
+    | "false" <<values.BoolValue(false), nil>>;

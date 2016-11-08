@@ -2,4 +2,4 @@
 component lines StdinLines();
 component logger Logger();
 
-connect lines.Output logger.Input;
+connect lines.Output to logger.Input;

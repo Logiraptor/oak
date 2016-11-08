@@ -1,11 +1,14 @@
 package ast
 
 import "github.com/Logiraptor/oak/flow/language/token"
+import "github.com/Logiraptor/oak/flow/values"
+import "strconv"
 
 type Attrib interface{}
 
 type Component struct {
 	Name, Constructor string
+	Args              []values.Value
 }
 
 type Port struct {
@@ -22,10 +25,11 @@ type Pipeline struct {
 	Pipes      []Connection
 }
 
-func NewComponent(name, ctor Attrib) Component {
+func NewComponent(name, ctor, args Attrib) Component {
 	return Component{
 		Name:        string(name.(*token.Token).Lit),
 		Constructor: string(ctor.(*token.Token).Lit),
+		Args:        args.([]values.Value),
 	}
 }
 
@@ -56,4 +60,14 @@ func AddConnection(pipeline, pipe Attrib) Pipeline {
 		Components: p.Components,
 		Pipes:      append(p.Pipes, pipe.(Connection)),
 	}
+}
+
+func NewString(val Attrib) values.StringValue {
+	buf := val.(*token.Token).Lit
+	return values.StringValue(string(buf[1 : len(buf)-1]))
+}
+
+func NewInt(val Attrib) (values.IntValue, error) {
+	i, err := strconv.Atoi(string(val.(*token.Token).Lit))
+	return values.IntValue(i), err
 }

@@ -4,6 +4,7 @@
 package parser
 
 import "github.com/Logiraptor/oak/flow/language/ast"
+import "github.com/Logiraptor/oak/flow/values"
 
 type (
 	//TODO: change type and variable names to be consistent with other tables
@@ -62,23 +63,133 @@ var productionsTable = ProdTab {
 		},
 	},
 	ProdTabEntry{
-		String: `Component : "component" id id "()"	<< ast.NewComponent(X[1], X[2]), nil >>`,
+		String: `Component : "component" id id "(" PossiblyEmptyArgList ")"	<< ast.NewComponent(X[1], X[2], X[4]), nil >>`,
 		Id: "Component",
 		NTType: 2,
 		Index: 4,
-		NumSymbols: 4,
+		NumSymbols: 6,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
-			return ast.NewComponent(X[1], X[2]), nil
+			return ast.NewComponent(X[1], X[2], X[4]), nil
 		},
 	},
 	ProdTabEntry{
-		String: `Connection : "connect" id "." id id "." id	<< ast.NewConnection(X[1], X[3], X[4], X[6]), nil >>`,
-		Id: "Connection",
+		String: `PossiblyEmptyArgList : empty	<< []values.Value{}, nil >>`,
+		Id: "PossiblyEmptyArgList",
 		NTType: 3,
 		Index: 5,
-		NumSymbols: 7,
+		NumSymbols: 0,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
-			return ast.NewConnection(X[1], X[3], X[4], X[6]), nil
+			return []values.Value{}, nil
+		},
+	},
+	ProdTabEntry{
+		String: `PossiblyEmptyArgList : ArgList	<<  >>`,
+		Id: "PossiblyEmptyArgList",
+		NTType: 3,
+		Index: 6,
+		NumSymbols: 1,
+		ReduceFunc: func(X []Attrib) (Attrib, error) {
+			return X[0], nil
+		},
+	},
+	ProdTabEntry{
+		String: `ArgList : Value	<< []values.Value{X[0].(values.Value)}, nil >>`,
+		Id: "ArgList",
+		NTType: 4,
+		Index: 7,
+		NumSymbols: 1,
+		ReduceFunc: func(X []Attrib) (Attrib, error) {
+			return []values.Value{X[0].(values.Value)}, nil
+		},
+	},
+	ProdTabEntry{
+		String: `ArgList : Value "," ArgList	<< append([]values.Value{X[0].(values.Value)}, X[2].([]values.Value)...), nil >>`,
+		Id: "ArgList",
+		NTType: 4,
+		Index: 8,
+		NumSymbols: 3,
+		ReduceFunc: func(X []Attrib) (Attrib, error) {
+			return append([]values.Value{X[0].(values.Value)}, X[2].([]values.Value)...), nil
+		},
+	},
+	ProdTabEntry{
+		String: `Connection : "connect" id dot id "to" id dot id	<< ast.NewConnection(X[1], X[3], X[5], X[7]), nil >>`,
+		Id: "Connection",
+		NTType: 5,
+		Index: 9,
+		NumSymbols: 8,
+		ReduceFunc: func(X []Attrib) (Attrib, error) {
+			return ast.NewConnection(X[1], X[3], X[5], X[7]), nil
+		},
+	},
+	ProdTabEntry{
+		String: `Value : String	<<  >>`,
+		Id: "Value",
+		NTType: 6,
+		Index: 10,
+		NumSymbols: 1,
+		ReduceFunc: func(X []Attrib) (Attrib, error) {
+			return X[0], nil
+		},
+	},
+	ProdTabEntry{
+		String: `Value : Int	<<  >>`,
+		Id: "Value",
+		NTType: 6,
+		Index: 11,
+		NumSymbols: 1,
+		ReduceFunc: func(X []Attrib) (Attrib, error) {
+			return X[0], nil
+		},
+	},
+	ProdTabEntry{
+		String: `Value : Bool	<<  >>`,
+		Id: "Value",
+		NTType: 6,
+		Index: 12,
+		NumSymbols: 1,
+		ReduceFunc: func(X []Attrib) (Attrib, error) {
+			return X[0], nil
+		},
+	},
+	ProdTabEntry{
+		String: `String : string_lit	<< ast.NewString(X[0]), nil >>`,
+		Id: "String",
+		NTType: 7,
+		Index: 13,
+		NumSymbols: 1,
+		ReduceFunc: func(X []Attrib) (Attrib, error) {
+			return ast.NewString(X[0]), nil
+		},
+	},
+	ProdTabEntry{
+		String: `Int : int_lit	<< ast.NewInt(X[0]) >>`,
+		Id: "Int",
+		NTType: 8,
+		Index: 14,
+		NumSymbols: 1,
+		ReduceFunc: func(X []Attrib) (Attrib, error) {
+			return ast.NewInt(X[0])
+		},
+	},
+	ProdTabEntry{
+		String: `Bool : "true"	<< values.BoolValue(true), nil >>`,
+		Id: "Bool",
+		NTType: 9,
+		Index: 15,
+		NumSymbols: 1,
+		ReduceFunc: func(X []Attrib) (Attrib, error) {
+			return values.BoolValue(true), nil
+		},
+	},
+	ProdTabEntry{
+		String: `Bool : "false"	<< values.BoolValue(false), nil >>`,
+		Id: "Bool",
+		NTType: 9,
+		Index: 16,
+		NumSymbols: 1,
+		ReduceFunc: func(X []Attrib) (Attrib, error) {
+			return values.BoolValue(false), nil
 		},
 	},
 	

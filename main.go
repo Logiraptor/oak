@@ -30,6 +30,7 @@ func main() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+
 	pipeline := interpreter.Interp(prog.(ast.Pipeline))
 
 	err = pipeline.Verify()

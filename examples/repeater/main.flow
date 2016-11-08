@@ -1,0 +1,10 @@
+component logger Logger();
+component repeater Repeater("1s");
+component constant Constant("Hello, World");
+component constant2 Constant("Hello, World");
+component cond Cond();
+
+connect repeater.Output to cond.Condition;
+connect constant.Output to cond.Consequence;
+connect constant2.Output to cond.Alternative;
+connect cond.Output to logger.Input;
