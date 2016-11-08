@@ -1,0 +1,5 @@
+
+component lines StdinLines();
+component logger Logger();
+
+connect lines.Output logger.Input;

@@ -22,3 +22,8 @@ Web Environment:
 Static Analysis:
     ☐ context.Context dependencies
     ☐ Write GO components natively with normal functions
+    ☐ Smart Compiler Hints like Elm
+
+DSL Support:
+    ✔ Instantiate new components @done (11/7/2016, 7:29:47 PM)
+    ✔ Wire them together @done (11/7/2016, 7:29:49 PM)
