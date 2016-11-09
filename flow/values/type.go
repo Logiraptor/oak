@@ -18,6 +18,7 @@ func NewGenericType(name string) *GenericType {
 }
 
 func UnifyType(env TypeEnv, def, use Type) (Type, bool) {
+	fmt.Println("Attempting to unify types", TypeToString(def), TypeToString(use))
 	if EqualTypes(def, use) {
 		return def, true
 	}
@@ -25,8 +26,10 @@ func UnifyType(env TypeEnv, def, use Type) (Type, bool) {
 	switch vuse := use.(type) {
 	case *GenericType:
 		if derived, ok := env[vuse.token]; ok {
+			fmt.Println("Generic type previously derived as", derived)
 			return UnifyType(env, def, derived)
 		}
+		fmt.Println("Generic type resolves to", def)
 		env[vuse.token] = def
 		return def, true
 	case RecordType:
@@ -61,6 +64,22 @@ func UnifyType(env TypeEnv, def, use Type) (Type, bool) {
 			env[vdef.token] = vuse
 			return vuse, true
 		}
+	case PrimitiveType:
+		switch vdef := def.(type) {
+		case PrimitiveType:
+			if vdef == vuse {
+				return vdef, true
+			}
+			return nil, false
+		case *GenericType:
+			if derived, ok := env[vdef.token]; ok {
+				return UnifyType(env, derived, use)
+			}
+			env[vdef.token] = vuse
+			return vuse, true
+		}
+	default:
+		fmt.Printf("Unhandled type in unification: %T\n", use)
 	}
 
 	return nil, false

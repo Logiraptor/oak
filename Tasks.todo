@@ -20,6 +20,7 @@ Web Environment:
     ☐ Query Previously put objects 
 
 Static Analysis:
+    ☐ frontend requirements (HTTPResponder requires web context)
     ☐ context.Context dependencies
     ☐ Write GO components natively with normal functions
     ☐ Smart Compiler Hints like Elm

@@ -71,3 +71,32 @@ func NewInt(val Attrib) (values.IntValue, error) {
 	i, err := strconv.Atoi(string(val.(*token.Token).Lit))
 	return values.IntValue(i), err
 }
+
+type Flow struct {
+	Frontend
+	Pipeline
+}
+
+func NewFlow(frontend, pipeline Attrib) (Flow, error) {
+	front, ok := frontend.(Frontend)
+	if !ok {
+		front = Frontend{
+			Constructor: "cli",
+		}
+	}
+	return Flow{
+		Frontend: front,
+		Pipeline: pipeline.(Pipeline),
+	}, nil
+}
+
+type Frontend struct {
+	Constructor string
+}
+
+func NewFrontend(ctor Attrib) (Frontend, error) {
+	name := string(ctor.(*token.Token).Lit)
+	return Frontend{
+		Constructor: name,
+	}, nil
+}

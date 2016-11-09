@@ -24,7 +24,7 @@ func HTTPRequest() pipeline.Component {
 			}},
 		},
 		Invoke: func(ctx context.Context, _ values.RecordValue, emitter pipeline.Emitter) {
-			req := ctx.Value(web.ReqKey).(http.Request)
+			req := ctx.Value(web.ReqKey).(*http.Request)
 			emitter.Emit(ctx, output, values.RecordValue{
 				Name: "HttpRequest",
 				Fields: []values.Field{

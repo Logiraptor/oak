@@ -24,13 +24,13 @@ func (p *Pipeline) Verify() error {
 		if sourcePort, ok := findPortByName(p.Components, pipe.Source); ok {
 			if destPort, ok := findPortByName(p.Components, pipe.Dest); ok {
 				specifiedInputs[destPort.Name] = struct{}{}
-				fmt.Println(derivedGenericTypes, values.TypeToString(sourcePort.Type), values.TypeToString(destPort.Type))
-				_, unifyable := values.UnifyType(derivedGenericTypes, sourcePort.Type, destPort.Type)
+				result, unifyable := values.UnifyType(derivedGenericTypes, sourcePort.Type, destPort.Type)
 				if !unifyable {
 					return fmt.Errorf("Type error: port %s produces type %s, but port %s expects type %s",
 						sourcePort.Name.Name, values.TypeToString(sourcePort.Type),
 						destPort.Name.Name, values.TypeToString(destPort.Type))
 				}
+				fmt.Println("Unified as", values.TypeToString(result))
 			}
 		}
 	}

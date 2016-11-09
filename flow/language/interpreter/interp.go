@@ -5,13 +5,21 @@ import (
 
 	"time"
 
+	"context"
+
 	"github.com/Logiraptor/oak/core"
+	"github.com/Logiraptor/oak/core/web"
+	wf "github.com/Logiraptor/oak/flow/frontends/web"
 	"github.com/Logiraptor/oak/flow/language/ast"
 	"github.com/Logiraptor/oak/flow/pipeline"
 	"github.com/Logiraptor/oak/flow/values"
 )
 
-func Interp(p ast.Pipeline) pipeline.Pipeline {
+type Frontend struct {
+	Start func(context.Context, pipeline.Pipeline) error
+}
+
+func Load(p ast.Flow) (Frontend, pipeline.Pipeline, error) {
 	var components = make(map[string]pipeline.Component)
 	var output pipeline.Pipeline
 	for _, component := range p.Components {
@@ -29,7 +37,38 @@ func Interp(p ast.Pipeline) pipeline.Pipeline {
 			Source: sourceComponent.PortTokenByName(pipe.Source.Port),
 		})
 	}
-	return output
+
+	err := output.Verify()
+	if err != nil {
+		return Frontend{}, pipeline.Pipeline{}, err
+	}
+
+	frontend, err := constructFrontend(p.Frontend)
+	if err != nil {
+		return Frontend{}, pipeline.Pipeline{}, err
+	}
+
+	return frontend, output, nil
+}
+
+func constructFrontend(f ast.Frontend) (Frontend, error) {
+	switch f.Constructor {
+	case "cli":
+		return Frontend{
+			Start: func(ctx context.Context, p pipeline.Pipeline) error {
+				p.Run(ctx)
+				return nil
+			},
+		}, nil
+	case "web":
+		return Frontend{
+			Start: func(ctx context.Context, p pipeline.Pipeline) error {
+				wf.Serve(":8080", p)
+				return nil
+			},
+		}, nil
+	}
+	return Frontend{}, fmt.Errorf("undefined frontend constructor: %s", f.Constructor)
 }
 
 func interpComponent(component ast.Component) pipeline.Component {
@@ -44,12 +83,19 @@ func interpComponent(component ast.Component) pipeline.Component {
 		return core.Constant(component.Args[0])
 	case "Repeater":
 		value := string(component.Args[0].(values.StringValue))
-		fmt.Println(value, []byte(value))
 		d, err := time.ParseDuration(value)
 		if err != nil {
 			panic(fmt.Sprintf("Invalid duration passed to repeater: %s", err.Error()))
 		}
 		return core.Repeater(d)
+	case "HTTPResponder":
+		return web.HTTPResponder()
+	case "HTTPRequest":
+		return web.HTTPRequest()
+	case "FieldAccessor":
+		return core.FieldAccessor(string(component.Args[0].(values.StringValue)))
+	case "Eq":
+		return core.Eq()
 	default:
 		panic(fmt.Sprintf("undefined constructor %s", component.Constructor))
 	}

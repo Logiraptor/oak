@@ -3,7 +3,7 @@
 
 package parser
 
-const numNTSymbols = 10
+const numNTSymbols = 12
 type(
 	gotoTable [numStates]gotoRow
 	gotoRow	[numNTSymbols] int
@@ -13,11 +13,13 @@ var gotoTab = gotoTable{
 	gotoRow{ // S0
 		
 		-1, // S'
-		1, // Pipeline
-		2, // Component
+		1, // Program
+		2, // Frontend
+		3, // Pipeline
+		5, // Component
 		-1, // PossiblyEmptyArgList
 		-1, // ArgList
-		3, // Connection
+		6, // Connection
 		-1, // Value
 		-1, // String
 		-1, // Int
@@ -28,6 +30,8 @@ var gotoTab = gotoTable{
 	gotoRow{ // S1
 		
 		-1, // S'
+		-1, // Program
+		-1, // Frontend
 		-1, // Pipeline
 		-1, // Component
 		-1, // PossiblyEmptyArgList
@@ -43,11 +47,13 @@ var gotoTab = gotoTable{
 	gotoRow{ // S2
 		
 		-1, // S'
-		-1, // Pipeline
-		-1, // Component
+		-1, // Program
+		-1, // Frontend
+		9, // Pipeline
+		5, // Component
 		-1, // PossiblyEmptyArgList
 		-1, // ArgList
-		-1, // Connection
+		6, // Connection
 		-1, // Value
 		-1, // String
 		-1, // Int
@@ -58,6 +64,8 @@ var gotoTab = gotoTable{
 	gotoRow{ // S3
 		
 		-1, // S'
+		-1, // Program
+		-1, // Frontend
 		-1, // Pipeline
 		-1, // Component
 		-1, // PossiblyEmptyArgList
@@ -73,6 +81,8 @@ var gotoTab = gotoTable{
 	gotoRow{ // S4
 		
 		-1, // S'
+		-1, // Program
+		-1, // Frontend
 		-1, // Pipeline
 		-1, // Component
 		-1, // PossiblyEmptyArgList
@@ -88,6 +98,8 @@ var gotoTab = gotoTable{
 	gotoRow{ // S5
 		
 		-1, // S'
+		-1, // Program
+		-1, // Frontend
 		-1, // Pipeline
 		-1, // Component
 		-1, // PossiblyEmptyArgList
@@ -103,11 +115,13 @@ var gotoTab = gotoTable{
 	gotoRow{ // S6
 		
 		-1, // S'
-		10, // Pipeline
-		2, // Component
+		-1, // Program
+		-1, // Frontend
+		-1, // Pipeline
+		-1, // Component
 		-1, // PossiblyEmptyArgList
 		-1, // ArgList
-		3, // Connection
+		-1, // Connection
 		-1, // Value
 		-1, // String
 		-1, // Int
@@ -118,11 +132,13 @@ var gotoTab = gotoTable{
 	gotoRow{ // S7
 		
 		-1, // S'
-		11, // Pipeline
-		2, // Component
+		-1, // Program
+		-1, // Frontend
+		-1, // Pipeline
+		-1, // Component
 		-1, // PossiblyEmptyArgList
 		-1, // ArgList
-		3, // Connection
+		-1, // Connection
 		-1, // Value
 		-1, // String
 		-1, // Int
@@ -133,6 +149,8 @@ var gotoTab = gotoTable{
 	gotoRow{ // S8
 		
 		-1, // S'
+		-1, // Program
+		-1, // Frontend
 		-1, // Pipeline
 		-1, // Component
 		-1, // PossiblyEmptyArgList
@@ -148,6 +166,8 @@ var gotoTab = gotoTable{
 	gotoRow{ // S9
 		
 		-1, // S'
+		-1, // Program
+		-1, // Frontend
 		-1, // Pipeline
 		-1, // Component
 		-1, // PossiblyEmptyArgList
@@ -163,6 +183,8 @@ var gotoTab = gotoTable{
 	gotoRow{ // S10
 		
 		-1, // S'
+		-1, // Program
+		-1, // Frontend
 		-1, // Pipeline
 		-1, // Component
 		-1, // PossiblyEmptyArgList
@@ -178,11 +200,13 @@ var gotoTab = gotoTable{
 	gotoRow{ // S11
 		
 		-1, // S'
-		-1, // Pipeline
-		-1, // Component
+		-1, // Program
+		-1, // Frontend
+		16, // Pipeline
+		5, // Component
 		-1, // PossiblyEmptyArgList
 		-1, // ArgList
-		-1, // Connection
+		6, // Connection
 		-1, // Value
 		-1, // String
 		-1, // Int
@@ -193,11 +217,13 @@ var gotoTab = gotoTable{
 	gotoRow{ // S12
 		
 		-1, // S'
-		-1, // Pipeline
-		-1, // Component
+		-1, // Program
+		-1, // Frontend
+		17, // Pipeline
+		5, // Component
 		-1, // PossiblyEmptyArgList
 		-1, // ArgList
-		-1, // Connection
+		6, // Connection
 		-1, // Value
 		-1, // String
 		-1, // Int
@@ -208,6 +234,8 @@ var gotoTab = gotoTable{
 	gotoRow{ // S13
 		
 		-1, // S'
+		-1, // Program
+		-1, // Frontend
 		-1, // Pipeline
 		-1, // Component
 		-1, // PossiblyEmptyArgList
@@ -223,21 +251,25 @@ var gotoTab = gotoTable{
 	gotoRow{ // S14
 		
 		-1, // S'
+		-1, // Program
+		-1, // Frontend
 		-1, // Pipeline
 		-1, // Component
-		16, // PossiblyEmptyArgList
-		17, // ArgList
+		-1, // PossiblyEmptyArgList
+		-1, // ArgList
 		-1, // Connection
-		18, // Value
-		19, // String
-		20, // Int
-		21, // Bool
+		-1, // Value
+		-1, // String
+		-1, // Int
+		-1, // Bool
 		
 
 	},
 	gotoRow{ // S15
 		
 		-1, // S'
+		-1, // Program
+		-1, // Frontend
 		-1, // Pipeline
 		-1, // Component
 		-1, // PossiblyEmptyArgList
@@ -253,6 +285,8 @@ var gotoTab = gotoTable{
 	gotoRow{ // S16
 		
 		-1, // S'
+		-1, // Program
+		-1, // Frontend
 		-1, // Pipeline
 		-1, // Component
 		-1, // PossiblyEmptyArgList
@@ -268,6 +302,8 @@ var gotoTab = gotoTable{
 	gotoRow{ // S17
 		
 		-1, // S'
+		-1, // Program
+		-1, // Frontend
 		-1, // Pipeline
 		-1, // Component
 		-1, // PossiblyEmptyArgList
@@ -283,6 +319,8 @@ var gotoTab = gotoTable{
 	gotoRow{ // S18
 		
 		-1, // S'
+		-1, // Program
+		-1, // Frontend
 		-1, // Pipeline
 		-1, // Component
 		-1, // PossiblyEmptyArgList
@@ -298,6 +336,8 @@ var gotoTab = gotoTable{
 	gotoRow{ // S19
 		
 		-1, // S'
+		-1, // Program
+		-1, // Frontend
 		-1, // Pipeline
 		-1, // Component
 		-1, // PossiblyEmptyArgList
@@ -313,6 +353,8 @@ var gotoTab = gotoTable{
 	gotoRow{ // S20
 		
 		-1, // S'
+		-1, // Program
+		-1, // Frontend
 		-1, // Pipeline
 		-1, // Component
 		-1, // PossiblyEmptyArgList
@@ -328,21 +370,25 @@ var gotoTab = gotoTable{
 	gotoRow{ // S21
 		
 		-1, // S'
+		-1, // Program
+		-1, // Frontend
 		-1, // Pipeline
 		-1, // Component
-		-1, // PossiblyEmptyArgList
-		-1, // ArgList
+		24, // PossiblyEmptyArgList
+		25, // ArgList
 		-1, // Connection
-		-1, // Value
-		-1, // String
-		-1, // Int
-		-1, // Bool
+		26, // Value
+		27, // String
+		28, // Int
+		29, // Bool
 		
 
 	},
 	gotoRow{ // S22
 		
 		-1, // S'
+		-1, // Program
+		-1, // Frontend
 		-1, // Pipeline
 		-1, // Component
 		-1, // PossiblyEmptyArgList
@@ -358,6 +404,8 @@ var gotoTab = gotoTable{
 	gotoRow{ // S23
 		
 		-1, // S'
+		-1, // Program
+		-1, // Frontend
 		-1, // Pipeline
 		-1, // Component
 		-1, // PossiblyEmptyArgList
@@ -373,6 +421,8 @@ var gotoTab = gotoTable{
 	gotoRow{ // S24
 		
 		-1, // S'
+		-1, // Program
+		-1, // Frontend
 		-1, // Pipeline
 		-1, // Component
 		-1, // PossiblyEmptyArgList
@@ -388,6 +438,8 @@ var gotoTab = gotoTable{
 	gotoRow{ // S25
 		
 		-1, // S'
+		-1, // Program
+		-1, // Frontend
 		-1, // Pipeline
 		-1, // Component
 		-1, // PossiblyEmptyArgList
@@ -403,6 +455,8 @@ var gotoTab = gotoTable{
 	gotoRow{ // S26
 		
 		-1, // S'
+		-1, // Program
+		-1, // Frontend
 		-1, // Pipeline
 		-1, // Component
 		-1, // PossiblyEmptyArgList
@@ -418,6 +472,8 @@ var gotoTab = gotoTable{
 	gotoRow{ // S27
 		
 		-1, // S'
+		-1, // Program
+		-1, // Frontend
 		-1, // Pipeline
 		-1, // Component
 		-1, // PossiblyEmptyArgList
@@ -433,21 +489,25 @@ var gotoTab = gotoTable{
 	gotoRow{ // S28
 		
 		-1, // S'
+		-1, // Program
+		-1, // Frontend
 		-1, // Pipeline
 		-1, // Component
 		-1, // PossiblyEmptyArgList
-		30, // ArgList
+		-1, // ArgList
 		-1, // Connection
-		18, // Value
-		19, // String
-		20, // Int
-		21, // Bool
+		-1, // Value
+		-1, // String
+		-1, // Int
+		-1, // Bool
 		
 
 	},
 	gotoRow{ // S29
 		
 		-1, // S'
+		-1, // Program
+		-1, // Frontend
 		-1, // Pipeline
 		-1, // Component
 		-1, // PossiblyEmptyArgList
@@ -463,6 +523,8 @@ var gotoTab = gotoTable{
 	gotoRow{ // S30
 		
 		-1, // S'
+		-1, // Program
+		-1, // Frontend
 		-1, // Pipeline
 		-1, // Component
 		-1, // PossiblyEmptyArgList
@@ -478,6 +540,8 @@ var gotoTab = gotoTable{
 	gotoRow{ // S31
 		
 		-1, // S'
+		-1, // Program
+		-1, // Frontend
 		-1, // Pipeline
 		-1, // Component
 		-1, // PossiblyEmptyArgList
@@ -493,6 +557,144 @@ var gotoTab = gotoTable{
 	gotoRow{ // S32
 		
 		-1, // S'
+		-1, // Program
+		-1, // Frontend
+		-1, // Pipeline
+		-1, // Component
+		-1, // PossiblyEmptyArgList
+		-1, // ArgList
+		-1, // Connection
+		-1, // Value
+		-1, // String
+		-1, // Int
+		-1, // Bool
+		
+
+	},
+	gotoRow{ // S33
+		
+		-1, // S'
+		-1, // Program
+		-1, // Frontend
+		-1, // Pipeline
+		-1, // Component
+		-1, // PossiblyEmptyArgList
+		-1, // ArgList
+		-1, // Connection
+		-1, // Value
+		-1, // String
+		-1, // Int
+		-1, // Bool
+		
+
+	},
+	gotoRow{ // S34
+		
+		-1, // S'
+		-1, // Program
+		-1, // Frontend
+		-1, // Pipeline
+		-1, // Component
+		-1, // PossiblyEmptyArgList
+		-1, // ArgList
+		-1, // Connection
+		-1, // Value
+		-1, // String
+		-1, // Int
+		-1, // Bool
+		
+
+	},
+	gotoRow{ // S35
+		
+		-1, // S'
+		-1, // Program
+		-1, // Frontend
+		-1, // Pipeline
+		-1, // Component
+		-1, // PossiblyEmptyArgList
+		-1, // ArgList
+		-1, // Connection
+		-1, // Value
+		-1, // String
+		-1, // Int
+		-1, // Bool
+		
+
+	},
+	gotoRow{ // S36
+		
+		-1, // S'
+		-1, // Program
+		-1, // Frontend
+		-1, // Pipeline
+		-1, // Component
+		-1, // PossiblyEmptyArgList
+		38, // ArgList
+		-1, // Connection
+		26, // Value
+		27, // String
+		28, // Int
+		29, // Bool
+		
+
+	},
+	gotoRow{ // S37
+		
+		-1, // S'
+		-1, // Program
+		-1, // Frontend
+		-1, // Pipeline
+		-1, // Component
+		-1, // PossiblyEmptyArgList
+		-1, // ArgList
+		-1, // Connection
+		-1, // Value
+		-1, // String
+		-1, // Int
+		-1, // Bool
+		
+
+	},
+	gotoRow{ // S38
+		
+		-1, // S'
+		-1, // Program
+		-1, // Frontend
+		-1, // Pipeline
+		-1, // Component
+		-1, // PossiblyEmptyArgList
+		-1, // ArgList
+		-1, // Connection
+		-1, // Value
+		-1, // String
+		-1, // Int
+		-1, // Bool
+		
+
+	},
+	gotoRow{ // S39
+		
+		-1, // S'
+		-1, // Program
+		-1, // Frontend
+		-1, // Pipeline
+		-1, // Component
+		-1, // PossiblyEmptyArgList
+		-1, // ArgList
+		-1, // Connection
+		-1, // Value
+		-1, // String
+		-1, // Int
+		-1, // Bool
+		
+
+	},
+	gotoRow{ // S40
+		
+		-1, // S'
+		-1, // Program
+		-1, // Frontend
 		-1, // Pipeline
 		-1, // Component
 		-1, // PossiblyEmptyArgList

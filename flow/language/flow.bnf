@@ -22,6 +22,13 @@ import "github.com/Logiraptor/oak/flow/language/ast"
 import "github.com/Logiraptor/oak/flow/values"
  >>
 
+Program:
+    Frontend Pipeline <<ast.NewFlow($0, $1)>>
+    | Pipeline <<ast.NewFlow(nil, $0)>>;
+
+Frontend:
+    "frontend" id "(" ")" ";" << ast.NewFrontend($1) >>;
+
 Pipeline:
     empty <<ast.Pipeline{}, nil>>
     | Component ";" Pipeline <<ast.AddComponent($2, $0), nil>>

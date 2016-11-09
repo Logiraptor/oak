@@ -8,7 +8,7 @@ import (
 	"github.com/Logiraptor/oak/flow/values"
 )
 
-const DEBUG = false
+const DEBUG = true
 
 func debugPrint(args ...interface{}) {
 	if DEBUG {
