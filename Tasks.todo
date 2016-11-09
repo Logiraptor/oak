@@ -3,9 +3,9 @@ Generic Value System:
     ✔ Add Value.toNative @done (11/1/2016, 7:44:51 PM)
 
 Components:
-    ☐ Request : _ -> RequestType
+    ✔ Request : _ -> RequestType @done (11/8/2016, 8:50:20 PM)
     ✔ Respond : String -> Int -> _ @done (11/6/2016, 12:16:42 PM)
-    ☐ Field Accessor : [Name] -> {'Name :'a} -> 'a
+    ✔ Field Accessor : [Name] -> {'Name :'a} -> 'a @done (11/8/2016, 8:50:21 PM)
     ☐ = : 'a -> 'a -> Bool
     ☐ Lazy : 'a -> 'b -> 'a
 
