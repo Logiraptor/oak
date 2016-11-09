@@ -28,3 +28,12 @@ Static Analysis:
 DSL Support:
     ✔ Instantiate new components @done (11/7/2016, 7:29:47 PM)
     ✔ Wire them together @done (11/7/2016, 7:29:49 PM)
+    ☐ Syntactic sugar for constants (value path "/whatever")?
+
+Dynamic Analysis:
+    ☐ Debug view as local webapp (-debug flag)
+    ☐ Vizualize graph
+    ☐ View messages in realtime
+
+Performance:
+    ☐ Stack vm for execution instead of lots of goroutines
