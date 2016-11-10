@@ -2,6 +2,9 @@ Generic Value System:
     ✔ Use type switches instead of the Kind system @done (11/1/2016, 12:58:04 PM)
     ✔ Add Value.toNative @done (11/1/2016, 7:44:51 PM)
 
+CLI Interpreter:
+    ☐ Verbose logging via flag -v
+
 Components:
     ✔ Request : _ -> RequestType @done (11/8/2016, 8:50:20 PM)
     ✔ Respond : String -> Int -> _ @done (11/6/2016, 12:16:42 PM)
@@ -31,9 +34,10 @@ DSL Support:
     ☐ Syntactic sugar for constants (value path "/whatever")?
 
 Dynamic Analysis:
-    ☐ Debug view as local webapp (-debug flag)
-    ☐ Vizualize graph
+    ✔ Debug view as local webapp (-debug flag) @done (11/9/2016, 10:02:15 PM)
+    ✔ Vizualize graph @done (11/9/2016, 10:02:16 PM)
     ☐ View messages in realtime
 
 Performance:
+    ☐ Some setup for profiling this effort
     ☐ Stack vm for execution instead of lots of goroutines

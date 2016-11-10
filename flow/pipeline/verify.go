@@ -91,12 +91,12 @@ func (p *Pipeline) WriteToDot(w io.Writer) error {
 			}
 		}
 
-		_ = sourceType
-		_ = destType
-		fmt.Fprintf(we, "%q -> %q [label = %q];",
+		fmt.Fprintf(we, "%q -> %q [headlabel = %q taillabel = %q];",
 			p.Components[sourceIndex].Name.Name,
 			p.Components[destIndex].Name.Name,
-			fmt.Sprintf("%s -> %s", values.TypeToString(sourceType), values.TypeToString(destType)))
+
+			values.TypeToString(destType),
+			values.TypeToString(sourceType))
 	}
 	io.WriteString(we, "}")
 	return we.err

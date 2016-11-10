@@ -9,7 +9,7 @@ import (
 
 	"context"
 
-	"io/ioutil"
+	"net/http"
 
 	"github.com/Logiraptor/oak/flow/language/ast"
 	"github.com/Logiraptor/oak/flow/language/interpreter"
@@ -17,8 +17,13 @@ import (
 	"github.com/Logiraptor/oak/flow/language/parser"
 )
 
+type Config struct {
+	Debug bool
+}
+
 func main() {
-	dumpDotFile := flag.Bool("dot", false, "Dump a dot file in a tmp file")
+	var c = Config{}
+	flag.BoolVar(&c.Debug, "debug", false, "Dump a dot file in a tmp file")
 	flag.Parse()
 	args := flag.Args()
 	if len(args) < 2 {
@@ -46,15 +51,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	if *dumpDotFile {
-		outFile, err := ioutil.TempFile(os.TempDir(), "flow-dot")
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+	if c.Debug {
+		log.Println("Debug server listening on port 9999")
+		s := http.Server{
+			Handler: &debugView{p: pipeline},
+			Addr:    "localhost:9999",
 		}
-		pipeline.WriteToDot(outFile)
-		log.Println("dot file written to ", outFile.Name())
-		outFile.Close()
+		go s.ListenAndServe()
 	}
 
 	err = frontend.Start(context.Background(), pipeline)
