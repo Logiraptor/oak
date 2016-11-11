@@ -1,25 +1,40 @@
 <html>
+    <style>
+        #messages {
+            overflow: auto;
+            height: 400px;
+        }
+    </style>
     <body>
         <img src="/graph.png" alt="">
 
-        <pre id="messages">
+        <div id="messages">
 
-        </pre>
+        </div>
 
         <script>
             var output = document.getElementById("messages");
             function writeMessage(message) {
-                var node = document.createTextNode(message + "\n");
+                var badge = document.createElement("div");
+                badge.style.display = "inline-block";
+                badge.style.backgroundColor = message.Color;
+                badge.style.width = "10px";
+                badge.style.height = "10px";
+                var node = document.createElement("span");
+                node.appendChild(document.createTextNode(message.Message));
+                output.appendChild(badge);
                 output.appendChild(node);
+                output.appendChild(document.createElement("br"));
             }
 
             var ws = new WebSocket("ws://localhost:9999/messages");
             ws.onopen = function(event) {
-                writeMessage("Connection established");
+                writeMessage({Message: "Connection established", Color: "#000000"});
             }
 
             ws.onmessage = function(event) {
-                writeMessage(event.data);
+                var obj = JSON.parse(event.data);
+                writeMessage(obj);
             }
         </script>
     </body>

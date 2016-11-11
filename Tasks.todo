@@ -9,7 +9,7 @@ Components:
     ✔ Request : _ -> RequestType @done (11/8/2016, 8:50:20 PM)
     ✔ Respond : String -> Int -> _ @done (11/6/2016, 12:16:42 PM)
     ✔ Field Accessor : [Name] -> {'Name :'a} -> 'a @done (11/8/2016, 8:50:21 PM)
-    ☐ = : 'a -> 'a -> Bool
+    ✔ = : 'a -> 'a -> Bool @done (11/11/2016, 6:54:06 AM)
     ☐ Lazy : 'a -> 'b -> 'a
 
 Web Environment:
@@ -37,7 +37,9 @@ Dynamic Analysis:
     ✔ Debug view as local webapp (-debug flag) @done (11/9/2016, 10:02:15 PM)
     ✔ Vizualize graph @done (11/9/2016, 10:02:16 PM)
     ✔ View messages in realtime @done (11/10/2016, 9:55:19 PM)
+    ✔ Improve debug view with colors @done (11/11/2016, 8:01:14 AM)
 
 Performance:
     ☐ Some setup for profiling this effort
     ✔ Stack vm for execution instead of lots of goroutines @done (11/10/2016, 9:55:44 PM)
+    ☐ Don't rebuild the thing everytime I call Run
