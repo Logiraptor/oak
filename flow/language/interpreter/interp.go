@@ -63,7 +63,7 @@ func constructFrontend(f ast.Frontend) (Frontend, error) {
 	case "web":
 		return Frontend{
 			Start: func(ctx context.Context, p pipeline.Pipeline) error {
-				wf.Serve(":8080", p)
+				wf.Serve(":8080", ctx, p)
 				return nil
 			},
 		}, nil

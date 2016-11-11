@@ -14,7 +14,7 @@ Components:
 
 Web Environment:
     ✔ Simple static webpage (Hello, World) @done (11/6/2016, 12:16:44 PM)
-    ☐ Routing based on path
+    ✔ Routing based on path @done (11/10/2016, 9:55:24 PM)
     ☐ Static webpage from file
     ☐ Fileserver based on path
     ☐ Echo server for query params
@@ -36,8 +36,8 @@ DSL Support:
 Dynamic Analysis:
     ✔ Debug view as local webapp (-debug flag) @done (11/9/2016, 10:02:15 PM)
     ✔ Vizualize graph @done (11/9/2016, 10:02:16 PM)
-    ☐ View messages in realtime
+    ✔ View messages in realtime @done (11/10/2016, 9:55:19 PM)
 
 Performance:
     ☐ Some setup for profiling this effort
-    ☐ Stack vm for execution instead of lots of goroutines
+    ✔ Stack vm for execution instead of lots of goroutines @done (11/10/2016, 9:55:44 PM)

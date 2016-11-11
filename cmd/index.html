@@ -1,0 +1,26 @@
+<html>
+    <body>
+        <img src="/graph.png" alt="">
+
+        <pre id="messages">
+
+        </pre>
+
+        <script>
+            var output = document.getElementById("messages");
+            function writeMessage(message) {
+                var node = document.createTextNode(message + "\n");
+                output.appendChild(node);
+            }
+
+            var ws = new WebSocket("ws://localhost:9999/messages");
+            ws.onopen = function(event) {
+                writeMessage("Connection established");
+            }
+
+            ws.onmessage = function(event) {
+                writeMessage(event.data);
+            }
+        </script>
+    </body>
+</html>

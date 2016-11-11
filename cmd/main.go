@@ -15,6 +15,7 @@ import (
 	"github.com/Logiraptor/oak/flow/language/interpreter"
 	"github.com/Logiraptor/oak/flow/language/lexer"
 	"github.com/Logiraptor/oak/flow/language/parser"
+	ppipeline "github.com/Logiraptor/oak/flow/pipeline"
 )
 
 type Config struct {
@@ -23,7 +24,7 @@ type Config struct {
 
 func main() {
 	var c = Config{}
-	flag.BoolVar(&c.Debug, "debug", false, "Dump a dot file in a tmp file")
+	flag.BoolVar(&c.Debug, "debug", false, "Start a debug server on port 9999")
 	flag.Parse()
 	args := flag.Args()
 	if len(args) < 2 {
@@ -51,16 +52,24 @@ func main() {
 		os.Exit(1)
 	}
 
+	ctx := context.Background()
+
 	if c.Debug {
 		log.Println("Debug server listening on port 9999")
+
+		dv := &debugView{p: pipeline, listeners: make(chan chan message), messages: make(chan message)}
+		go dv.Start()
+
+		ctx = context.WithValue(ctx, ppipeline.InspectorKey, ppipeline.Inspector(dv))
+
 		s := http.Server{
-			Handler: &debugView{p: pipeline},
+			Handler: dv,
 			Addr:    "localhost:9999",
 		}
 		go s.ListenAndServe()
 	}
 
-	err = frontend.Start(context.Background(), pipeline)
+	err = frontend.Start(ctx, pipeline)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)

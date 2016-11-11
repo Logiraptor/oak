@@ -28,8 +28,9 @@ func FieldAccessor(name string) pipeline.Component {
 		OutputPorts: []pipeline.Port{
 			pipeline.Port{Name: output, Type: outputType},
 		},
-		Invoke: func(ctx context.Context, input values.RecordValue, emitter pipeline.Emitter) {
-			for _, field := range input.Fields {
+		Invoke: func(ctx context.Context, inputRecord values.RecordValue, emitter pipeline.Emitter) {
+			inputRecord = inputRecord.FieldByToken(input).(values.RecordValue)
+			for _, field := range inputRecord.Fields {
 				if field.Name == name {
 					emitter.Emit(ctx, output, field.Value)
 				}
