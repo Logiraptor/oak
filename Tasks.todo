@@ -31,7 +31,7 @@ Static Analysis:
 DSL Support:
     ✔ Instantiate new components @done (11/7/2016, 7:29:47 PM)
     ✔ Wire them together @done (11/7/2016, 7:29:49 PM)
-    ☐ Syntactic sugar for constants (value path "/whatever")?
+    ✔ Syntactic sugar for constants (value path "/whatever")? @done (11/11/2016, 10:20:47 PM)
 
 Dynamic Analysis:
     ✔ Debug view as local webapp (-debug flag) @done (11/9/2016, 10:02:15 PM)
