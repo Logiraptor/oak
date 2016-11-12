@@ -1,8 +1,6 @@
 frontend web();
 
-component output Constant("Hello, World Wide Web!");
-component success Constant(200);
 component responder HTTPResponder();
 
-connect output.Output to responder.Body;
-connect success.Output to responder.Status;
+send "Hello, World Wide Web!" to responder.Body;
+send 200 to responder.Status;

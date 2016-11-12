@@ -23,11 +23,12 @@ var actionTab = actionTable{
 			nil,		/* ) */
 			nil,		/* ; */
 			nil,		/* empty */
-			shift(7),		/* component */
+			shift(8),		/* component */
 			nil,		/* , */
-			shift(8),		/* connect */
+			shift(9),		/* connect */
 			nil,		/* dot */
 			nil,		/* to */
+			shift(10),		/* send */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */
@@ -52,6 +53,7 @@ var actionTab = actionTable{
 			nil,		/* connect */
 			nil,		/* dot */
 			nil,		/* to */
+			nil,		/* send */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */
@@ -71,11 +73,12 @@ var actionTab = actionTable{
 			nil,		/* ) */
 			nil,		/* ; */
 			nil,		/* empty */
-			shift(7),		/* component */
+			shift(8),		/* component */
 			nil,		/* , */
-			shift(8),		/* connect */
+			shift(9),		/* connect */
 			nil,		/* dot */
 			nil,		/* to */
+			shift(10),		/* send */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */
@@ -100,6 +103,7 @@ var actionTab = actionTable{
 			nil,		/* connect */
 			nil,		/* dot */
 			nil,		/* to */
+			nil,		/* send */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */
@@ -114,7 +118,7 @@ var actionTab = actionTable{
 			nil,		/* INVALID */
 			nil,		/* $ */
 			nil,		/* frontend */
-			shift(10),		/* id */
+			shift(12),		/* id */
 			nil,		/* ( */
 			nil,		/* ) */
 			nil,		/* ; */
@@ -124,6 +128,7 @@ var actionTab = actionTable{
 			nil,		/* connect */
 			nil,		/* dot */
 			nil,		/* to */
+			nil,		/* send */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */
@@ -141,13 +146,14 @@ var actionTab = actionTable{
 			nil,		/* id */
 			nil,		/* ( */
 			nil,		/* ) */
-			shift(11),		/* ; */
+			shift(13),		/* ; */
 			nil,		/* empty */
 			nil,		/* component */
 			nil,		/* , */
 			nil,		/* connect */
 			nil,		/* dot */
 			nil,		/* to */
+			nil,		/* send */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */
@@ -165,13 +171,14 @@ var actionTab = actionTable{
 			nil,		/* id */
 			nil,		/* ( */
 			nil,		/* ) */
-			shift(12),		/* ; */
+			shift(14),		/* ; */
 			nil,		/* empty */
 			nil,		/* component */
 			nil,		/* , */
 			nil,		/* connect */
 			nil,		/* dot */
 			nil,		/* to */
+			nil,		/* send */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */
@@ -186,16 +193,17 @@ var actionTab = actionTable{
 			nil,		/* INVALID */
 			nil,		/* $ */
 			nil,		/* frontend */
-			shift(13),		/* id */
+			nil,		/* id */
 			nil,		/* ( */
 			nil,		/* ) */
-			nil,		/* ; */
+			shift(15),		/* ; */
 			nil,		/* empty */
 			nil,		/* component */
 			nil,		/* , */
 			nil,		/* connect */
 			nil,		/* dot */
 			nil,		/* to */
+			nil,		/* send */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */
@@ -210,7 +218,7 @@ var actionTab = actionTable{
 			nil,		/* INVALID */
 			nil,		/* $ */
 			nil,		/* frontend */
-			shift(14),		/* id */
+			shift(16),		/* id */
 			nil,		/* ( */
 			nil,		/* ) */
 			nil,		/* ; */
@@ -220,6 +228,7 @@ var actionTab = actionTable{
 			nil,		/* connect */
 			nil,		/* dot */
 			nil,		/* to */
+			nil,		/* send */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */
@@ -232,9 +241,9 @@ var actionTab = actionTable{
 				canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
-			reduce(1),		/* $, reduce: Program */
+			nil,		/* $ */
 			nil,		/* frontend */
-			nil,		/* id */
+			shift(17),		/* id */
 			nil,		/* ( */
 			nil,		/* ) */
 			nil,		/* ; */
@@ -244,6 +253,7 @@ var actionTab = actionTable{
 			nil,		/* connect */
 			nil,		/* dot */
 			nil,		/* to */
+			nil,		/* send */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */
@@ -259,7 +269,7 @@ var actionTab = actionTable{
 			nil,		/* $ */
 			nil,		/* frontend */
 			nil,		/* id */
-			shift(15),		/* ( */
+			nil,		/* ( */
 			nil,		/* ) */
 			nil,		/* ; */
 			nil,		/* empty */
@@ -268,10 +278,11 @@ var actionTab = actionTable{
 			nil,		/* connect */
 			nil,		/* dot */
 			nil,		/* to */
-			nil,		/* string_lit */
-			nil,		/* int_lit */
-			nil,		/* true */
-			nil,		/* false */
+			nil,		/* send */
+			shift(22),		/* string_lit */
+			shift(23),		/* int_lit */
+			shift(24),		/* true */
+			shift(25),		/* false */
 			
 		},
 
@@ -280,18 +291,19 @@ var actionTab = actionTable{
 				canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
-			reduce(4),		/* $, reduce: Pipeline */
+			reduce(1),		/* $, reduce: Program */
 			nil,		/* frontend */
 			nil,		/* id */
 			nil,		/* ( */
 			nil,		/* ) */
 			nil,		/* ; */
 			nil,		/* empty */
-			shift(7),		/* component */
+			nil,		/* component */
 			nil,		/* , */
-			shift(8),		/* connect */
+			nil,		/* connect */
 			nil,		/* dot */
 			nil,		/* to */
+			nil,		/* send */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */
@@ -304,18 +316,19 @@ var actionTab = actionTable{
 				canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
-			reduce(4),		/* $, reduce: Pipeline */
+			nil,		/* $ */
 			nil,		/* frontend */
 			nil,		/* id */
-			nil,		/* ( */
+			shift(26),		/* ( */
 			nil,		/* ) */
 			nil,		/* ; */
 			nil,		/* empty */
-			shift(7),		/* component */
+			nil,		/* component */
 			nil,		/* , */
-			shift(8),		/* connect */
+			nil,		/* connect */
 			nil,		/* dot */
 			nil,		/* to */
+			nil,		/* send */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */
@@ -328,18 +341,19 @@ var actionTab = actionTable{
 				canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
-			nil,		/* $ */
+			reduce(4),		/* $, reduce: Pipeline */
 			nil,		/* frontend */
-			shift(18),		/* id */
+			nil,		/* id */
 			nil,		/* ( */
 			nil,		/* ) */
 			nil,		/* ; */
 			nil,		/* empty */
-			nil,		/* component */
+			shift(8),		/* component */
 			nil,		/* , */
-			nil,		/* connect */
+			shift(9),		/* connect */
 			nil,		/* dot */
 			nil,		/* to */
+			shift(10),		/* send */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */
@@ -352,18 +366,19 @@ var actionTab = actionTable{
 				canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
-			nil,		/* $ */
+			reduce(4),		/* $, reduce: Pipeline */
 			nil,		/* frontend */
 			nil,		/* id */
 			nil,		/* ( */
 			nil,		/* ) */
 			nil,		/* ; */
 			nil,		/* empty */
-			nil,		/* component */
+			shift(8),		/* component */
 			nil,		/* , */
-			nil,		/* connect */
-			shift(19),		/* dot */
+			shift(9),		/* connect */
+			nil,		/* dot */
 			nil,		/* to */
+			shift(10),		/* send */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */
@@ -376,18 +391,19 @@ var actionTab = actionTable{
 				canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
-			nil,		/* $ */
+			reduce(4),		/* $, reduce: Pipeline */
 			nil,		/* frontend */
 			nil,		/* id */
 			nil,		/* ( */
-			shift(20),		/* ) */
+			nil,		/* ) */
 			nil,		/* ; */
 			nil,		/* empty */
-			nil,		/* component */
+			shift(8),		/* component */
 			nil,		/* , */
-			nil,		/* connect */
+			shift(9),		/* connect */
 			nil,		/* dot */
 			nil,		/* to */
+			shift(10),		/* send */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */
@@ -400,9 +416,9 @@ var actionTab = actionTable{
 				canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
-			reduce(5),		/* $, reduce: Pipeline */
+			nil,		/* $ */
 			nil,		/* frontend */
-			nil,		/* id */
+			shift(30),		/* id */
 			nil,		/* ( */
 			nil,		/* ) */
 			nil,		/* ; */
@@ -412,6 +428,7 @@ var actionTab = actionTable{
 			nil,		/* connect */
 			nil,		/* dot */
 			nil,		/* to */
+			nil,		/* send */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */
@@ -424,7 +441,7 @@ var actionTab = actionTable{
 				canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
-			reduce(6),		/* $, reduce: Pipeline */
+			nil,		/* $ */
 			nil,		/* frontend */
 			nil,		/* id */
 			nil,		/* ( */
@@ -434,8 +451,9 @@ var actionTab = actionTable{
 			nil,		/* component */
 			nil,		/* , */
 			nil,		/* connect */
-			nil,		/* dot */
+			shift(31),		/* dot */
 			nil,		/* to */
+			nil,		/* send */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */
@@ -451,7 +469,7 @@ var actionTab = actionTable{
 			nil,		/* $ */
 			nil,		/* frontend */
 			nil,		/* id */
-			shift(21),		/* ( */
+			nil,		/* ( */
 			nil,		/* ) */
 			nil,		/* ; */
 			nil,		/* empty */
@@ -459,7 +477,8 @@ var actionTab = actionTable{
 			nil,		/* , */
 			nil,		/* connect */
 			nil,		/* dot */
-			nil,		/* to */
+			shift(32),		/* to */
+			nil,		/* send */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */
@@ -474,7 +493,7 @@ var actionTab = actionTable{
 			nil,		/* INVALID */
 			nil,		/* $ */
 			nil,		/* frontend */
-			shift(22),		/* id */
+			nil,		/* id */
 			nil,		/* ( */
 			nil,		/* ) */
 			nil,		/* ; */
@@ -483,7 +502,8 @@ var actionTab = actionTable{
 			nil,		/* , */
 			nil,		/* connect */
 			nil,		/* dot */
-			nil,		/* to */
+			reduce(15),		/* to, reduce: Value */
+			nil,		/* send */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */
@@ -501,13 +521,14 @@ var actionTab = actionTable{
 			nil,		/* id */
 			nil,		/* ( */
 			nil,		/* ) */
-			shift(23),		/* ; */
+			nil,		/* ; */
 			nil,		/* empty */
 			nil,		/* component */
 			nil,		/* , */
 			nil,		/* connect */
 			nil,		/* dot */
-			nil,		/* to */
+			reduce(16),		/* to, reduce: Value */
+			nil,		/* send */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */
@@ -524,18 +545,19 @@ var actionTab = actionTable{
 			nil,		/* frontend */
 			nil,		/* id */
 			nil,		/* ( */
-			reduce(8),		/* ), reduce: PossiblyEmptyArgList */
+			nil,		/* ) */
 			nil,		/* ; */
 			nil,		/* empty */
 			nil,		/* component */
 			nil,		/* , */
 			nil,		/* connect */
 			nil,		/* dot */
-			nil,		/* to */
-			shift(30),		/* string_lit */
-			shift(31),		/* int_lit */
-			shift(32),		/* true */
-			shift(33),		/* false */
+			reduce(17),		/* to, reduce: Value */
+			nil,		/* send */
+			nil,		/* string_lit */
+			nil,		/* int_lit */
+			nil,		/* true */
+			nil,		/* false */
 			
 		},
 
@@ -555,7 +577,8 @@ var actionTab = actionTable{
 			nil,		/* , */
 			nil,		/* connect */
 			nil,		/* dot */
-			shift(34),		/* to */
+			reduce(18),		/* to, reduce: String */
+			nil,		/* send */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */
@@ -568,18 +591,19 @@ var actionTab = actionTable{
 				canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
-			reduce(3),		/* $, reduce: Frontend */
+			nil,		/* $ */
 			nil,		/* frontend */
 			nil,		/* id */
 			nil,		/* ( */
 			nil,		/* ) */
 			nil,		/* ; */
 			nil,		/* empty */
-			reduce(3),		/* component, reduce: Frontend */
+			nil,		/* component */
 			nil,		/* , */
-			reduce(3),		/* connect, reduce: Frontend */
+			nil,		/* connect */
 			nil,		/* dot */
-			nil,		/* to */
+			reduce(19),		/* to, reduce: Int */
+			nil,		/* send */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */
@@ -596,14 +620,15 @@ var actionTab = actionTable{
 			nil,		/* frontend */
 			nil,		/* id */
 			nil,		/* ( */
-			shift(35),		/* ) */
+			nil,		/* ) */
 			nil,		/* ; */
 			nil,		/* empty */
 			nil,		/* component */
 			nil,		/* , */
 			nil,		/* connect */
 			nil,		/* dot */
-			nil,		/* to */
+			reduce(20),		/* to, reduce: Bool */
+			nil,		/* send */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */
@@ -620,14 +645,15 @@ var actionTab = actionTable{
 			nil,		/* frontend */
 			nil,		/* id */
 			nil,		/* ( */
-			reduce(9),		/* ), reduce: PossiblyEmptyArgList */
+			nil,		/* ) */
 			nil,		/* ; */
 			nil,		/* empty */
 			nil,		/* component */
 			nil,		/* , */
 			nil,		/* connect */
 			nil,		/* dot */
-			nil,		/* to */
+			reduce(21),		/* to, reduce: Bool */
+			nil,		/* send */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */
@@ -644,14 +670,15 @@ var actionTab = actionTable{
 			nil,		/* frontend */
 			nil,		/* id */
 			nil,		/* ( */
-			reduce(10),		/* ), reduce: ArgList */
+			shift(33),		/* ) */
 			nil,		/* ; */
 			nil,		/* empty */
 			nil,		/* component */
-			shift(36),		/* , */
+			nil,		/* , */
 			nil,		/* connect */
 			nil,		/* dot */
 			nil,		/* to */
+			nil,		/* send */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */
@@ -664,18 +691,19 @@ var actionTab = actionTable{
 				canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
-			nil,		/* $ */
+			reduce(5),		/* $, reduce: Pipeline */
 			nil,		/* frontend */
 			nil,		/* id */
 			nil,		/* ( */
-			reduce(13),		/* ), reduce: Value */
+			nil,		/* ) */
 			nil,		/* ; */
 			nil,		/* empty */
 			nil,		/* component */
-			reduce(13),		/* ,, reduce: Value */
+			nil,		/* , */
 			nil,		/* connect */
 			nil,		/* dot */
 			nil,		/* to */
+			nil,		/* send */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */
@@ -688,18 +716,19 @@ var actionTab = actionTable{
 				canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
-			nil,		/* $ */
+			reduce(6),		/* $, reduce: Pipeline */
 			nil,		/* frontend */
 			nil,		/* id */
 			nil,		/* ( */
-			reduce(14),		/* ), reduce: Value */
+			nil,		/* ) */
 			nil,		/* ; */
 			nil,		/* empty */
 			nil,		/* component */
-			reduce(14),		/* ,, reduce: Value */
+			nil,		/* , */
 			nil,		/* connect */
 			nil,		/* dot */
 			nil,		/* to */
+			nil,		/* send */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */
@@ -712,18 +741,19 @@ var actionTab = actionTable{
 				canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
-			nil,		/* $ */
+			reduce(7),		/* $, reduce: Pipeline */
 			nil,		/* frontend */
 			nil,		/* id */
 			nil,		/* ( */
-			reduce(15),		/* ), reduce: Value */
+			nil,		/* ) */
 			nil,		/* ; */
 			nil,		/* empty */
 			nil,		/* component */
-			reduce(15),		/* ,, reduce: Value */
+			nil,		/* , */
 			nil,		/* connect */
 			nil,		/* dot */
 			nil,		/* to */
+			nil,		/* send */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */
@@ -739,15 +769,16 @@ var actionTab = actionTable{
 			nil,		/* $ */
 			nil,		/* frontend */
 			nil,		/* id */
-			nil,		/* ( */
-			reduce(16),		/* ), reduce: String */
+			shift(34),		/* ( */
+			nil,		/* ) */
 			nil,		/* ; */
 			nil,		/* empty */
 			nil,		/* component */
-			reduce(16),		/* ,, reduce: String */
+			nil,		/* , */
 			nil,		/* connect */
 			nil,		/* dot */
 			nil,		/* to */
+			nil,		/* send */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */
@@ -762,16 +793,17 @@ var actionTab = actionTable{
 			nil,		/* INVALID */
 			nil,		/* $ */
 			nil,		/* frontend */
-			nil,		/* id */
+			shift(35),		/* id */
 			nil,		/* ( */
-			reduce(17),		/* ), reduce: Int */
+			nil,		/* ) */
 			nil,		/* ; */
 			nil,		/* empty */
 			nil,		/* component */
-			reduce(17),		/* ,, reduce: Int */
+			nil,		/* , */
 			nil,		/* connect */
 			nil,		/* dot */
 			nil,		/* to */
+			nil,		/* send */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */
@@ -786,16 +818,17 @@ var actionTab = actionTable{
 			nil,		/* INVALID */
 			nil,		/* $ */
 			nil,		/* frontend */
-			nil,		/* id */
+			shift(36),		/* id */
 			nil,		/* ( */
-			reduce(18),		/* ), reduce: Bool */
+			nil,		/* ) */
 			nil,		/* ; */
 			nil,		/* empty */
 			nil,		/* component */
-			reduce(18),		/* ,, reduce: Bool */
+			nil,		/* , */
 			nil,		/* connect */
 			nil,		/* dot */
 			nil,		/* to */
+			nil,		/* send */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */
@@ -812,14 +845,15 @@ var actionTab = actionTable{
 			nil,		/* frontend */
 			nil,		/* id */
 			nil,		/* ( */
-			reduce(19),		/* ), reduce: Bool */
-			nil,		/* ; */
+			nil,		/* ) */
+			shift(37),		/* ; */
 			nil,		/* empty */
 			nil,		/* component */
-			reduce(19),		/* ,, reduce: Bool */
+			nil,		/* , */
 			nil,		/* connect */
 			nil,		/* dot */
 			nil,		/* to */
+			nil,		/* send */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */
@@ -834,9 +868,9 @@ var actionTab = actionTable{
 			nil,		/* INVALID */
 			nil,		/* $ */
 			nil,		/* frontend */
-			shift(37),		/* id */
+			nil,		/* id */
 			nil,		/* ( */
-			nil,		/* ) */
+			reduce(9),		/* ), reduce: PossiblyEmptyArgList */
 			nil,		/* ; */
 			nil,		/* empty */
 			nil,		/* component */
@@ -844,10 +878,11 @@ var actionTab = actionTable{
 			nil,		/* connect */
 			nil,		/* dot */
 			nil,		/* to */
-			nil,		/* string_lit */
-			nil,		/* int_lit */
-			nil,		/* true */
-			nil,		/* false */
+			nil,		/* send */
+			shift(44),		/* string_lit */
+			shift(45),		/* int_lit */
+			shift(46),		/* true */
+			shift(47),		/* false */
 			
 		},
 
@@ -861,13 +896,14 @@ var actionTab = actionTable{
 			nil,		/* id */
 			nil,		/* ( */
 			nil,		/* ) */
-			reduce(7),		/* ;, reduce: Component */
+			nil,		/* ; */
 			nil,		/* empty */
 			nil,		/* component */
 			nil,		/* , */
 			nil,		/* connect */
 			nil,		/* dot */
-			nil,		/* to */
+			shift(48),		/* to */
+			nil,		/* send */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */
@@ -890,12 +926,13 @@ var actionTab = actionTable{
 			nil,		/* component */
 			nil,		/* , */
 			nil,		/* connect */
-			nil,		/* dot */
+			shift(49),		/* dot */
 			nil,		/* to */
-			shift(30),		/* string_lit */
-			shift(31),		/* int_lit */
-			shift(32),		/* true */
-			shift(33),		/* false */
+			nil,		/* send */
+			nil,		/* string_lit */
+			nil,		/* int_lit */
+			nil,		/* true */
+			nil,		/* false */
 			
 		},
 
@@ -904,18 +941,19 @@ var actionTab = actionTable{
 				canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
-			nil,		/* $ */
+			reduce(3),		/* $, reduce: Frontend */
 			nil,		/* frontend */
 			nil,		/* id */
 			nil,		/* ( */
 			nil,		/* ) */
 			nil,		/* ; */
 			nil,		/* empty */
-			nil,		/* component */
+			reduce(3),		/* component, reduce: Frontend */
 			nil,		/* , */
-			nil,		/* connect */
-			shift(39),		/* dot */
+			reduce(3),		/* connect, reduce: Frontend */
+			nil,		/* dot */
 			nil,		/* to */
+			reduce(3),		/* send, reduce: Frontend */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */
@@ -932,7 +970,7 @@ var actionTab = actionTable{
 			nil,		/* frontend */
 			nil,		/* id */
 			nil,		/* ( */
-			reduce(11),		/* ), reduce: ArgList */
+			shift(50),		/* ) */
 			nil,		/* ; */
 			nil,		/* empty */
 			nil,		/* component */
@@ -940,6 +978,7 @@ var actionTab = actionTable{
 			nil,		/* connect */
 			nil,		/* dot */
 			nil,		/* to */
+			nil,		/* send */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */
@@ -954,9 +993,9 @@ var actionTab = actionTable{
 			nil,		/* INVALID */
 			nil,		/* $ */
 			nil,		/* frontend */
-			shift(40),		/* id */
+			nil,		/* id */
 			nil,		/* ( */
-			nil,		/* ) */
+			reduce(10),		/* ), reduce: PossiblyEmptyArgList */
 			nil,		/* ; */
 			nil,		/* empty */
 			nil,		/* component */
@@ -964,6 +1003,7 @@ var actionTab = actionTable{
 			nil,		/* connect */
 			nil,		/* dot */
 			nil,		/* to */
+			nil,		/* send */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */
@@ -980,14 +1020,415 @@ var actionTab = actionTable{
 			nil,		/* frontend */
 			nil,		/* id */
 			nil,		/* ( */
+			reduce(11),		/* ), reduce: ArgList */
+			nil,		/* ; */
+			nil,		/* empty */
+			nil,		/* component */
+			shift(51),		/* , */
+			nil,		/* connect */
+			nil,		/* dot */
+			nil,		/* to */
+			nil,		/* send */
+			nil,		/* string_lit */
+			nil,		/* int_lit */
+			nil,		/* true */
+			nil,		/* false */
+			
+		},
+
+	},
+	actionRow{ // S41
+				canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			nil,		/* $ */
+			nil,		/* frontend */
+			nil,		/* id */
+			nil,		/* ( */
+			reduce(15),		/* ), reduce: Value */
+			nil,		/* ; */
+			nil,		/* empty */
+			nil,		/* component */
+			reduce(15),		/* ,, reduce: Value */
+			nil,		/* connect */
+			nil,		/* dot */
+			nil,		/* to */
+			nil,		/* send */
+			nil,		/* string_lit */
+			nil,		/* int_lit */
+			nil,		/* true */
+			nil,		/* false */
+			
+		},
+
+	},
+	actionRow{ // S42
+				canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			nil,		/* $ */
+			nil,		/* frontend */
+			nil,		/* id */
+			nil,		/* ( */
+			reduce(16),		/* ), reduce: Value */
+			nil,		/* ; */
+			nil,		/* empty */
+			nil,		/* component */
+			reduce(16),		/* ,, reduce: Value */
+			nil,		/* connect */
+			nil,		/* dot */
+			nil,		/* to */
+			nil,		/* send */
+			nil,		/* string_lit */
+			nil,		/* int_lit */
+			nil,		/* true */
+			nil,		/* false */
+			
+		},
+
+	},
+	actionRow{ // S43
+				canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			nil,		/* $ */
+			nil,		/* frontend */
+			nil,		/* id */
+			nil,		/* ( */
+			reduce(17),		/* ), reduce: Value */
+			nil,		/* ; */
+			nil,		/* empty */
+			nil,		/* component */
+			reduce(17),		/* ,, reduce: Value */
+			nil,		/* connect */
+			nil,		/* dot */
+			nil,		/* to */
+			nil,		/* send */
+			nil,		/* string_lit */
+			nil,		/* int_lit */
+			nil,		/* true */
+			nil,		/* false */
+			
+		},
+
+	},
+	actionRow{ // S44
+				canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			nil,		/* $ */
+			nil,		/* frontend */
+			nil,		/* id */
+			nil,		/* ( */
+			reduce(18),		/* ), reduce: String */
+			nil,		/* ; */
+			nil,		/* empty */
+			nil,		/* component */
+			reduce(18),		/* ,, reduce: String */
+			nil,		/* connect */
+			nil,		/* dot */
+			nil,		/* to */
+			nil,		/* send */
+			nil,		/* string_lit */
+			nil,		/* int_lit */
+			nil,		/* true */
+			nil,		/* false */
+			
+		},
+
+	},
+	actionRow{ // S45
+				canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			nil,		/* $ */
+			nil,		/* frontend */
+			nil,		/* id */
+			nil,		/* ( */
+			reduce(19),		/* ), reduce: Int */
+			nil,		/* ; */
+			nil,		/* empty */
+			nil,		/* component */
+			reduce(19),		/* ,, reduce: Int */
+			nil,		/* connect */
+			nil,		/* dot */
+			nil,		/* to */
+			nil,		/* send */
+			nil,		/* string_lit */
+			nil,		/* int_lit */
+			nil,		/* true */
+			nil,		/* false */
+			
+		},
+
+	},
+	actionRow{ // S46
+				canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			nil,		/* $ */
+			nil,		/* frontend */
+			nil,		/* id */
+			nil,		/* ( */
+			reduce(20),		/* ), reduce: Bool */
+			nil,		/* ; */
+			nil,		/* empty */
+			nil,		/* component */
+			reduce(20),		/* ,, reduce: Bool */
+			nil,		/* connect */
+			nil,		/* dot */
+			nil,		/* to */
+			nil,		/* send */
+			nil,		/* string_lit */
+			nil,		/* int_lit */
+			nil,		/* true */
+			nil,		/* false */
+			
+		},
+
+	},
+	actionRow{ // S47
+				canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			nil,		/* $ */
+			nil,		/* frontend */
+			nil,		/* id */
+			nil,		/* ( */
+			reduce(21),		/* ), reduce: Bool */
+			nil,		/* ; */
+			nil,		/* empty */
+			nil,		/* component */
+			reduce(21),		/* ,, reduce: Bool */
+			nil,		/* connect */
+			nil,		/* dot */
+			nil,		/* to */
+			nil,		/* send */
+			nil,		/* string_lit */
+			nil,		/* int_lit */
+			nil,		/* true */
+			nil,		/* false */
+			
+		},
+
+	},
+	actionRow{ // S48
+				canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			nil,		/* $ */
+			nil,		/* frontend */
+			shift(52),		/* id */
+			nil,		/* ( */
 			nil,		/* ) */
-			reduce(12),		/* ;, reduce: Connection */
+			nil,		/* ; */
 			nil,		/* empty */
 			nil,		/* component */
 			nil,		/* , */
 			nil,		/* connect */
 			nil,		/* dot */
 			nil,		/* to */
+			nil,		/* send */
+			nil,		/* string_lit */
+			nil,		/* int_lit */
+			nil,		/* true */
+			nil,		/* false */
+			
+		},
+
+	},
+	actionRow{ // S49
+				canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			nil,		/* $ */
+			nil,		/* frontend */
+			shift(53),		/* id */
+			nil,		/* ( */
+			nil,		/* ) */
+			nil,		/* ; */
+			nil,		/* empty */
+			nil,		/* component */
+			nil,		/* , */
+			nil,		/* connect */
+			nil,		/* dot */
+			nil,		/* to */
+			nil,		/* send */
+			nil,		/* string_lit */
+			nil,		/* int_lit */
+			nil,		/* true */
+			nil,		/* false */
+			
+		},
+
+	},
+	actionRow{ // S50
+				canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			nil,		/* $ */
+			nil,		/* frontend */
+			nil,		/* id */
+			nil,		/* ( */
+			nil,		/* ) */
+			reduce(8),		/* ;, reduce: Component */
+			nil,		/* empty */
+			nil,		/* component */
+			nil,		/* , */
+			nil,		/* connect */
+			nil,		/* dot */
+			nil,		/* to */
+			nil,		/* send */
+			nil,		/* string_lit */
+			nil,		/* int_lit */
+			nil,		/* true */
+			nil,		/* false */
+			
+		},
+
+	},
+	actionRow{ // S51
+				canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			nil,		/* $ */
+			nil,		/* frontend */
+			nil,		/* id */
+			nil,		/* ( */
+			nil,		/* ) */
+			nil,		/* ; */
+			nil,		/* empty */
+			nil,		/* component */
+			nil,		/* , */
+			nil,		/* connect */
+			nil,		/* dot */
+			nil,		/* to */
+			nil,		/* send */
+			shift(44),		/* string_lit */
+			shift(45),		/* int_lit */
+			shift(46),		/* true */
+			shift(47),		/* false */
+			
+		},
+
+	},
+	actionRow{ // S52
+				canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			nil,		/* $ */
+			nil,		/* frontend */
+			nil,		/* id */
+			nil,		/* ( */
+			nil,		/* ) */
+			nil,		/* ; */
+			nil,		/* empty */
+			nil,		/* component */
+			nil,		/* , */
+			nil,		/* connect */
+			shift(55),		/* dot */
+			nil,		/* to */
+			nil,		/* send */
+			nil,		/* string_lit */
+			nil,		/* int_lit */
+			nil,		/* true */
+			nil,		/* false */
+			
+		},
+
+	},
+	actionRow{ // S53
+				canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			nil,		/* $ */
+			nil,		/* frontend */
+			nil,		/* id */
+			nil,		/* ( */
+			nil,		/* ) */
+			reduce(14),		/* ;, reduce: Constant */
+			nil,		/* empty */
+			nil,		/* component */
+			nil,		/* , */
+			nil,		/* connect */
+			nil,		/* dot */
+			nil,		/* to */
+			nil,		/* send */
+			nil,		/* string_lit */
+			nil,		/* int_lit */
+			nil,		/* true */
+			nil,		/* false */
+			
+		},
+
+	},
+	actionRow{ // S54
+				canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			nil,		/* $ */
+			nil,		/* frontend */
+			nil,		/* id */
+			nil,		/* ( */
+			reduce(12),		/* ), reduce: ArgList */
+			nil,		/* ; */
+			nil,		/* empty */
+			nil,		/* component */
+			nil,		/* , */
+			nil,		/* connect */
+			nil,		/* dot */
+			nil,		/* to */
+			nil,		/* send */
+			nil,		/* string_lit */
+			nil,		/* int_lit */
+			nil,		/* true */
+			nil,		/* false */
+			
+		},
+
+	},
+	actionRow{ // S55
+				canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			nil,		/* $ */
+			nil,		/* frontend */
+			shift(56),		/* id */
+			nil,		/* ( */
+			nil,		/* ) */
+			nil,		/* ; */
+			nil,		/* empty */
+			nil,		/* component */
+			nil,		/* , */
+			nil,		/* connect */
+			nil,		/* dot */
+			nil,		/* to */
+			nil,		/* send */
+			nil,		/* string_lit */
+			nil,		/* int_lit */
+			nil,		/* true */
+			nil,		/* false */
+			
+		},
+
+	},
+	actionRow{ // S56
+				canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			nil,		/* $ */
+			nil,		/* frontend */
+			nil,		/* id */
+			nil,		/* ( */
+			nil,		/* ) */
+			reduce(13),		/* ;, reduce: Connection */
+			nil,		/* empty */
+			nil,		/* component */
+			nil,		/* , */
+			nil,		/* connect */
+			nil,		/* dot */
+			nil,		/* to */
+			nil,		/* send */
 			nil,		/* string_lit */
 			nil,		/* int_lit */
 			nil,		/* true */

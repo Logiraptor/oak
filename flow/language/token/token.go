@@ -73,6 +73,7 @@ var TokMap = TokenMap{
 		"connect",
 		"dot",
 		"to",
+		"send",
 		"string_lit",
 		"int_lit",
 		"true",
@@ -93,10 +94,11 @@ var TokMap = TokenMap{
 		"connect": 10,
 		"dot": 11,
 		"to": 12,
-		"string_lit": 13,
-		"int_lit": 14,
-		"true": 15,
-		"false": 16,
+		"send": 13,
+		"string_lit": 14,
+		"int_lit": 15,
+		"true": 16,
+		"false": 17,
 	},
 }
 

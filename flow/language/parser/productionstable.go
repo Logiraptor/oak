@@ -93,10 +93,20 @@ var productionsTable = ProdTab {
 		},
 	},
 	ProdTabEntry{
+		String: `Pipeline : Constant ";" Pipeline	<< ast.AddConstant(X[2], X[0]), nil >>`,
+		Id: "Pipeline",
+		NTType: 3,
+		Index: 7,
+		NumSymbols: 3,
+		ReduceFunc: func(X []Attrib) (Attrib, error) {
+			return ast.AddConstant(X[2], X[0]), nil
+		},
+	},
+	ProdTabEntry{
 		String: `Component : "component" id id "(" PossiblyEmptyArgList ")"	<< ast.NewComponent(X[1], X[2], X[4]), nil >>`,
 		Id: "Component",
 		NTType: 4,
-		Index: 7,
+		Index: 8,
 		NumSymbols: 6,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
 			return ast.NewComponent(X[1], X[2], X[4]), nil
@@ -106,7 +116,7 @@ var productionsTable = ProdTab {
 		String: `PossiblyEmptyArgList : empty	<< []values.Value{}, nil >>`,
 		Id: "PossiblyEmptyArgList",
 		NTType: 5,
-		Index: 8,
+		Index: 9,
 		NumSymbols: 0,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
 			return []values.Value{}, nil
@@ -116,7 +126,7 @@ var productionsTable = ProdTab {
 		String: `PossiblyEmptyArgList : ArgList	<<  >>`,
 		Id: "PossiblyEmptyArgList",
 		NTType: 5,
-		Index: 9,
+		Index: 10,
 		NumSymbols: 1,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
 			return X[0], nil
@@ -126,7 +136,7 @@ var productionsTable = ProdTab {
 		String: `ArgList : Value	<< []values.Value{X[0].(values.Value)}, nil >>`,
 		Id: "ArgList",
 		NTType: 6,
-		Index: 10,
+		Index: 11,
 		NumSymbols: 1,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
 			return []values.Value{X[0].(values.Value)}, nil
@@ -136,7 +146,7 @@ var productionsTable = ProdTab {
 		String: `ArgList : Value "," ArgList	<< append([]values.Value{X[0].(values.Value)}, X[2].([]values.Value)...), nil >>`,
 		Id: "ArgList",
 		NTType: 6,
-		Index: 11,
+		Index: 12,
 		NumSymbols: 3,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
 			return append([]values.Value{X[0].(values.Value)}, X[2].([]values.Value)...), nil
@@ -146,17 +156,27 @@ var productionsTable = ProdTab {
 		String: `Connection : "connect" id dot id "to" id dot id	<< ast.NewConnection(X[1], X[3], X[5], X[7]), nil >>`,
 		Id: "Connection",
 		NTType: 7,
-		Index: 12,
+		Index: 13,
 		NumSymbols: 8,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
 			return ast.NewConnection(X[1], X[3], X[5], X[7]), nil
 		},
 	},
 	ProdTabEntry{
+		String: `Constant : "send" Value "to" id dot id	<< ast.NewConstant(X[1], X[3], X[5]), nil >>`,
+		Id: "Constant",
+		NTType: 8,
+		Index: 14,
+		NumSymbols: 6,
+		ReduceFunc: func(X []Attrib) (Attrib, error) {
+			return ast.NewConstant(X[1], X[3], X[5]), nil
+		},
+	},
+	ProdTabEntry{
 		String: `Value : String	<<  >>`,
 		Id: "Value",
-		NTType: 8,
-		Index: 13,
+		NTType: 9,
+		Index: 15,
 		NumSymbols: 1,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
 			return X[0], nil
@@ -165,8 +185,8 @@ var productionsTable = ProdTab {
 	ProdTabEntry{
 		String: `Value : Int	<<  >>`,
 		Id: "Value",
-		NTType: 8,
-		Index: 14,
+		NTType: 9,
+		Index: 16,
 		NumSymbols: 1,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
 			return X[0], nil
@@ -175,8 +195,8 @@ var productionsTable = ProdTab {
 	ProdTabEntry{
 		String: `Value : Bool	<<  >>`,
 		Id: "Value",
-		NTType: 8,
-		Index: 15,
+		NTType: 9,
+		Index: 17,
 		NumSymbols: 1,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
 			return X[0], nil
@@ -185,8 +205,8 @@ var productionsTable = ProdTab {
 	ProdTabEntry{
 		String: `String : string_lit	<< ast.NewString(X[0]), nil >>`,
 		Id: "String",
-		NTType: 9,
-		Index: 16,
+		NTType: 10,
+		Index: 18,
 		NumSymbols: 1,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
 			return ast.NewString(X[0]), nil
@@ -195,8 +215,8 @@ var productionsTable = ProdTab {
 	ProdTabEntry{
 		String: `Int : int_lit	<< ast.NewInt(X[0]) >>`,
 		Id: "Int",
-		NTType: 10,
-		Index: 17,
+		NTType: 11,
+		Index: 19,
 		NumSymbols: 1,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
 			return ast.NewInt(X[0])
@@ -205,8 +225,8 @@ var productionsTable = ProdTab {
 	ProdTabEntry{
 		String: `Bool : "true"	<< values.BoolValue(true), nil >>`,
 		Id: "Bool",
-		NTType: 11,
-		Index: 18,
+		NTType: 12,
+		Index: 20,
 		NumSymbols: 1,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
 			return values.BoolValue(true), nil
@@ -215,8 +235,8 @@ var productionsTable = ProdTab {
 	ProdTabEntry{
 		String: `Bool : "false"	<< values.BoolValue(false), nil >>`,
 		Id: "Bool",
-		NTType: 11,
-		Index: 19,
+		NTType: 12,
+		Index: 21,
 		NumSymbols: 1,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
 			return values.BoolValue(false), nil

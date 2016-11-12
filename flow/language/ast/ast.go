@@ -46,6 +46,21 @@ func NewConnection(a, b, c, d Attrib) Connection {
 	}
 }
 
+type Constant struct {
+	val  values.Value
+	dest Port
+}
+
+func NewConstant(a, b, c Attrib) Constant {
+	return Constant{
+		val: a.(values.Value),
+		dest: Port{
+			Component: string(b.(*token.Token).Lit),
+			Port:      string(c.(*token.Token).Lit),
+		},
+	}
+}
+
 func AddComponent(pipeline, component Attrib) Pipeline {
 	p := pipeline.(Pipeline)
 	return Pipeline{
@@ -59,6 +74,26 @@ func AddConnection(pipeline, pipe Attrib) Pipeline {
 	return Pipeline{
 		Components: p.Components,
 		Pipes:      append(p.Pipes, pipe.(Connection)),
+	}
+}
+
+var implicitConstants = 0
+
+func AddConstant(pipeline, constant Attrib) Pipeline {
+	implicitConstants++
+	c := constant.(Constant)
+	p := pipeline.(Pipeline)
+	name := "$$implicitConst" + strconv.Itoa(implicitConstants)
+	return Pipeline{
+		Components: append(p.Components, Component{
+			Args:        []values.Value{c.val},
+			Name:        name,
+			Constructor: "Constant",
+		}),
+		Pipes: append(p.Pipes, Connection{
+			Dest:   c.dest,
+			Source: Port{Component: name, Port: "Output"},
+		}),
 	}
 }
 

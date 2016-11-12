@@ -32,7 +32,8 @@ Frontend:
 Pipeline:
     empty <<ast.Pipeline{}, nil>>
     | Component ";" Pipeline <<ast.AddComponent($2, $0), nil>>
-    | Connection ";" Pipeline <<ast.AddConnection($2, $0), nil>>;
+    | Connection ";" Pipeline <<ast.AddConnection($2, $0), nil>>
+    | Constant ";" Pipeline <<ast.AddConstant($2, $0), nil>>;
 
 Component:
     "component" id id "(" PossiblyEmptyArgList ")" << ast.NewComponent($1, $2, $4), nil >>;
@@ -47,6 +48,9 @@ ArgList :
 
 Connection:
     "connect" id dot id "to" id dot id << ast.NewConnection($1, $3, $5, $7), nil >>;
+
+Constant:
+    "send" Value "to" id dot id << ast.NewConstant($1, $3, $5), nil >>;
 
 Value :
     String

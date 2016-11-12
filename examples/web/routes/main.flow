@@ -2,20 +2,16 @@ frontend web();
 
 component eq Eq();
 component cond Cond();
-component path1 Constant("/bye");
-component path2 Constant("/hello");
-component message1 Constant("Goodbye!");
-component message2 Constant("Hello!");
-component success Constant(200);
 component responder HTTPResponder();
 component request HTTPRequest();
 component path FieldAccessor("Path");
 
+send "Goodbye!" to cond.Consequence;
+send "Hello!" to cond.Alternative;
+send "/bye" to eq.RHS;
+send 200 to responder.Status;
+
 connect request.Output to path.Input;
 connect path.Output to eq.LHS;
-connect path1.Output to eq.RHS;
 connect eq.Output to cond.Condition;
-connect message1.Output to cond.Consequence;
-connect message2.Output to cond.Alternative;
 connect cond.Output to responder.Body;
-connect success.Output to responder.Status;
